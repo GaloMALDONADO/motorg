@@ -22,4 +22,13 @@ def meanConfiguration(motion):
             dataStd += [np.std(data2,0).A1]
         return np.matrix(dataMean), np.matrix(dataStd)
 
-
+def meanVar(var):
+        #nRep = len(motion)
+        tmax = len(var[0])
+        #DoF = len(motion[0][0]) 
+        dataMean = []
+        dataStd = []
+        for t in xrange(tmax):
+            dataMean += [np.mean(var[:,t,:],0)]
+            dataStd += [np.std(var[:,t,:],0)]
+        return np.matrix(dataMean), np.matrix(dataStd)

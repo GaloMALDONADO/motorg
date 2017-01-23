@@ -19,18 +19,23 @@ trial.display()
 trial.getTrials()
 
 
-''' Get reference configuration                                                                                  
-    Qi_hat = mean(q(t))                                                                                          
+''' Get reference configuration 
+    Qi_hat = mean(q(t)) 
 '''
 jumpMeanConf, jumpStdConf = meanConfiguration(trial.jump)
 
-''' Get reference trajectories                                                                                   
-    Xi_hat = mean(x(t))                                                                                          
-    Reference tasks(trajectories)                                                                                
-    JUMP = CoM trajectory, lower-limb impulsion, maximize angular momentum with arms                             
-    FLY = neck orientation                                                                                       
-    LAND = stability(CoMx,CoMy), damping(CoMz), posture(IC:i.e. foot)                                            
+''' Get reference trajectories
+    Xi_hat = mean(x(t))
+    Reference tasks(trajectories)
+    JUMP = CoM trajectory, lower-limb impulsion, maximize angular momentum with arms
+    FLY = neck orientation                                                                                
+    LAND = stability(CoMx,CoMy), damping(CoMz), posture(IC:i.e. foot)
 '''
-jumpMeanCoM = np.matrix(robot.record(trial.jump[0]['pinocchio_data'],'com',0)[0])
+
+x=[]
+for i in xrange (len(trial.jump)):
+    x += [robot.record(trial.jump[i]['pinocchio_data'],'com',0)[0]]
+
+jumpMeanCoM, jumpStdCoM = meanVar(np.array(x))
 #x = jumpMeanCoM[:,0]
 

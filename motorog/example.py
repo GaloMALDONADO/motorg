@@ -4,25 +4,22 @@ import robot_config as rconf
 import mocap_config as mconf
 from hqp.wrapper import Wrapper
 from trajectory_extractor import References
-from tools import *
-
+import ucm
 
 
 participantName = 'Lucas'
 robot = Wrapper(lp.models_path+'/'+participantName+'.osim', lp.mesh_path, participantName, True)
-robot.q0 = rconf.half_sitting
-
-idxTraceur = mconf.traceurs_list.index('Lucas')
+idxTraceur = mconf.traceurs_list.index(participantName)
 trial = References(mconf.traceurs_list[idxTraceur])
 trial.loadModel()
 trial.display()
 trial.getTrials()
 
+taskCoM = ucm.ucmCoM(robot, trial.jump)
+Vcm, Vucm, criteria =taskCoM.getUCMVariances()
+title = 'CENTER OF MASS DURING JUMP PHASE'
+taskCoM.plotUCM(Vucm, Vcm, criteria, title)
 
-''' Get reference configuration 
-    Qi_hat = mean(q(t)) 
-'''
-jumpMeanConf, jumpStdConf = meanConfiguration(trial.jump)
 
 ''' Get reference trajectories
     Xi_hat = mean(x(t))
@@ -31,11 +28,4 @@ jumpMeanConf, jumpStdConf = meanConfiguration(trial.jump)
     FLY = neck orientation                                                                                
     LAND = stability(CoMx,CoMy), damping(CoMz), posture(IC:i.e. foot)
 '''
-
-x=[]
-for i in xrange (len(trial.jump)):
-    x += [robot.record(trial.jump[i]['pinocchio_data'],'com',0)[0]]
-
-jumpMeanCoM, jumpStdCoM = meanVar(np.array(x))
-#x = jumpMeanCoM[:,0]
 

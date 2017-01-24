@@ -13,14 +13,16 @@ def meanConfiguration(motion):
         data = []
         dataMean = []
         dataStd = []
+        dataStr = np.zeros((tmax,DoF,nRep))
+        #for dof in xrange(DoF):
         for t in xrange(tmax):
-            for dof in xrange(DoF):
-                for i in xrange (nRep):
-                    data += [np.array(motion[i]['pinocchio_data'][t]).squeeze()]
+            for i in xrange (nRep):
+                data += [np.array(motion[i]['pinocchio_data'][t]).squeeze()]
+                dataStr[t,:,i] = motion[i]['pinocchio_data'][t]
             data2 = np.matrix(data)
             dataMean += [np.mean(data2,0).A1]
             dataStd += [np.std(data2,0).A1]
-        return np.matrix(dataMean), np.matrix(dataStd)
+        return np.matrix(dataMean), np.matrix(dataStd), dataStr
 
 def meanVar(var):
         #nRep = len(motion)

@@ -1,17 +1,8 @@
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
 import numpy as np
-
-def nullSpace(A, eps = 1e-15):
-    ''' Computes the null space from SVD                                                                         
-    returns the nulls space and the rank                                                                         
-    '''
-    U, s, V = np.linalg.svd(A)
-    rank = (s>=eps).sum()
-    nullspace = V[rank:].T.copy()
-    return nullspace, rank
-
-
+import pinocchio as se3
+from tools import *
 
 class UCM:
     def __init__(self, robot):
@@ -35,7 +26,7 @@ class UCM:
         N=[]
         for i in xrange(100):
             N.append(getNullSpaceAndRank(Jq[i])[0])
-        return N
+        return np.array(N)
 
     def varianceFromManifolds(self, Q_hat, Qi, Ni, normUCM=1, normCM=1, criteria='log'):
         ''' Vcm, Vucm, c = varianceFromManifolds(Q_hat, Qi, Ni)                                                  
@@ -54,9 +45,10 @@ class UCM:
         for i in xrange(100):
             v_ucm = 0; v_cm = 0;
             for trls in xrange(ntrials):
-                devq = np.matrix(Q_hat[i] - Qi[i,:,trls]).T
+                #devq = np.matrix(Q_hat[i] - Qi[i,:,trls]).T
+                devq = se3.differentiate(self.robot.model, Q_hat[0], np.matrix(Qi[i,:,trls]))
                 # the deviations from the mean trajectories in joint-space are projected onto the null-space     
-                ucm = Ni[trls] * Ni[trls].T * devq
+                ucm = np.matrix(Ni[trls]) * np.matrix(Ni[trls]).T * devq
                 # and onto the range space (orthogonal to the null space)                                        
                 # which is a lineat appoximation of the controlled manifold                                      
                 cm = devq - ucm
@@ -116,7 +108,7 @@ class UCM:
             ax.plot(self.time, X[:,0]-X_std[:,0],'--r', linewidth=3.0)
             color=iter(cm.rainbow(np.linspace(0,1,ntrials)))
             for trls in xrange(ntrials):
-            c = next(color)
+                c = next(color)
                 ax.plot(self.time,Xi[:, 0, trls], color=c, linewidth=1.0)
             plt.ylabel('m')
 
@@ -141,16 +133,18 @@ class UCM:
         if var is 'joint':
             fig = plt.figure ()
             fig.canvas.set_window_title(title)
+
             ax = fig.add_subplot ('323')
             plt.title('Y Position [m]')
-                ax.plot(self.time, X[:,0],'r', linewidth=3.0)
+            ax.plot(self.time, X[:,0],'r', linewidth=3.0)
             ax.plot(self.time, X[:,0]+X_std[:,0],'--r', linewidth=3.0)
             ax.plot(self.time ,X[:,0]-X_std[:,0],'--r', linewidth=3.0)
             color=iter(cm.rainbow(np.linspace(0,1,ntrials)))
             for trls in xrange(ntrials):
                 c = next(color)
-            ax.plot(self.time, Xi[:, 0, trls], color=c, linewidth=1.00)
+                ax.plot(self.time, Xi[:, 0, trls], color=c, linewidth=1.00)
                 legends.append('trials'+str(trls))
+
             ax = fig.add_subplot ('321')
             plt.title('X Position [m]')
             ax.plot(self.time, X[:,1],'r', linewidth=3.0)
@@ -161,8 +155,9 @@ class UCM:
                 c = next(color)
                 ax.plot(self.time, Xi[:, 0, trls], color=c, linewidth=1.00)
                 legends.append('trials'+str(trls))
+            
             ax = fig.add_subplot ('321')
-                plt.title('X Position [m]')
+            plt.title('X Position [m]')
             ax.plot(self.time, X[:,1],'r', linewidth=3.0)
             ax.plot(self.time, X[:,1]+X_std[:,1],'--r', linewidth=3.0)
             ax.plot(self.time, X[:,1]-X_std[:,1],'--r', linewidth=3.0)
@@ -241,6 +236,71 @@ class UCM:
 
 
 
+class ucmCoM(UCM):
+    def __init__(self, robot,motions, name="UCM of CoM"):
+        UCM.__init__(self, robot)
+        self.name = name
+        self.robot = robot
+        self.motions = motions
+        self.repNo = len(motions)
+        self._mask = (np.ones(3)).astype(bool)
+
+    @property
+    def dim(self):
+        return self._mask.sum()
+
+    def referenceConfiguration(self, motions):
+        '''
+        meanConf, stdConf, data = meanConfiguration(motions)
+        '''
+        return meanConfiguration(motions)
+
+    def referenceTask(self, motions):
+        '''
+        Xi_hat = mean(x(t))
+        '''
+        x=[]
+        for i in xrange (self.repNo):
+            x += [self.getTask(motions[i]['pinocchio_data'])]
+        meanCoM, stdCoM = meanVar(np.array(x).squeeze())
+        return meanCoM, stdCoM
+    
+    def getTask(self, Q):
+        task=[]
+        for i in range(0, len(Q)):
+            se3.forwardKinematics(self.robot.model, self.robot.data, Q[i])
+            task.append(self.robot.com(Q[i]).getA())
+        return task 
+
+    def getJacobian(self, Q):
+        taskJacobian=[]
+        for i in range(0, len(Q)):
+            se3.forwardKinematics(self.robot.model, self.robot.data, Q[i])
+            taskJacobian.append(self.robot.Jcom(Q[i]))
+        return taskJacobian
+        
+    def getUCMVariances(self):
+        self.meanConf, self.stdConf, self.data = self.referenceConfiguration(self.motions)
+        self.meanCoM, self.stdCoM = self.referenceTask(self.motions)
+        self.JCoM = self.getJacobian(self.meanConf)
+        self.NCoM = self.nullspace(self.JCoM)
+        self.n_ucm = self.repNo * self.robot.nv
+        self.n_cm = self.repNo * self.dim
+        self.Vcm, self.Vucm, self.criteria = self.varianceFromManifolds(self.meanConf, 
+                                                                        self.data, 
+                                                                        self.NCoM, 
+                                                                        self.n_ucm, 
+                                                                        self.n_cm, 
+                                                                        'log')
+        return self.Vcm, self.Vucm, self.criteria
+
+    
+    
+    
+        
+        
+    
+    
 
 
 

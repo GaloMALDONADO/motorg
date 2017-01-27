@@ -118,6 +118,5 @@ class References:
                                                                       self.human.data, 
                                                                       self.human.q)))
         if record is True:
-            return rec
-
-1
+            pass
+            #return rec

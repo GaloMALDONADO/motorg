@@ -30,7 +30,8 @@ def meanVar(var):
         #DoF = len(motion[0][0]) 
         dataMean = []
         dataStd = []
+        
         for t in xrange(tmax):
-            dataMean += [np.mean(var[:,t,:],0)]
-            dataStd += [np.std(var[:,t,:],0)]
+            dataMean += [np.mean(var[:,t],0)]
+            dataStd += [np.std(var[:,t],0)]
         return np.matrix(dataMean), np.matrix(dataStd)

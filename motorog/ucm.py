@@ -493,6 +493,7 @@ class ucmMomentum(UCM):
                                                                         'log')
         return self.Vucm, self.Vcm, self.criteria
 
+#def ucmEnergy(UCM):
 '''
     def plotCoM(self, deg=True):
         

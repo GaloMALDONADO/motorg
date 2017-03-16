@@ -1,0 +1,16 @@
+frame_id = 5
+x_dot_dot = robot.frameAcceleration(frame_id)
+J = robot.frameJacobian(robot.q.copy(),frame_id, True)
+
+v_frame = robot.frameVelocity(frame_id)
+drift = x_dot_dot.copy()
+drift.linear += np.cross(v_frame.angular.T, v_frame.linear.T).T
+
+q_dot = robot.v.copy()
+q_dot_dot = robot.a.copy()
+
+dq = np.matrix(np.ones(robot.nv)*0.01)
+ddq = np.matrix(np.ones(robot.nv)*0.01)
+
+#a=
+b=J*dq.T + J*ddq.T

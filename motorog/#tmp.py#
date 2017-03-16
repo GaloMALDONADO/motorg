@@ -1,0 +1,5 @@
+participantNo = 5
+
+trial = getTrials(0)
+trialNo = len(trial.jump)
+trial.jump[0]['pinocchio_data']

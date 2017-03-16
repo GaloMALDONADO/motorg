@@ -1,0 +1,12 @@
+import paths as lp
+
+participantName = 'Lucas'
+traceur = Wrapper(lp.models_path+'/'+participantName+'.osim', lp.mesh_path, participantName, True)
+
+traceur.q0 = rconf.half_sitting
+idxTraceur = mconf.traceurs_list.index('Lucas')
+trial = References(mconf.traceurs_list[idxTraceur])
+trial.loadModel()
+trial.display()
+trial.getTrials()
+

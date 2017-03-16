@@ -1,0 +1,230 @@
+import matplotlib.pyplot as plt
+from matplotlib.pyplot import cm
+import numpy as np
+
+
+class UCM:
+    def __init__(self, robot):
+        self.robot = robot
+        self.name = robot.name
+        self.nq = robot.nq
+        self.nv = robot.nv
+        self.tf = 100
+        self.time = np.linspace(1,100,100)
+
+    def nullspace(self, Jq):
+        N=[]
+        for i in xrange(100):
+            N.append(nullSpace(Jq[i])[0])
+        return N
+
+    def varianceFromManifolds(self, Q_hat, Qi, Ni, normUCM=1, normCM=1, criteria='log'):
+        ''' Vcm, Vucm, c = varianceFromManifolds(Q_hat, Qi, Ni)                                                  
+        Return a normalized array of the variance of the CM and the UCM, and the hypothesis test result          
+        Param-in :                                                                                               
+        Q_hat = mean joint configuration (1x100)                                                                 
+        Qi = matrix of joint configurations (100, joints_dof, nTrials)                                           
+        Ni = list of size (100) containing the nullspace (1 x joints_dof- task_dof)                              
+        norm UCM = value to which the variance of UCM is normalized. Default is 1                                
+        norm CM = value to which the variance of CM is normalized. Default is 1                                  
+        normaly the value is calculated as : # of dof involved (joints and tasks) * # of trials                  
+        '''
+        q_ucm = []; q_cm = [];
+        Vucm = []; Vcm =[];
+        ntrials = np.shape(Qi)[2]
+        for i in xrange(100):
+            v_ucm = 0; v_cm = 0;
+            for trls in xrange(ntrials):
+                devq = np.matrix(Q_hat[i] - Qi[i,:,trls]).T
+                # the deviations from the mean trajectories in joint-space are projected onto the null-space     
+                ucm = Ni[trls] * Ni[trls].T * devq
+                # and onto the range space (orthogonal to the null space)                                        
+                # which is a lineat appoximation of the controlled manifold                                      
+                cm = devq - ucm
+                # the variance per degree of freedom of the projected deviations is                              
+                v_ucm = v_ucm + np.square(np.linalg.norm(ucm))
+                v_cm = v_cm + np.square(np.linalg.norm(cm))
+
+
+            Vucm.append(v_ucm)
+            Vcm.append (v_cm)
+
+        Vcm_n = np.array(Vcm)/normCM
+        Vucm_n = np.array(Vucm)/normUCM
+        if criteria is 'log':
+            c = np.log(Vucm_n/Vcm_n)
+        else:
+            c = Vucm_n/Vcm_n
+        return Vucm_n, Vcm_n, c
+
+
+    '''
+    Plot the task
+    '''
+    def plotTask(self, var, X, X_std, Xi, title, deg=True):
+        if deg is True:
+            X[:,3:6] = np.rad2deg(X[:,3:6])
+            X_std[:,3:6] = np.rad2deg(X_std[:,3:6])
+            Xi[:,3:6] = np.rad2deg(Xi[:,3:6])
+            sangle='degrees'
+        else:
+                sangle='rad'
+        ntrials = np.shape(Xi)[2]
+        legends=[]
+        legends.append('mean')
+        legends.append('mean+std')
+        legends.append('mean-std')
+        plt.ion()
+        if var is 'com':
+            fig = plt.figure()
+            fig.canvas.set_window_title(title)
+            ax = fig.add_subplot ('311')
+            plt.title('Medial-Lateral center of Mass during jump [m]')
+            ax.plot(self.time, X[:,1],'r', linewidth=3.0)
+            ax.plot(self.time, X[:,1]+X_std[:,0],'--r', linewidth=3.0)
+            ax.plot(self.time, X[:,1]-X_std[:,0],'--r', linewidth=3.0)
+            color=iter(cm.rainbow(np.linspace(0,1,ntrials)))
+            for trls in xrange(ntrials):
+                c = next(color)
+                ax.plot(self.time,Xi[:, 1, trls], color=c, linewidth=1.0)
+                legends.append('trials'+str(trls))
+            plt.ylabel('m')
+            
+            ax = fig.add_subplot ('312')
+            plt.title('Antero-Posterior center of Mass during jump [m]')
+            ax.plot(self.time, X[:,0],'r', linewidth=3.0)
+            ax.plot(self.time, X[:,0]+X_std[:,0],'--r', linewidth=3.0)
+            ax.plot(self.time, X[:,0]-X_std[:,0],'--r', linewidth=3.0)
+            color=iter(cm.rainbow(np.linspace(0,1,ntrials)))
+            for trls in xrange(ntrials):
+            c = next(color)
+                ax.plot(self.time,Xi[:, 0, trls], color=c, linewidth=1.0)
+            plt.ylabel('m')
+
+            ax = fig.add_subplot ('313')
+            plt.title('Vertical center of Mass during jump [m]')
+            ax.plot(self.time,X[:,2], 'r', linewidth=3.0)
+            ax.plot(self.time,X[:,2]+X_std[:,2],'--r', linewidth=3.0)
+            ax.plot(self.time,X[:,2]-X_std[:,2],'--r', linewidth=3.0)
+            color=iter(cm.rainbow(np.linspace(0,1,ntrials)))
+            for trls in xrange(ntrials):
+                c = next(color)
+                ax.plot(self.time,Xi[:, 2, trls], color=c, linewidth=1.0)
+            plt.xlabel('% of phase')
+            plt.ylabel('m')
+
+            # Shrink current axis's height by 10% on the bottom                                                  
+            box = ax.get_position()
+            ax.set_position([box.x0, box.y0 + box.height * 0.1,
+                              box.width, box.height * 0.9])
+            ax.legend(legends,loc='upper center', bbox_to_anchor=(0.5, -0.2),
+                      ncol=7, fancybox=True, shadow=True)
+        if var is 'joint':
+            fig = plt.figure ()
+            fig.canvas.set_window_title(title)
+            ax = fig.add_subplot ('323')
+            plt.title('Y Position [m]')
+                ax.plot(self.time, X[:,0],'r', linewidth=3.0)
+            ax.plot(self.time, X[:,0]+X_std[:,0],'--r', linewidth=3.0)
+            ax.plot(self.time ,X[:,0]-X_std[:,0],'--r', linewidth=3.0)
+            color=iter(cm.rainbow(np.linspace(0,1,ntrials)))
+            for trls in xrange(ntrials):
+                c = next(color)
+            ax.plot(self.time, Xi[:, 0, trls], color=c, linewidth=1.00)
+                legends.append('trials'+str(trls))
+            ax = fig.add_subplot ('321')
+            plt.title('X Position [m]')
+            ax.plot(self.time, X[:,1],'r', linewidth=3.0)
+            ax.plot(self.time, X[:,1]+X_std[:,1],'--r', linewidth=3.0)
+            ax.plot(self.time, X[:,1]-X_std[:,1],'--r', linewidth=3.0)
+            color=iter(cm.rainbow(np.linspace(0,1,ntrials)))
+            for trls in xrange(ntrials):
+                c = next(color)
+                ax.plot(self.time, Xi[:, 0, trls], color=c, linewidth=1.00)
+                legends.append('trials'+str(trls))
+            ax = fig.add_subplot ('321')
+                plt.title('X Position [m]')
+            ax.plot(self.time, X[:,1],'r', linewidth=3.0)
+            ax.plot(self.time, X[:,1]+X_std[:,1],'--r', linewidth=3.0)
+            ax.plot(self.time, X[:,1]-X_std[:,1],'--r', linewidth=3.0)
+            color=iter(cm.rainbow(np.linspace(0,1,ntrials)))
+            for trls in xrange(ntrials):
+                c = next(color)
+                ax.plot(self.time,Xi[:, 1, trls], color=c, linewidth=1.0)
+
+            ax = fig.add_subplot ('325')
+            plt.title('Z Position  [m]')
+            ax.plot(self.time, X[:,2],'r', linewidth=3.0)
+            ax.plot(self.time, X[:,2]+X_std[:,2],'--r', linewidth=3.0)
+            ax.plot(self.time, X[:,2]-X_std[:,2],'--r', linewidth=3.0)
+            color=iter(cm.rainbow(np.linspace(0,1,ntrials)))
+
+            ax = fig.add_subplot ('324')
+            plt.title('Rot Y'+sangle)
+            ax.plot(self.time, X[:,3],'r', linewidth=3.0)
+            ax.plot(self.time, X[:,3]+X_std[:,3],'--r', linewidth=3.0)
+            ax.plot(self.time ,X[:,3]-X_std[:,3],'--r', linewidth=3.0)
+            color=iter(cm.rainbow(np.linspace(0,1,ntrials)))
+            for trls in xrange(ntrials):
+                c = next(color)
+                ax.plot(self.time, Xi[:, 3, trls], color=c, linewidth=1.0)
+
+            ax = fig.add_subplot ('322')
+            plt.title('Rot X'+sangle)
+            ax.plot(self.time, X[:,4],'r', linewidth=3.0)
+            ax.plot(self.time, X[:,4]+X_std[:,4],'--r', linewidth=3.0)
+            ax.plot(self.time, X[:,4]-X_std[:,4],'--r', linewidth=3.0)
+            color=iter(cm.rainbow(np.linspace(0,1,ntrials)))
+            for trls in xrange(ntrials):
+                c = next(color)
+                ax.plot(self.time, Xi[:, 4, trls], color=c, linewidth=1.0)
+
+            ax = fig.add_subplot ('326')
+            plt.title('Rot Z'+sangle)
+            ax.plot(self.time, X[:,5],'r', linewidth=3.0)
+            ax.plot(self.time, X[:,5]+X_std[:,5],'--r', linewidth=3.0)
+            ax.plot(self.time, X[:,5]-X_std[:,5],'--r', linewidth=3.0)
+            color=iter(cm.rainbow(np.linspace(0,1,ntrials)))
+            for trls in xrange(ntrials):
+                c = next(color)
+                ax.plot(self.time, Xi[:, 5, trls], color=c, linewidth=1.0)
+
+            # Shrink current axis's height by 10% on the bottom                                                  
+            box = ax.get_position()
+            ax.set_position([box.x0, box.y0 + box.height * 0.1,
+                              box.width, box.height * 0.9])
+            ax.legend(legends,loc='upper center', bbox_to_anchor=(0., -0.2),
+                      ncol=7, fancybox=True, shadow=True)
+
+
+    '''
+    Plot the uncontrolled manifold 
+    '''
+    def plotUCM(self,Vucm,Vcm,criteria, title, degree=True):
+        if degree is True:
+            np.rad2deg(Vucm)
+            np.rad2deg(Vcm)
+        plt.ion()
+        fig = plt.figure ()
+        fig.canvas.set_window_title(title)
+        ax = fig.add_subplot ('311')
+        plt.title('Uncontrolled Manifold')
+        plt.ylabel('variance')
+        ax.plot(self.time, Vucm, 'b', linewidth=3.0)
+        ax = fig.add_subplot ('312')
+        plt.title('Controlled Manifold')
+        plt.ylabel('variance')
+        ax.plot(self.time, Vcm, 'r', linewidth=3.0)
+        ax = fig.add_subplot ('313')
+        plt.title('Criteria')
+        ax.plot(self.time, criteria, 'k', linewidth=3.0)
+        plt.xlabel('% of phase')
+
+
+
+
+
+
+
+
+

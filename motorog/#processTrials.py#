@@ -1,0 +1,53 @@
+import numpy as np
+import paths as lp
+import robot_config as rconf
+import mocap_config as mconf
+from hqp.wrapper import Wrapper
+from trajectory_extractor import References
+import ucm
+import csv
+
+def getTrials(i):
+    participantName = mconf.traceurs_list[i]
+    idxTraceur = mconf.traceurs_list.index(participantName)
+    trial = References(mconf.traceurs_list[idxTraceur])
+    trial.loadModel()
+    trial.display()
+    trial.getTrials()
+    return trial
+
+class CalculateAll:
+    def __init__(self, robot, motions):
+        self.robot = robot
+        self.Q = motions
+
+    def update(self,q,v,a):
+        se3.computeAllTerms(self.robot.model, self.robot.data, q, v)
+        self.robot.q=q
+        self.robot.v=v
+        self.robot.a=a
+        self.robot.tau = se3.rnea(self.robot.model, self.robot.data, q, v, a)
+
+    def differentiate(self, q1, q2):
+        return se3.differentiate(self.robot.model, np.asmatrix(q1), np.asmatrix(q2))
+
+    
+    def getVelocity(self, Q, T, filterFlag=True):
+        Vi = []
+        for i in range(1,len(Q)):
+            dt = T[i]-T[i-1]
+            Vi += [self.differentiate(Q[i-1],Q[i])/dt]
+
+            Vi.insert(0,Vi[0])
+            V = np.matrix(np.array(Vi))
+            if filterFlag is True:
+                fDof = []
+                for i in xrange (self.robot.nv):
+                    fDof += [filtfilt_butter(np.array(V[:,i]).squeeze(),
+                                             self.cutoff,
+                                             self.fs,
+                                             self.filter_order)]
+                    Vf = np.matrix(fDof).T
+                    return Vf
+                return V
+

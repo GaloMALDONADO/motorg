@@ -60,7 +60,7 @@ class References:
     def store(self,store_path):
         #store_path = '/local/gmaldona/devel/biomechatronics/motions/landing/'+self.name+'/' 
         pass
-    
+
     def getTrials(self):
         self.trial = []; self.jump = []; self.fly = []; self.land = []
         for trls in xrange(len(self.trial_names)):

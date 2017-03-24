@@ -21,3 +21,4 @@ def plot2(x,y,title='Plot'):
 
 def plotCoordinate(x,name):
     plot(x[:,indexes.coordinateIndex(name)])
+    return fig, ax

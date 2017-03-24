@@ -1,7 +1,7 @@
 # Analysis of Variances from uncontrolled manifold and its orthogonal space
 rm(list = ls())
-p='/galo/devel/gepetto/motorg/motorog/'
-
+#p='/galo/devel/gepetto/motorg/motorog/'
+p='/local/gmaldona/devel/motorg/motorog/'
 # ------------------------------------------------------------------------
 #    JUMP IMPULSE
 # Task 1: impulsion through antero-posterior and vertical linear momentum

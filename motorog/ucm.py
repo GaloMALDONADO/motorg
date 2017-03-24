@@ -3,6 +3,7 @@ from matplotlib.pyplot import cm
 import numpy as np
 import pinocchio as se3
 import tools 
+
 #from bmtools.filters import filtfilt_butter
 
 class UCM:
@@ -15,7 +16,7 @@ class UCM:
         self.time = np.linspace(1,100,100)
         self.dt = 0.0025
         self.fs = 400
-        self.cutoff = 50
+        self.cutoff = 10
         self.filter_order = 4
 
     def nullspace(self, Jq):
@@ -30,32 +31,44 @@ class UCM:
 
         N=[]
         for i in xrange(100):
-            N.append(getNullSpaceAndRank(Jq[i])[0])
-        return np.array(N)
+            P=np.matrix(np.identity(42)) - (np.linalg.pinv(Jq[i])*Jq[i])
+            print 'P*J:'
+            print np.sum(abs(P*Jq[i].T))
+            print 'P*P = P as P*P-P=0'
+            print np.sum(abs((P*P)-P))
+            N.append(P)
+
+            #N.append(getNullSpaceAndRank(Jq[i])[0])
+        projector = np.array(N)
+        self.projector = projector
+        print np.sum((np.matrix(projector[1])*np.matrix(projector[1]))-np.matrix(projector[1]))
+        return projector
     
-    def update(self,q,v,a):
+    def updateAll(self,q,v,a):
         se3.computeAllTerms(self.robot.model, self.robot.data, q, v)
         self.robot.q=q
         self.robot.v=v
         self.robot.a=a
         self.robot.tau = se3.rnea(self.robot.model, self.robot.data, q, v, a)
 
-    def getReferenceConfiguration(self, motions):
+    def getReferenceConfigurations(self, motions):
         '''
         meanConf, stdConf, data = meanConfiguration(motions)
         '''
-        (self.x_mean, self.x_std, self.x_data) = tools.meanConfiguration(motions)
         (self.time_mean, self.time_std, self.time_data) = tools.meanTime(motions)
-        # this is taking long time
-        (self.v_mean, self.v_std, self.v_data) = tools.meanVelocities(self.robot.model, 
-                                                                      self.x_data, 
-                                                                      self.time_data,
-                                                                      10, 
-                                                                      self.fs, 
-                                                                      self.filter_order)
+        (self.q_mean, self.q_std, self.q_data) = tools.meanConfiguration(motions)
+        (self.dq_mean, self.dq_std, self.dq_data) = tools.meanVelocities(self.robot.model, 
+                                                                         self.q_data, 
+                                                                         self.time_data,
+                                                                         self.cutoff, 
+                                                                         self.fs, 
+                                                                         self.filter_order)
+        (self.ddq_mean, self.ddq_std, self.ddq_data) = tools.meanAccelerations(self.dq_data, 
+                                                                               self.time_data,
+                                                                               self.cutoff, 
+                                                                               self.fs, 
+                                                                               self.filter_order)
         
-        #(a_mean, a_std, a_data) = tools.meanAccelerations(v_data)
-        return (self.x_mean, self.x_std, self.x_data)
     
     def getMeanTime(self, motions):
         ''' computes the mean time and the std'''
@@ -64,7 +77,9 @@ class UCM:
             x += [motions[i]['time']]
         meanT =  np.mean(x,0)
         stdT = np.std(x,0)
-        self.repData = x
+        #self.t_mean =
+        #self.t_std = 
+        #self.t_data = x
         return meanT.squeeze(), stdT.squeeze()
 
     def differentiate(self, q1, q2):
@@ -97,8 +112,8 @@ class UCM:
             return A
 
 
-    def varianceFromManifolds(self, Q_hat, Qi, Ni, normUCM=1, normCM=1, criteria='log'):
-        ''' Vcm, Vucm, c = varianceFromManifolds(Q_hat, Qi, Ni) 
+    def varianceFromManifolds(self, Q_hat, Qi, Pi, normUCM, normCM, criteria='log'):
+        ''' Vcm, Vucm, c = varianceFromManifolds(Q_hat, Qi, Pi) 
         Return a normalized array of the variance of the CM and the UCM, and the hypothesis test result
         Param-in :
         Q_hat = mean joint configuration (1x100)
@@ -108,28 +123,35 @@ class UCM:
         norm CM = value to which the variance of CM is normalized. Default is 1 
         normaly the value is calculated as : # of dof involved (joints and tasks) * # of trials
         '''
-        q_ucm = []; q_cm = [];
+        
         Vucm = []; Vcm =[];
         ntrials = np.shape(Qi)[2]
+
         for i in xrange(100):
             v_ucm = 0; v_cm = 0;
             for trls in xrange(ntrials):
                 #devq = np.matrix(Q_hat[i] - Qi[i,:,trls]).T
-                devq = se3.differentiate(self.robot.model, Q_hat[0], np.matrix(Qi[i,:,trls]))
+                #devq = se3.differentiate(self.robot.model, np.matrix(Qi[i,:,trls]), Q_hat[0])
+                devq = (Qi[i,:,trls]-Q_hat[i])
+                #print devq.shape
                 # the deviations from the mean trajectories in joint-space are projected onto the null-space
-                ucm = np.matrix(Ni[trls]) * np.matrix(Ni[trls]).T * devq
+                #ucm = (np.matrix(Ni[trls]) * np.matrix(Ni[trls]).T) * devq.copy()
+                ucm = np.matrix(Pi[i]) * devq.copy().T
                 # and onto the range space (orthogonal to the null space)
                 # which is a lineat appoximation of the controlled manifold
-                cm = devq - ucm
+                cm = devq.copy().T - ucm.copy()
                 # the variance per degree of freedom of the projected deviations is
-                v_ucm += np.square(np.linalg.norm(ucm))
-                v_cm  += np.square(np.linalg.norm(cm))
+                #v_ucm += np.square(np.linalg.norm(ucm))
+                #v_cm  += np.square(np.linalg.norm(cm))
+                v_ucm += np.linalg.norm(ucm)
+                v_cm  += np.linalg.norm(cm)
+                
 
             Vucm.append(v_ucm)
             Vcm.append (v_cm)
 
-        Vcm_n = np.array(Vcm)/normCM
-        Vucm_n = np.array(Vucm)/normUCM
+        Vcm_n = np.array(Vcm)/np.float64(normCM)
+        Vucm_n = np.array(Vucm)/np.float64(normUCM)
         if criteria is 'log':
             c = np.log(Vucm_n/Vcm_n)
         else:
@@ -308,6 +330,168 @@ class UCM:
         ax = fig.add_subplot ('111')
         ax.plot(self.time, y, 'b', linewidth=3.0)
 
+
+
+'''
+Joints
+'''
+class ucmJoint(UCM):
+    def __init__(self, robot, motions, frame_id, mask, name="UCM of CoM"):
+        assert len(mask) == 6, "The mask must have 6 elements"
+        UCM.__init__(self, robot)
+        self.name = name
+        self.robot = robot
+        self.motions = motions
+        self.repNo = len(motions)
+        self._mask = mask
+        self._frame_id = frame_id
+
+    @property
+    def dim(self):
+        return self._mask.sum()
+
+    def mask(self, mask):
+        assert len(mask) == 6, "The mask must have 6 elements"
+        self._mask = mask.astype(bool)
+
+    def _getDrift(self):
+        v_frame = self.robot.frameVelocity(self._frame_id)
+        drift = self.robot.frameAcceleration(self._frame_id)
+        drift.linear += np.cross(v_frame.angular.T, v_frame.linear.T).T
+        return drift.vector
+
+    def _getDynTask(self):
+        '''
+        Let M be an m-dimensional manifold representing the task space
+        Let U be an n-dimensional manifold representing the control space
+        task : the hypothetized accelerations element of R^m
+        Jtask : the task jacobian that maps task accelerations to controlled joint accelerations
+        drift : the dynamic drift of the task
+        '''
+        task=[]; JTask=[]; drift=[];
+        for i in range(0, 100):
+            self.updateAll(self.q_mean[i], self.dq_mean[i], self.ddq_mean[i])
+            se3.forwardKinematics(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
+            se3.framesKinematics(self.robot.model, self.robot.data, self.q_mean[i])
+            b = self._getDrift()[self._mask]
+            dx = self.robot.frameAcceleration(self._frame_id).vector[self._mask]
+            ddx = b+dx
+            drift.append(b)
+            task.append(ddx)
+            JTask.append(self.robot.frameJacobian(self.q_mean[i],self._frame_id, True)[self._mask,:])
+        return task, JTask , drift
+    
+    def getUCMVariances(self):
+        self.getReferenceConfigurations(self.motions)
+        (self.task, self.JTask, self.drift) = self._getDynTask()
+        self.NTask = self.nullspace(self.JTask)
+        self.n_ucm = self.repNo * self.robot.nv
+        self.n_cm = self.repNo * self.dim
+        self.Vucm, self.Vcm, self.criteria = self.varianceFromManifolds(self.dq_mean, 
+                                                                        self.dq_data, 
+                                                                        self.NTask, 
+                                                                        self.n_ucm, 
+                                                                        self.n_cm, 
+                                                                        'log')
+        return self.Vucm, self.Vcm, self.criteria
+
+
+
+
+
+
+
+
+''' Uncontrolled Manifold of the Momentum '''
+class ucmMomentum(UCM):
+
+    def __init__(self, robot,motions, mask, name="UCM of CoM"):
+        UCM.__init__(self, robot)
+        self.name = name
+        self.robot = robot
+        self.motions = motions
+        self.repNo = len(motions)
+        self._mask = mask
+        
+
+    @property
+    def dim(self):
+        return self._mask.sum()
+
+    def mask(self, mask):
+        assert len(mask) == 6, "The mask must have 6 elements".format(6)
+        self._mask = mask.astype(bool)
+
+    def _getBiais(self,q,v):
+        model = self.robot.model
+        data = self.robot.data
+        p_com = self.robot.com(q)#data.com[0]
+        cXi = se3.SE3.Identity()
+        oXi = data.oMi[1]
+        cXi.rotation = oXi.rotation
+        cXi.translation = oXi.translation - p_com
+        m_gravity = model.gravity.copy()
+        model.gravity.setZero()
+        b = se3.nle(model,data,q,v)
+        model.gravity = m_gravity
+        f_ff = se3.Force(b[:6])
+        f_com = cXi.act(f_ff)
+        #print f_com
+        return f_com.np
+
+    def _getDynTask(self):
+        task=[]; Jtask=[]; drift=[]
+        for i in range(0, 100):
+            self.updateAll(self.q_mean[i],self.dq_mean[i],self.ddq_mean[i])
+            se3.forwardKinematics(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
+            JH = se3.ccrba(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
+            H = self.robot.data.hg.np.A.copy()
+            b = self._getBiais(self.q_mean[i], self.dq_mean[i])[self._mask]
+            H = H[self._mask]
+            Hdot = H+b
+            task.append(Hdot)
+            drift.append(b)
+            Jtask.append(JH[self._mask,:])
+        return task, Jtask, drift
+        
+    def _getReferenceTask(self, motions):
+        '''
+        Xi_hat = mean(x(t))
+        '''
+        x=[]
+        for i in xrange (self.repNo):
+            x += [self._getTask(motions[i]['pinocchio_data'],motions[i]['time'])]
+        meanV, stdV = meanVar(np.array(x).squeeze())
+        self.repData = x
+        return meanV, stdV
+    
+    def getUCMVariances(self):
+        self.getReferenceConfigurations(self.motions)
+        (self.task, self.JTask, self.drift) = self._getDynTask()
+        print 'getUCMVariances'
+        print np.shape(np.array(self.JTask))
+        self.NTask = self.nullspace(self.JTask)
+        self.n_ucm = self.repNo * (self.robot.nv-self.dim)
+        self.n_cm = self.repNo * self.dim
+        (self.Vucm, self.Vcm, self.criteria) = self.varianceFromManifolds(self.dq_mean, 
+                                                                          self.dq_data, 
+                                                                          self.NTask, 
+                                                                          self.n_ucm, 
+                                                                          self.n_cm, 
+                                                                          'log')
+        return self.Vucm, self.Vcm, self.criteria
+
+
+
+
+
+
+
+
+
+
+
+
 ''' Uncontrolled Manifold of the Center of Mass '''
 class ucmCoM(UCM):
 
@@ -392,170 +576,6 @@ class ucmCoM(UCM):
 
         ax.legend(legends,loc='upper center', bbox_to_anchor=(0.5, -0.2),
                   ncol=7, fancybox=True, shadow=True)
-
-
-
-'''
-Joints
-'''
-class ucmJoint(UCM):
-    def __init__(self, robot, motions, frame_id, mask=(np.ones(6)).astype(bool), name="UCM of CoM"):
-        assert len(mask) == 6, "The mask must have 6 elements"
-        UCM.__init__(self, robot)
-        self.name = name
-        self.robot = robot
-        self.motions = motions
-        self.repNo = len(motions)
-        self._mask = mask
-        self._frame_id = frame_id
-
-    @property
-    def dim(self):
-        return self._mask.sum()
-
-    def mask(self, mask):
-        assert len(mask) == 6, "The mask must have 6 elements"
-        self._mask = mask.astype(bool)
-
-    def _getDrift(self):
-        v_frame = self.robot.frameVelocity(self._frame_id)
-        drift = self.robot.frameAcceleration(self._frame_id)
-        drift.linear += np.cross(v_frame.angular.T, v_frame.linear.T).T
-        return drift.vector
-
-    def _getDynTask(self, Q, T):
-        '''
-        Let M be an m-dimensional manifold representing the task space
-        Let U be an n-dimensional manifold representing the control space
-        task : the hypothetized accelerations element of R^m
-        Jtask : the task jacobian that maps task accelerations to controlled joint accelerations
-        drift : the dynamic drift of the task
-        '''
-        self.Q = Q.copy()
-        self.T = T.copy()
-        self.V = self.getVelocity(Q, T, filterFlag=True)
-        self.A = self.getAcceleration(self.V, T, filterFlag=True)
-        task=[]; JTask=[]; drift=[];
-        for i in range(0, len(Q)):
-            se3.forwardKinematics(self.robot.model, self.robot.data, self.Q[i], self.V[i])
-            se3.framesKinematics(self.robot.model, self.robot.data, self.Q[i])
-            self.update(Q[i],self.V[i],self.A[i])
-            drift.append(self._getDrift()[self._mask])
-            task.append(self.robot.frameAcceleration(self._frame_id).vector[self._mask]) #time>
-            JTask.append(self.robot.frameJacobian(Q[i],self._frame_id, True)[self._mask,:])
-        return task, JTask , drift
-    
-    def referenceTask(self, motions):
-        '''
-        e_hat = mean(x(t))
-        '''
-        x=[]
-        for i in xrange (self.repNo):
-            x += [self._getTask(motions[i]['pinocchio_data'])][0]
-        meanTask, stdTask = meanVar(np.array(x).squeeze())
-        return meanTask, stdTask
-                    
-    def getUCMVariances(self):
-        (self.meanConf, self.stdMeanConf, self.dataAllTrials) = self.getReferenceConfiguration(self.motions)
-        (self.task, self.JTask, self.drift) = self._getDynTask(self.meanConf,self.getMeanTime(self.motions)[0])
-
-        self.NTask = self.nullspace(self.JTask)
-        self.n_ucm = self.repNo * self.robot.nv
-        self.n_cm = self.repNo * self.dim
-        self.Vucm, self.Vcm, self.criteria = self.varianceFromManifolds(self.meanConf, 
-                                                                        self.dataAllTrials, 
-                                                                        self.NTask, 
-                                                                        self.n_ucm, 
-                                                                        self.n_cm, 
-                                                                        'log')
-        return self.Vucm, self.Vcm, self.criteria
-
-
-
-
-
-
-
-
-''' Uncontrolled Manifold of the Momentum '''
-class ucmMomentum(UCM):
-
-    def __init__(self, robot,motions, mask=(np.ones(3)).astype(bool), name="UCM of CoM"):
-        UCM.__init__(self, robot)
-        self.name = name
-        self.robot = robot
-        self.motions = motions
-        self.repNo = len(motions)
-        self._mask = mask
-        
-
-    @property
-    def dim(self):
-        return self._mask.sum()
-
-    def mask(self, mask):
-        assert len(mask) == 6, "The mask must have 6 elements".format(6)
-        self._mask = mask.astype(bool)
-
-    def _getBiais(self,q,v):
-        model = self.robot.model
-        data = self.robot.data
-        p_com = self.robot.com(q)#data.com[0]
-        cXi = se3.SE3.Identity()
-        oXi = data.oMi[1]
-        cXi.rotation = oXi.rotation
-        cXi.translation = oXi.translation - p_com
-        m_gravity = model.gravity.copy()
-        model.gravity.setZero()
-        b = se3.nle(model,data,q,v)
-        model.gravity = m_gravity
-        f_ff = se3.Force(b[:6])
-        f_com = cXi.act(f_ff)
-        #print f_com
-        return f_com.np
-
-    def _getDynTask(self, Q, T):
-        self.T = T.copy()
-        self.Q = Q.copy()
-        self.V = self.getVelocity(Q,T, filterFlag=True)
-        self.A = self.getAcceleration(self.V, T, filterFlag=True)
-        task=[]; Jtask=[]; biais=[]
-        for i in range(0, len(Q)):
-            se3.forwardKinematics(self.robot.model, self.robot.data, Q[i], self.V[i])
-            self.update(Q[i],self.V[i],self.A[i])
-            JH = se3.ccrba(self.robot.model, self.robot.data, Q[i], self.V[i])
-            H = self.robot.data.hg.np.A.copy()
-            biais.append(self._getBiais(Q[i],self.V[i])[self._mask])
-            #print biais
-            #Hdot = H - biais
-            task.append(H[self._mask])
-            Jtask.append(JH[self._mask,:])
-        return task, Jtask, biais
-        
-    def _getReferenceTask(self, motions):
-        '''
-        Xi_hat = mean(x(t))
-        '''
-        x=[]
-        for i in xrange (self.repNo):
-            x += [self._getTask(motions[i]['pinocchio_data'],motions[i]['time'])]
-        meanV, stdV = meanVar(np.array(x).squeeze())
-        self.repData = x
-        return meanV, stdV
-    
-    def getUCMVariances(self):
-        (self.meanConf, self.stdMeanConf, self.dataAllTrials) = self.getReferenceConfiguration(self.motions)
-        (self.task, self.JTask, self.biais) = self._getDynTask(self.meanConf,self.getMeanTime(self.motions)[0])
-        self.NTask = self.nullspace(self.JTask)
-        self.n_ucm = self.repNo * self.robot.nv
-        self.n_cm = self.repNo * self.dim
-        (self.Vucm, self.Vcm, self.criteria) = self.varianceFromManifolds(self.meanConf, 
-                                                                          self.dataAllTrials, 
-                                                                          self.NTask, 
-                                                                          self.n_ucm, 
-                                                                          self.n_cm, 
-                                                                          'log')
-        return self.Vucm, self.Vcm, self.criteria
 
 
 

@@ -32,14 +32,14 @@ def meanVelocities(model, x, t, cutoff, fs, filter_order):
     Nrep = x.shape[2]
     tmax = x.shape[0]
     DoF = model.nv
-    v = []
+    #v = []
     data = []
     dataMean = []
     dataStd = []
     dataStr = np.zeros((tmax,DoF,Nrep))
     dataF = np.zeros((tmax,DoF,Nrep))
     for r in xrange(Nrep):
-        for i in xrange(tmax):
+        for i in range(1,tmax):
         # velocity
             if i >= 1:
                 dt = (t[i,r]-t[i-1,r])
@@ -47,6 +47,7 @@ def meanVelocities(model, x, t, cutoff, fs, filter_order):
                 q2 = x[i,:,r]
                 diff = se3.differentiate(model, q1,  q2)/dt
                 dataStr[i,:,r] = diff.A1
+        dataStr[0,:,r] = dataStr[1,:,r].copy()
         #filter
         for j in xrange(DoF):
             dataF[:,j,r] = filtfilt_butter(dataStr[:,j,r],
@@ -60,6 +61,41 @@ def meanVelocities(model, x, t, cutoff, fs, filter_order):
         dataMean += [np.mean(data2,1).A1]
         dataStd += [np.std(data2,1).A1]
     return np.matrix(dataMean), np.matrix(dataStd), dataF
+
+def meanAccelerations(v, t, cutoff, fs, filter_order):
+    Nrep = v.shape[2]
+    tmax = v.shape[0]
+    DoF = 42
+    data = []
+    dataMean = []
+    dataStd = []
+    dataStr = np.zeros((tmax,DoF,Nrep))
+    dataF = np.zeros((tmax,DoF,Nrep))
+    for r in xrange(Nrep):
+        
+        for i in range(1,tmax):
+        # velocity
+            if i >= 1:
+                dt = (t[i,r]-t[i-1,r])
+                v1 = v[i-1,:,r]
+                v2 = v[i,:,r]
+                diff = np.gradient(np.array([v1,  v2]), dt)[0][0]
+                dataStr[i,:,r] = diff.copy()
+        dataStr[0,:,r] = dataStr[1,:,r].copy()
+        #filter
+        for j in xrange(DoF):
+            dataF[:,j,r] = filtfilt_butter(dataStr[:,j,r],
+                                           10,
+                                           fs,
+                                           filter_order)
+    # stats
+    for i in xrange(tmax):
+        data = dataF[i,:,:]
+        data2 = np.matrix(data)
+        dataMean += [np.mean(data2,1).A1]
+        dataStd += [np.std(data2,1).A1]
+    return np.matrix(dataMean), np.matrix(dataStd), dataF
+
 
 def meanVar(var):
     tmax = len(var[0])
@@ -100,3 +136,5 @@ def filterMatrix(M, cutoff, fs, filter_order):
         ]
     return np.matrix(fDof,dtype=np.float64).T
 
+def meanTask(task):
+    pass

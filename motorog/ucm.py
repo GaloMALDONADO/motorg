@@ -580,6 +580,7 @@ class ucmCoM(UCM):
 
 
 
+#def ucmEnergy(UCM):
 '''
     def plotCoM(self, deg=True):
         

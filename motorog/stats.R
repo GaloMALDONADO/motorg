@@ -1,7 +1,12 @@
 # Analysis of Variances from uncontrolled manifold and its orthogonal space
 rm(list = ls())
+<<<<<<< HEAD
 #p='/galo/devel/gepetto/motorg/motorog/'
 p='/local/gmaldona/devel/motorg/motorog/'
+=======
+p='/galo/devel/gepetto/motorg/motorog/'
+
+>>>>>>> 677af561e294bf478ded07bff7be2524627f32f2
 # ------------------------------------------------------------------------
 #    JUMP IMPULSE
 # Task 1: impulsion through antero-posterior and vertical linear momentum
@@ -24,6 +29,55 @@ boxplot(SOT_IMPULSE$Ratio~SOT_IMPULSE$Task:SOT_IMPULSE$Phase)
 # impulsionAM is more controlled than impulsionLM at 50% and 100%
 # impulsionLM decrease it is importance during the jump phase
 
+<<<<<<< HEAD
+=======
+# Plot the means and stds (error bars)
+meanImpLM1 = mean(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="1"&
+                                     SOT_IMPULSE$Phase=="1"])
+stdImpLM1 = sd(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="1"&
+                                 SOT_IMPULSE$Phase=="1"])
+meanImpLM50= mean(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="1"&
+                                      SOT_IMPULSE$Phase=="50"])
+stdImpLM50= mean(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="1"&
+                                      SOT_IMPULSE$Phase=="50"])
+meanImpLM100= mean(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="1"&
+                                      SOT_IMPULSE$Phase=="100"])
+stdImpLM100= mean(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="1"&
+                                       SOT_IMPULSE$Phase=="100"])
+meanImpAM1 = mean(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="2"&
+                                      SOT_IMPULSE$Phase=="1"])
+stdImpAM1 = sd(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="2"&
+                                      SOT_IMPULSE$Phase=="1"])
+meanImpAM50= mean(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="2"&
+                                      SOT_IMPULSE$Phase=="50"])
+stdImpAM50= sd(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="2"&
+                                      SOT_IMPULSE$Phase=="50"])
+meanImpAM100= mean(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="2"&
+                                       SOT_IMPULSE$Phase=="100"])
+stdImpAM100= sd(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="2"&
+                                     SOT_IMPULSE$Phase=="100"])
+
+jump.means <- structure(list('1'=c(meanImpLM1,meanImpAM1),
+                             '50'=c(meanImpLM50, meanImpAM50),
+                             '100'=c(meanImpLM100, meanImpAM100)), 
+                              .Names = c("1%", "50%", "100%"), 
+                              class = "data.frame", row.names = c(NA, -2L))
+barx = barplot(as.matrix(jump.means), main="Jump",
+        xlab="Phase of the motion", ylab="Index of Motor Task Control",
+        xlim=c(0,10),ylim=c(0,8),
+        col=c("darkblue","red"),
+        legend = c( "Impulsion Linear Momentum","Impulsion Angular Mommentum"), beside=TRUE)
+
+jump.stds <- structure(list('1'=c(stdImpLM1,stdImpAM1),
+                             '50'=c(stdImpLM50, stdImpAM50),
+                             '100'=c(stdImpLM100, stdImpAM100)), 
+                        .Names = c("1%", "50%", "100%"), 
+                        class = "data.frame", row.names = c(NA, -2L))
+xx=as.matrix(jump.means)
+er=as.matrix(jump.stds)
+arrows(barx,xx+er, barx,xx, angle=90, code=3, length=0.05)
+
+>>>>>>> 677af561e294bf478ded07bff7be2524627f32f2
 # compute repetitive measures anova
 aovstats <-aov(SOT_IMPULSE$Ratio ~ 
                SOT_IMPULSE$Task*SOT_IMPULSE$Phase + 
@@ -90,6 +144,55 @@ boxplot(SOT_FLY$Ratio~SOT_FLY$Task:SOT_FLY$Phase)
 # vision is more controlled than pelvis at all phases
 # pelvis is almost invariant
 
+<<<<<<< HEAD
+=======
+# Plot the means and stds (error bars)
+meanVis1 = mean(SOT_FLY$Ratio[SOT_FLY$Task=="1"&
+                                SOT_FLY$Phase=="1"])
+stdVis1 = sd(SOT_FLY$Ratio[SOT_FLY$Task=="1"&
+                             SOT_FLY$Phase=="1"])
+meanVis50= mean(SOT_FLY$Ratio[SOT_FLY$Task=="1"&
+                                SOT_FLY$Phase=="50"])
+stdVis50= mean(SOT_FLY$Ratio[SOT_FLY$Task=="1"&
+                               SOT_FLY$Phase=="50"])
+meanVis100= mean(SOT_FLY$Ratio[SOT_FLY$Task=="1"&
+                                 SOT_FLY$Phase=="100"])
+stdVis100= mean(SOT_FLY$Ratio[SOT_FLY$Task=="1"&
+                                SOT_FLY$Phase=="100"])
+meanPelv1 = mean(SOT_FLY$Ratio[SOT_FLY$Task=="2"&
+                                 SOT_FLY$Phase=="1"])
+stdPelv1 = sd(SOT_FLY$Ratio[SOT_FLY$Task=="2"&
+                              SOT_FLY$Phase=="1"])
+meanPelv50= mean(SOT_FLY$Ratio[SOT_FLY$Task=="2"&
+                                 SOT_FLY$Phase=="50"])
+stdPelv50= sd(SOT_FLY$Ratio[SOT_FLY$Task=="2"&
+                              SOT_FLY$Phase=="50"])
+meanPelv100= mean(SOT_FLY$Ratio[SOT_FLY$Task=="2"&
+                                  SOT_FLY$Phase=="100"])
+stdPelv100= sd(SOT_FLY$Ratio[SOT_FLY$Task=="2"&
+                               SOT_FLY$Phase=="100"])
+
+fly.means <- structure(list('1'=c(meanVis1,meanPelv1),
+                             '50'=c(meanVis50, meanPelv50),
+                             '100'=c(meanVis100, meanPelv100)), 
+                        .Names = c("1%", "50%", "100%"), 
+                        class = "data.frame", row.names = c(NA, -2L))
+barx = barplot(as.matrix(fly.means), main="Fly",
+               xlab="Phase of the motion", ylab="Index of Motor Task Control",
+               xlim=c(0,10),ylim=c(0,11),
+               col=c("darkblue","red"),
+               legend = c( "Vision","Pelvis"), beside=TRUE)
+
+fly.stds <- structure(list('1'=c(stdVis1,stdPelv1),
+                            '50'=c(stdVis50, stdPelv50),
+                            '100'=c(stdVis100, stdPelv100)), 
+                       .Names = c("1%", "50%", "100%"), 
+                       class = "data.frame", row.names = c(NA, -2L))
+xx=as.matrix(fly.means)
+er=as.matrix(fly.stds)
+arrows(barx,xx+er, barx,xx, angle=90, code=3, length=0.05)
+
+>>>>>>> 677af561e294bf478ded07bff7be2524627f32f2
 # compute repetitive measures anova
 aovstats <-aov(SOT_FLY$Ratio ~ 
                  SOT_FLY$Task*SOT_FLY$Phase + 
@@ -159,6 +262,83 @@ boxplot(SOT_LAND$Ratio~SOT_LAND$Task:SOT_LAND$Phase)
 # damping is more controlled than stifness at all phases
 # stifness is almost invariant
 
+<<<<<<< HEAD
+=======
+# Plot the means and stds (error bars)
+meanDamp1 = mean(SOT_LAND$Ratio[SOT_LAND$Task=="1"&
+                                 SOT_LAND$Phase=="1"])
+stdDamp1 = sd(SOT_LAND$Ratio[SOT_LAND$Task=="1"&
+                              SOT_LAND$Phase=="1"])
+meanDamp50= mean(SOT_LAND$Ratio[SOT_LAND$Task=="1"&
+                                 SOT_LAND$Phase=="50"])
+stdDamp50= mean(SOT_LAND$Ratio[SOT_LAND$Task=="1"&
+                                SOT_LAND$Phase=="50"])
+meanDamp100= mean(SOT_LAND$Ratio[SOT_LAND$Task=="1"&
+                                  SOT_LAND$Phase=="100"])
+stdDamp100= mean(SOT_LAND$Ratio[SOT_LAND$Task=="1"&
+                                 SOT_LAND$Phase=="100"])
+meanStiff1 = mean(SOT_LAND$Ratio[SOT_LAND$Task=="2"&
+                                  SOT_LAND$Phase=="1"])
+stdStiff1 = sd(SOT_LAND$Ratio[SOT_LAND$Task=="2"&
+                               SOT_LAND$Phase=="1"])
+meanStiff50= mean(SOT_LAND$Ratio[SOT_LAND$Task=="2"&
+                                  SOT_LAND$Phase=="50"])
+stdStiff50= sd(SOT_LAND$Ratio[SOT_LAND$Task=="2"&
+                               SOT_LAND$Phase=="50"])
+meanStiff100= mean(SOT_LAND$Ratio[SOT_LAND$Task=="2"&
+                                   SOT_LAND$Phase=="100"])
+stdStiff100= sd(SOT_LAND$Ratio[SOT_LAND$Task=="2"&
+                                SOT_LAND$Phase=="100"])
+
+meanStabCM1 = mean(SOT_LAND$Ratio[SOT_LAND$Task=="3"&
+                                   SOT_LAND$Phase=="1"])
+stdStabCM1 = sd(SOT_LAND$Ratio[SOT_LAND$Task=="3"&
+                                SOT_LAND$Phase=="1"])
+meanStabCM50= mean(SOT_LAND$Ratio[SOT_LAND$Task=="3"&
+                                   SOT_LAND$Phase=="50"])
+stdStabCM50= sd(SOT_LAND$Ratio[SOT_LAND$Task=="3"&
+                                SOT_LAND$Phase=="50"])
+meanStabCM100= mean(SOT_LAND$Ratio[SOT_LAND$Task=="3"&
+                                    SOT_LAND$Phase=="100"])
+stdStabCM100= sd(SOT_LAND$Ratio[SOT_LAND$Task=="3"&
+                                 SOT_LAND$Phase=="100"])
+
+meanStabAM1 = mean(SOT_LAND$Ratio[SOT_LAND$Task=="4"&
+                                    SOT_LAND$Phase=="1"])
+stdStabAM1 = sd(SOT_LAND$Ratio[SOT_LAND$Task=="4"&
+                                 SOT_LAND$Phase=="1"])
+meanStabAM50= mean(SOT_LAND$Ratio[SOT_LAND$Task=="4"&
+                                    SOT_LAND$Phase=="50"])
+stdStabAM50= sd(SOT_LAND$Ratio[SOT_LAND$Task=="4"&
+                                SOT_LAND$Phase=="50"])
+meanStabAM100= mean(SOT_LAND$Ratio[SOT_LAND$Task=="4"&
+                                     SOT_LAND$Phase=="100"])
+stdStabAM100= sd(SOT_LAND$Ratio[SOT_LAND$Task=="4"&
+                                  SOT_LAND$Phase=="100"])
+
+
+land.means <- structure(list('1'=c(meanDamp1,meanStiff1,meanStabCM1,meanStabAM1),
+                            '50'=c(meanDamp50, meanStiff50,meanStabCM50,meanStabAM50),
+                            '100'=c(meanDamp100, meanStiff100,meanStabCM100,meanStabAM100)), 
+                       .Names = c("1%", "50%", "100%"), 
+                       class = "data.frame", row.names = c(NA, -4L))
+barx = barplot(as.matrix(land.means), main="Landing",
+               xlab="Phase of the motion", ylab="Index of Motor Task Control",
+               xlim=c(0,15),ylim=c(0,10),
+               col=c("darkblue","red","green","yellow"),
+               legend = c( "Damping","Stiffness","Stability CoM","Stability Angular Momentum"), beside=TRUE)
+
+land.stds <- structure(list('1'=c(stdDamp1,stdStiff1,stdStabCM1,stdStabAM1),
+                           '50'=c(stdDamp50, stdStiff50,stdStabCM50,stdStabAM50),
+                           '100'=c(stdDamp100, stdStiff100,stdStabCM100,stdStabAM100)), 
+                      .Names = c("1%", "50%", "100%"), 
+                      class = "data.frame", row.names = c(NA, -4L))
+xx=as.matrix(land.means)
+er=as.matrix(land.stds)
+arrows(barx,xx+er, barx,xx, angle=90, code=3, length=0.05)
+
+
+>>>>>>> 677af561e294bf478ded07bff7be2524627f32f2
 # compute repetitive measures anova
 statsaov2 <-aov(SOT_LAND$Ratio ~ 
               SOT_LAND$Task*SOT_LAND$Phase + 

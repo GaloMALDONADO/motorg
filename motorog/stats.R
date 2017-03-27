@@ -1,12 +1,10 @@
 # Analysis of Variances from uncontrolled manifold and its orthogonal space
 rm(list = ls())
-<<<<<<< HEAD
+
 #p='/galo/devel/gepetto/motorg/motorog/'
 p='/local/gmaldona/devel/motorg/motorog/'
-=======
-p='/galo/devel/gepetto/motorg/motorog/'
 
->>>>>>> 677af561e294bf478ded07bff7be2524627f32f2
+
 # ------------------------------------------------------------------------
 #    JUMP IMPULSE
 # Task 1: impulsion through antero-posterior and vertical linear momentum
@@ -29,8 +27,7 @@ boxplot(SOT_IMPULSE$Ratio~SOT_IMPULSE$Task:SOT_IMPULSE$Phase)
 # impulsionAM is more controlled than impulsionLM at 50% and 100%
 # impulsionLM decrease it is importance during the jump phase
 
-<<<<<<< HEAD
-=======
+
 # Plot the means and stds (error bars)
 meanImpLM1 = mean(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="1"&
                                      SOT_IMPULSE$Phase=="1"])
@@ -77,7 +74,7 @@ xx=as.matrix(jump.means)
 er=as.matrix(jump.stds)
 arrows(barx,xx+er, barx,xx, angle=90, code=3, length=0.05)
 
->>>>>>> 677af561e294bf478ded07bff7be2524627f32f2
+
 # compute repetitive measures anova
 aovstats <-aov(SOT_IMPULSE$Ratio ~ 
                SOT_IMPULSE$Task*SOT_IMPULSE$Phase + 
@@ -144,8 +141,7 @@ boxplot(SOT_FLY$Ratio~SOT_FLY$Task:SOT_FLY$Phase)
 # vision is more controlled than pelvis at all phases
 # pelvis is almost invariant
 
-<<<<<<< HEAD
-=======
+
 # Plot the means and stds (error bars)
 meanVis1 = mean(SOT_FLY$Ratio[SOT_FLY$Task=="1"&
                                 SOT_FLY$Phase=="1"])
@@ -192,7 +188,7 @@ xx=as.matrix(fly.means)
 er=as.matrix(fly.stds)
 arrows(barx,xx+er, barx,xx, angle=90, code=3, length=0.05)
 
->>>>>>> 677af561e294bf478ded07bff7be2524627f32f2
+
 # compute repetitive measures anova
 aovstats <-aov(SOT_FLY$Ratio ~ 
                  SOT_FLY$Task*SOT_FLY$Phase + 
@@ -262,8 +258,7 @@ boxplot(SOT_LAND$Ratio~SOT_LAND$Task:SOT_LAND$Phase)
 # damping is more controlled than stifness at all phases
 # stifness is almost invariant
 
-<<<<<<< HEAD
-=======
+
 # Plot the means and stds (error bars)
 meanDamp1 = mean(SOT_LAND$Ratio[SOT_LAND$Task=="1"&
                                  SOT_LAND$Phase=="1"])
@@ -338,7 +333,6 @@ er=as.matrix(land.stds)
 arrows(barx,xx+er, barx,xx, angle=90, code=3, length=0.05)
 
 
->>>>>>> 677af561e294bf478ded07bff7be2524627f32f2
 # compute repetitive measures anova
 statsaov2 <-aov(SOT_LAND$Ratio ~ 
               SOT_LAND$Task*SOT_LAND$Phase + 

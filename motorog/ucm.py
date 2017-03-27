@@ -446,11 +446,10 @@ class ucmMomentum(UCM):
             se3.forwardKinematics(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
             JH = se3.ccrba(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
             H = self.robot.data.hg.np.A.copy()
-            b = self._getBiais(self.q_mean[i], self.dq_mean[i])[self._mask]
-            H = H[self._mask]
-            Hdot = H+b
-            task.append(Hdot)
-            drift.append(b)
+            b = self._getBiais(self.q_mean[i], self.dq_mean[i])
+            Hdot = (JH * self.ddq_mean[i].T) + b
+            task.append(Hdot[self._mask])
+            drift.append(b[self._mask])
             Jtask.append(JH[self._mask,:])
         return task, Jtask, drift
         

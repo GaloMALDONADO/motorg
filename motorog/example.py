@@ -45,13 +45,14 @@ JAMmask = np.array([False,False,False,False,True,False])
 JVmask  = np.array([False,False,False,True,True,True])
 JNCmask = np.array([False,False,False,True,False,False])
 #Fly
-FlyV = []; #FlyP = []; 
+FlyV = []; FlyLM = [];#FlyP = []; 
 FVmask=np.array([False,False,False,True,True,True])
+FLMmask = np.array([True,True,True,False,False,False])
 #Land
 LandV = []; LandLM_abs = []; LandLM_stab = []; LandAM = []; LandM_stab = []; LandNC = []; LandBack = [];
 LVmask  =   np.array([False, False, False, True, True, True])
 LAMmask =   np.array([False, False, False, False, True,False])
-LLM_Abs_mask =   np.array([False, False, True, False, False, False])
+LLM_Abs_mask =   np.array([True, True, True, False, False, False])
 LLM_Stab_mask =   np.array([True, True, False, False, False, False])
 LM_Stab_mask =   np.array([True, True, False, False, True, False])
 nc_mask = np.array([False, False, False, True, False, False])
@@ -87,6 +88,8 @@ for i in xrange (len(mconf.traceurs_list)):
     ''' Vision task is defined with the joint flexion of the neck to track the target '''
     FlyV += [ucm.ucmJoint(robots[i], fly,IDX_NECK,FVmask)]
     Vucm, Vcm, criteria = FlyV[i].getUCMVariances()
+    FlyLM += [ucm.ucmMomentum(robots[i], fly, FLMmask)]
+    Vucm, Vcm, criteria = FlyLM[i].getUCMVariances()
     ''' Pelvis task is defined with the joint flexion of the pelvis '''
     #Pelvis += [ucm.ucmJoint(robots[i], fly, 
     #                        IDX_PELVIS, 
@@ -130,6 +133,7 @@ plotLinMomJ = plotTasks.CentroidalMomentum(JumpLM,'Impulsion through Linear Mome
 plotAngMomJ = plotTasks.CentroidalMomentum(JumpAM, 'Angular Momentum (around M-L) contribution during Jump')
 
 plotVisionF = plotTasks.Joint(FlyV,'neck_flexion')
+plotLinMomF = plotTasks.CentroidalMomentum(FlyLM,'Fly Linear Momentum')
 
 plotLinMomL_stab = plotTasks.CentroidalMomentum(LandLM_stab,'Linear Momentum stability (A-P and M-L) task during Landing')
 plotLinMomL_abs = plotTasks.CentroidalMomentum(LandLM_abs, 'Linear Momentum absorption (V) task during Landing')

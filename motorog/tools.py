@@ -2,8 +2,9 @@ print 'tools'
 import numpy as np
 from bmtools.filters import filtfilt_butter
 import pinocchio as se3
+import hqp.wrapper as wrapper
 
-def meanConfiguration(motion):
+def meanConfiguration(robot,motion):
     ''' 
     Motion is a collection of configurations that
     should be normalized between 0% and 100%
@@ -13,19 +14,22 @@ def meanConfiguration(motion):
     '''
     nRep = len(motion)
     tmax = len(motion[0]['pinocchio_data'])
-    DoF = motion[0]['pinocchio_data'][0].A1.shape[0] 
+    #DoF = motion[0]['pinocchio_data'][0].A1.shape[0] 
+    DoF = 42
     data = []
     dataMean = []
     dataStd = []
-    dataStr = np.zeros((tmax,DoF,nRep))
+    dataStr = np.zeros((tmax,49,nRep))
     #for dof in xrange(DoF):
     for t in xrange(tmax):
         for i in xrange (nRep):
-            data += [np.array(motion[i]['pinocchio_data'][t]).squeeze()]
+            #data += [np.array(motion[i]['pinocchio_data'][t]).squeeze()]
+            #dataStr[t,:,i] = motion[i]['pinocchio_data'][t]
+            data += [np.array(motion[i]['osim_data'][t]).squeeze()]
             dataStr[t,:,i] = motion[i]['pinocchio_data'][t]
         data2 = np.matrix(data)
-        dataMean += [np.mean(data2,0).A1]
-        dataStd += [np.std(data2,0).A1]
+        dataMean += [robot.dof2pinocchio(np.mean(data2,0).A1)]
+        dataStd += [robot.dof2pinocchio(np.std(data2,0).A1)]
     return np.matrix(dataMean), np.matrix(dataStd), dataStr
 
 def meanVelocities(model, x, t, cutoff, fs, filter_order):

@@ -9,6 +9,7 @@ import plot_tools
 import csv
 import indexes 
 import plotTasks
+from hqp.viewer_utils import Viewer
 
 coordinateNames = np.matrix(indexes.coordinates).squeeze()[:,1]
 jointNames = np.matrix(indexes.joints).squeeze()[:,1]
@@ -52,8 +53,8 @@ FLMmask = np.array([True,True,True,False,False,False])
 LandV = []; LandLM_abs = []; LandLM_stab = []; LandAM = []; LandM_stab = []; LandNC = []; LandBack = [];
 LVmask  =   np.array([False, False, False, True, True, True])
 LAMmask =   np.array([False, False, False, False, True,False])
-LLM_Abs_mask =   np.array([True, True, True, False, False, False])
-LLM_Stab_mask =   np.array([True, True, False, False, False, False])
+LLM_Abs_mask =   np.array([True, False, True, False, False, False])
+LLM_Stab_mask =   np.array([False, True, False, False, False, False])
 LM_Stab_mask =   np.array([True, True, False, False, True, False])
 nc_mask = np.array([False, False, False, True, False, False])
 back_mask = np.array([False, False, False, True, True, True])
@@ -61,8 +62,8 @@ back_mask = np.array([False, False, False, True, True, True])
 robots=[]
 
 
-
-for i in xrange (len(mconf.traceurs_list)):
+participantsNo = len(mconf.traceurs_list)
+for i in xrange (participantsNo):
 
     (jump,fly,land) = getTrials(i)
     robots += [getRobot(i)]
@@ -86,7 +87,7 @@ for i in xrange (len(mconf.traceurs_list)):
 
     ''' *******************************  FLY *******************************  '''
     ''' Vision task is defined with the joint flexion of the neck to track the target '''
-    FlyV += [ucm.ucmJoint(robots[i], fly,IDX_NECK,FVmask)]
+    FlyV += [ucm.ucmJoint(robots[i], fly, IDX_NECK,FVmask)]
     Vucm, Vcm, criteria = FlyV[i].getUCMVariances()
     FlyLM += [ucm.ucmMomentum(robots[i], fly, FLMmask)]
     Vucm, Vcm, criteria = FlyLM[i].getUCMVariances()
@@ -127,6 +128,10 @@ for i in xrange (len(mconf.traceurs_list)):
 
 
 #animate robot with mean configurations !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+
+
+
+
 #plotNCJ = plotTasks.Joint(JumpNC,'rmtp')
 plotVisionJ = plotTasks.Joint(JumpV,'neck_flexion')
 plotLinMomJ = plotTasks.CentroidalMomentum(JumpLM,'Impulsion through Linear Momentum (A-P and V) during Jump')
@@ -145,8 +150,6 @@ plotVisionL = plotTasks.Joint(LandV,'neck_flexion')
 
 
 
-
-
 ''' *******************************  Prepare files for R  ******************************* '''
 nsubjects = 5; nphases = 3;
 
@@ -156,7 +159,7 @@ subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases)).T
 phaseFactor = np.matrix([  10, 10, 10, 50, 50, 50, 90, 90, 90]*nsubjects).T
 taskFactor =  np.matrix([1,2,3]*nsubjects*nphases).T
 
-VU = []; VO=[]; C=[];
+C=[];
 for i in xrange (len(mconf.traceurs_list)):
     C += [
         JumpV[i].criteria[10],
@@ -174,78 +177,133 @@ np.savetxt("TableCriteriaImpulse.csv",
            np.hstack([subjects,phaseFactor,taskFactor,np.matrix(C).T]), 
            delimiter=",")
 
+''' Fly Phase  '''
+ntasks = 1
+subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases)).T 
+phaseFactor = np.matrix([  10, 50, 90]*nsubjects).T
+taskFactor =  np.matrix([1]*nsubjects*nphases).T
+
+C=[];
+for i in xrange (len(mconf.traceurs_list)):
+    C += [
+        FlyV[i].criteria[10],
+        FlyV[i].criteria[50],
+        FlyV[i].criteria[90],
+    ]
+
+np.savetxt("TableCriteriaFly.csv", 
+           np.hstack([subjects,phaseFactor,taskFactor,np.matrix(C).T]), 
+           delimiter=",")
+
+
 
 ''' Landing Phase '''
 ntasks = 4
 subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases)).T 
-phaseFactor = np.matrix([  1, 1, 1, 1, 50, 50, 50, 50, 100, 100, 100, 100]*nsubjects).T
+phaseFactor = np.matrix([  10, 10, 10, 10, 50, 50, 50, 50, 90, 90, 90, 90]*nsubjects).T
 taskFactor =  np.matrix([1,2,3,4]*nsubjects*nphases).T
 
-VU = []; VO=[]; C=[];
+C=[];
 for i in xrange (len(mconf.traceurs_list)):
-    C += [Damping[i].criteria[10],
-          Stiffness[i].criteria[10],
-          StabilityCM[i].criteria[10],
-          StabilityAM[i].criteria[10],          
-          Damping[i].criteria[55],
-          Stiffness[i].criteria[55],
-          StabilityCM[i].criteria[55],
-          StabilityAM[i].criteria[55],
-          Damping[i].criteria[99],
-          Stiffness[i].criteria[99],
-          StabilityCM[i].criteria[99],
-          StabilityAM[i].criteria[99]]
+    C += [
+        LandV[i].criteria[10],
+        LandLM_abs[i].criteria[10],
+        LandLM_stab[i].criteria[10],
+        LandAM[i].criteria[10],
+        LandV[i].criteria[50],
+        LandLM_abs[i].criteria[50],
+        LandLM_stab[i].criteria[50],
+        LandAM[i].criteria[50],
+        LandV[i].criteria[90],
+        LandLM_abs[i].criteria[90],
+        LandLM_stab[i].criteria[90],
+        LandAM[i].criteria[90],
+    ]
 
-
-np.savetxt("TableVucmLand.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,np.matrix(VU).T]), 
-           delimiter=",")
-np.savetxt("TableVortLand.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,np.matrix(VO).T]), 
-           delimiter=",")
 np.savetxt("TableCriteriaLand.csv", 
            np.hstack([subjects,phaseFactor,taskFactor,np.matrix(C).T]), 
            delimiter=",")
 
 
+''' Display '''
+avatar = robots[0]
+#launch with gepetto viewer
+viewer = Viewer('avatar viewer',avatar)
 
-''' Fly Phase '''
-ntasks = 2
-subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases)).T 
-phaseFactor = np.matrix([  1, 1, 50, 50, 100, 100]*nsubjects).T
-taskFactor =  np.matrix([1,2]*nsubjects*nphases).T
+task = JumpV
+jq=[]
+for i in xrange (participantsNo):
+    jq+=[task[i].q_mean.squeeze()]
+jq_mean =  np.mean(np.array(jq),0)
 
-VU = []; VO=[]; C=[];
-for i in xrange (len(mconf.traceurs_list)):
-    VU += [Vision[i].Vucm[0],
-           Pelvis[i].Vucm[0],
-           Vision[i].Vucm[50],
-           Pelvis[i].Vucm[50],
-           Vision[i].Vucm[99],
-           Pelvis[i].Vucm[99]]
+task = FlyV
+fq=[]
+for i in xrange (participantsNo):
+    fq+=[task[i].q_mean.squeeze()]
+fq_mean =  np.mean(np.array(fq),0)
 
-    VO += [Vision[i].Vcm[0],
-           Pelvis[i].Vcm[0],
-           Vision[i].Vcm[50],
-           Pelvis[i].Vcm[50],
-           Vision[i].Vcm[99],
-           Pelvis[i].Vcm[99]]
-
-    C += [Vision[i].criteria[0],
-          Pelvis[i].criteria[0],
-          Vision[i].criteria[50],
-          Pelvis[i].criteria[50],
-          Vision[i].criteria[99],
-          Pelvis[i].criteria[99]]
+task = LandV
+lq=[]
+for i in xrange (participantsNo):
+    lq+=[task[i].q_mean.squeeze()]
+lq_mean =  np.mean(np.array(lq),0)
 
 
-np.savetxt("TableVucmFly.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,np.matrix(VU).T]), 
-           delimiter=",")
-np.savetxt("TableVortFly.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,np.matrix(VO).T]), 
-           delimiter=",")
-np.savetxt("TableCriteriaFly.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,np.matrix(C).T]), 
-           delimiter=",")
+viewer.display(lq_mean[99],avatar.name) 
 
+
+'''
+(jump,fly,land) = getTrials(0)
+motion = fly
+nRep = len(motion)
+tmax = len(motion[0]['pinocchio_data'])
+DoF = 42#motion[0]['pinocchio_data'][0].A1.shape[0]
+data = []
+dataStr = np.zeros((tmax,DoF,nRep))
+for t in xrange(tmax):
+    for i in xrange (nRep):
+        data += [np.array(motion[i]['osim_data'][t]).squeeze()]
+        dataStr[t,:,i] = motion[i]['osim_data'][t]
+
+'''
+'''
+def averageQuatertions(Q):
+    M = np.zeros((4,4));
+    n = Q.shape[1];
+
+    for i in xrange(n):
+        q = np.matrix(Q[:,i])
+        M += q*q.T
+
+    Mnorm = (1./n)*M
+    eigvals, eigvec = np.linalg.eig(Mnorm)
+    Qavg=eigvec[eigvals.argmax()]
+    return abs(Qavg)
+
+
+(jump,fly,land) = getTrials(0)
+motion = fly
+nRep = len(motion)
+tmax = len(motion[0]['pinocchio_data'])
+DoF = motion[0]['pinocchio_data'][0].A1.shape[0]
+data = []
+dataStr = np.zeros((tmax,DoF,nRep))
+for t in xrange(tmax):
+    for i in xrange (nRep):
+        data += [np.array(motion[i]['pinocchio_data'][t]).squeeze()]
+        dataStr[t,:,i] = motion[i]['pinocchio_data'][t]
+
+Q_avg = np.zeros((100,4))
+for i in xrange(100):
+    Q = dataStr[i,3:7,:]
+    Q_avg[i] = averageQuatertions(Q)
+
+q_mean = fq_mean.copy()
+viewer.display(q_mean[99],avatar.name)
+
+q_mean2 = fq_mean.copy()
+q_mean2[:,3:7] = Q_avg
+viewer.display(q_mean2[0],avatar.name)
+
+
+'''

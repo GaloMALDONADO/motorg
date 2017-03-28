@@ -32,13 +32,8 @@ class UCM:
         N=[]
         for i in xrange(100):
             P=np.matrix(np.identity(42)) - (np.linalg.pinv(Jq[i])*Jq[i])
-            print 'P*J:'
-            print np.sum(abs(P*Jq[i].T))
-            print 'P*P = P as P*P-P=0'
-            print np.sum(abs((P*P)-P))
             N.append(P)
 
-            #N.append(getNullSpaceAndRank(Jq[i])[0])
         projector = np.array(N)
         self.projector = projector
         print np.sum((np.matrix(projector[1])*np.matrix(projector[1]))-np.matrix(projector[1]))
@@ -56,7 +51,7 @@ class UCM:
         meanConf, stdConf, data = meanConfiguration(motions)
         '''
         (self.time_mean, self.time_std, self.time_data) = tools.meanTime(motions)
-        (self.q_mean, self.q_std, self.q_data) = tools.meanConfiguration(motions)
+        (self.q_mean, self.q_std, self.q_data) = tools.meanConfiguration(self.robot,motions)
         (self.dq_mean, self.dq_std, self.dq_data) = tools.meanVelocities(self.robot.model, 
                                                                          self.q_data, 
                                                                          self.time_data,

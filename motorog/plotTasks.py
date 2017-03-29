@@ -31,7 +31,7 @@ class Plot:
         plt.show()
     
     def plotTask(self):
-        fig = plt.figure ()
+        fig = plt.figure()
         fig.canvas.set_window_title(self.windowTitle)
         
         task = [np.array(self.task[i].task).squeeze() for i in xrange(self.participantsNo)]
@@ -50,6 +50,7 @@ class Plot:
             ax.plot(taskPlus,'-k',color = '0.75', linewidth=1.0, linestyle='--')
             ax.plot(taskMin,'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
             plt.xlabel('Phase' + '%')
+            plt.ylabel('Momentum $[N]$')
         else:
             rows = task_hat.shape[1]
             for i in xrange(rows):
@@ -59,14 +60,16 @@ class Plot:
                 ax.plot(task_hat[:,i],'-r', linewidth=3.0)
                 ax.plot(taskPlus[:,i],'-k',color = '0.75', linewidth=1.0, linestyle='--')
                 ax.plot(taskMin[:,i],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+                plt.ylabel('$[N]$')
                 plt.xlabel('Phase' + '%')
             
 
         self.task_hat = task_hat
         self.task_std = taskStd_hat
+        return ax, plt
 
     def UCMAnalysis(self):
-        fig = plt.figure ()
+        fig = plt.figure()
         s = self.windowTitle+' '+self.name
         fig.canvas.set_window_title(s)
 
@@ -202,25 +205,118 @@ class CentroidalMomentum(Plot):
         self.momentumTitle = 'Rate of change of centroidal momenta task'
         self.name = name
     
-    def plotMomenta(self):
-        fig, ax = self.plot()
-        plt.title(self.coordinatesTitle)
-        x=[]
-        xstd=[]
-        for i in xrange (self.participantsNo):
-            x+=[self.k*self.task[i].x_mean[:,indexes.coordinateIndex(self.name)].squeeze()]
-            xstd += [self.k*self.task[i].x_std[:,indexes.coordinateIndex(self.name)].squeeze()]
-        x_hat = np.mean(np.array(x),0)
-        xstd_hat =  np.std(np.array(xstd),0)
-        xMin = x_hat - xstd_hat
-        xPlus = x_hat + xstd_hat
-        ax.plot(x_hat.T,'-r', linewidth=3.0)
-        ax.plot(xPlus.T,'-k',color = '0.75', linewidth=1.0, linestyle='--')
-        ax.plot(xMin.T,'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+    def plotLinearMomentumImpulsion(self):
+        fig = plt.figure()
+        fig.canvas.set_window_title(self.windowTitle)
+        
+        task = [np.array(self.task[i].task).squeeze() for i in xrange(self.participantsNo)]
+        task_hat = np.mean(task,0)
+        taskStd_hat = np.std(task,0)
+        
+        taskPlus = task_hat + taskStd_hat
+        taskMin = task_hat - taskStd_hat
+        
+        ax = fig.add_subplot('211')
+        plt.title('Antero-Posterior Linear Impulsion Task')
+        ax.plot(task_hat[:,0],'-r', linewidth=3.0)
+        ax.plot(taskPlus[:,0],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin[:,0],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[N]$')
+        plt.legend(['mean','mean $\pm$ std'],loc=4)
+
+        ax = fig.add_subplot('212')
+        plt.title('Vertical Linear Impulsion Task')
+        ax.plot(task_hat[:,1],'-r', linewidth=3.0)
+        ax.plot(taskPlus[:,1],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin[:,1],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[N]$')
         plt.xlabel('Phase' + '%')
-        plt.ylabel('neck flexion ' + ' $[deg]$')
-        self.x_hat = x_hat
-        self.x_std = xstd_hat
+        plt.legend(['mean','mean $\pm$ std'],loc=1)
+        plt.xlabel('Phase' + '%')
+        
+    def plotLinearMomentumAbs(self):
+        fig = plt.figure()
+        fig.canvas.set_window_title(self.windowTitle)
+        
+        task = [np.array(self.task[i].task).squeeze() for i in xrange(self.participantsNo)]
+        task_hat = np.mean(task,0)
+        taskStd_hat = np.std(task,0)
+        
+        taskPlus = task_hat + taskStd_hat
+        taskMin = task_hat - taskStd_hat
+        
+        ax = fig.add_subplot('211')
+        plt.title('Antero-Posterior force task')
+        ax.plot(task_hat[:,0],'-r', linewidth=3.0)
+        ax.plot(taskPlus[:,0],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin[:,0],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[N]$')
+        plt.legend(['mean','mean $\pm$ std'],loc=1)
 
+        ax = fig.add_subplot('212')
+        plt.title('Vertical force task')
+        ax.plot(task_hat[:,1],'-r', linewidth=3.0)
+        ax.plot(taskPlus[:,1],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin[:,1],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[N]$')
+        plt.xlabel('Phase' + '%')
+        plt.legend(['mean','mean $\pm$ std'],loc=4)
+        plt.xlabel('Phase' + '%')
 
+    def plotLinearMomentumStab(self):
+        fig = plt.figure()
+        fig.canvas.set_window_title(self.windowTitle)
+        
+        task = [np.array(self.task[i].task).squeeze() for i in xrange(self.participantsNo)]
+        task_hat = np.mean(task,0)
+        taskStd_hat = np.std(task,0)
+        
+        taskPlus = task_hat + taskStd_hat
+        taskMin = task_hat - taskStd_hat
+        
+        ax = fig.add_subplot('111')
+        plt.title('Medial-Lateral force for stabilizing')
+        ax.plot(task_hat[:,0],'-r', linewidth=3.0)
+        ax.plot(taskPlus[:,0],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin[:,0],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[N]$')
+        plt.legend(['mean','mean $\pm$ std'],loc=1)
+        
     
+    def plotAngularMomentumImpulsion(self):
+        fig = plt.figure()
+        fig.canvas.set_window_title(self.windowTitle)
+        
+        task = [np.array(self.task[i].task).squeeze() for i in xrange(self.participantsNo)]
+        task_hat = np.mean(task,0)
+        taskStd_hat = np.std(task,0)
+        
+        taskPlus = task_hat + taskStd_hat
+        taskMin = task_hat - taskStd_hat
+        
+        ax = fig.add_subplot('111')
+        plt.title('Torque for impulsion task')
+        ax.plot(task_hat[:,0],'-r', linewidth=3.0)
+        ax.plot(taskPlus[:,0],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin[:,0],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[N \cdot m]$')
+        plt.legend(['mean','mean $\pm$ std'],loc=1)
+
+    def plotAngularMomentumStab(self):
+        fig = plt.figure()
+        fig.canvas.set_window_title(self.windowTitle)
+        
+        task = [np.array(self.task[i].task).squeeze() for i in xrange(self.participantsNo)]
+        task_hat = np.mean(task,0)
+        taskStd_hat = np.std(task,0)
+        
+        taskPlus = task_hat + taskStd_hat
+        taskMin = task_hat - taskStd_hat
+        
+        ax = fig.add_subplot('111')
+        plt.title('Torque for stabilization task')
+        ax.plot(task_hat[:,0],'-r', linewidth=3.0)
+        ax.plot(taskPlus[:,0],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin[:,0],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[N \cdot m]$')
+        plt.legend(['mean','mean $\pm$ std'],loc=1)

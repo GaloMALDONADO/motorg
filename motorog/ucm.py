@@ -16,7 +16,7 @@ class UCM:
         self.time = np.linspace(1,100,100)
         self.dt = 0.0025
         self.fs = 400
-        self.cutoff = 10
+        self.cutoff = 35
         self.filter_order = 4
 
     def nullspace(self, Jq):
@@ -36,7 +36,7 @@ class UCM:
 
         projector = np.array(N)
         self.projector = projector
-        print np.sum((np.matrix(projector[1])*np.matrix(projector[1]))-np.matrix(projector[1]))
+        #print np.sum((np.matrix(projector[1])*np.matrix(projector[1]))-np.matrix(projector[1]))
         return projector
     
     def updateAll(self,q,v,a):
@@ -72,9 +72,6 @@ class UCM:
             x += [motions[i]['time']]
         meanT =  np.mean(x,0)
         stdT = np.std(x,0)
-        #self.t_mean =
-        #self.t_std = 
-        #self.t_data = x
         return meanT.squeeze(), stdT.squeeze()
 
     def differentiate(self, q1, q2):
@@ -442,7 +439,12 @@ class ucmMomentum(UCM):
             JH = se3.ccrba(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
             H = self.robot.data.hg.np.A.copy()
             b = self._getBiais(self.q_mean[i], self.dq_mean[i])
-            Hdot = (JH * self.ddq_mean[i].T) + b
+            ddq_g = np.matrix(np.zeros(42)).T 
+            ddq_g[2] = -9.81
+            a = self.ddq_mean[i].T + ddq_g
+            Hdot = (JH * self.ddq_mean[i].T) + b #+ (self.robot.data.mass[0] * self.robot.model.gravity.vector)
+            #Hdot = (JH * a) + b
+            #Hdot = Hdot/(self.robot.data.mass[0]*9.81)
             task.append(Hdot[self._mask])
             drift.append(b[self._mask])
             Jtask.append(JH[self._mask,:])
@@ -462,8 +464,6 @@ class ucmMomentum(UCM):
     def getUCMVariances(self):
         self.getReferenceConfigurations(self.motions)
         (self.task, self.JTask, self.drift) = self._getDynTask()
-        print 'getUCMVariances'
-        print np.shape(np.array(self.JTask))
         self.NTask = self.nullspace(self.JTask)
         self.n_ucm = self.repNo * (self.robot.nv-self.dim)
         self.n_cm = self.repNo * self.dim

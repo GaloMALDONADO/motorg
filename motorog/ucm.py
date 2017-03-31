@@ -365,12 +365,13 @@ class ucmJoint(UCM):
             self.updateAll(self.q_mean[i], self.dq_mean[i], self.ddq_mean[i])
             se3.forwardKinematics(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
             se3.framesKinematics(self.robot.model, self.robot.data, self.q_mean[i])
-            b = self._getDrift()[self._mask]
+            J = self.robot.frameJacobian(self.q_mean[i],self._frame_id, True)
+            b = self._getDrift()
             dx = self.robot.frameAcceleration(self._frame_id).vector[self._mask]
-            ddx = b+dx
-            drift.append(b)
-            task.append(ddx)
-            JTask.append(self.robot.frameJacobian(self.q_mean[i],self._frame_id, True)[self._mask,:])
+            ddx = (J * self.ddq_mean[i].T) + b - (self.robot.data.mass[0] * self.robot.model.gravity.vector)
+            task.append(ddx[self._mask])
+            drift.append(b[self._mask])
+            JTask.append(J[self._mask,:])
         return task, JTask , drift
     
     def getUCMVariances(self):
@@ -397,14 +398,16 @@ class ucmJoint(UCM):
 ''' Uncontrolled Manifold of the Momentum '''
 class ucmMomentum(UCM):
 
-    def __init__(self, robot,motions, mask, name="UCM of CoM"):
+    def __init__(self, robot, motions, mask, KF=1, KT=1, name="UCM of CoM"):
         UCM.__init__(self, robot)
         self.name = name
         self.robot = robot
         self.motions = motions
         self.repNo = len(motions)
         self._mask = mask
-        
+        self._KF = np.float64(KF)
+        self._KT = np.float64(KT)
+        self._K = self._KF * self._KT
 
     @property
     def dim(self):
@@ -428,23 +431,19 @@ class ucmMomentum(UCM):
         model.gravity = m_gravity
         f_ff = se3.Force(b[:6])
         f_com = cXi.act(f_ff)
-        #print f_com
         return f_com.np
 
     def _getDynTask(self):
-        task=[]; Jtask=[]; drift=[]
+        task=[]; Jtask=[]; drift=[] ;taskNormalized=[];
         for i in range(0, 100):
             self.updateAll(self.q_mean[i],self.dq_mean[i],self.ddq_mean[i])
             se3.forwardKinematics(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
             JH = se3.ccrba(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
             H = self.robot.data.hg.np.A.copy()
             b = self._getBiais(self.q_mean[i], self.dq_mean[i])
-            ddq_g = np.matrix(np.zeros(42)).T 
-            ddq_g[2] = -9.81
-            a = self.ddq_mean[i].T + ddq_g
-            Hdot = (JH * self.ddq_mean[i].T) + b #+ (self.robot.data.mass[0] * self.robot.model.gravity.vector)
-            #Hdot = (JH * a) + b
-            #Hdot = Hdot/(self.robot.data.mass[0]*9.81)
+            Hdot = (JH * self.ddq_mean[i].T) + b - (self.robot.data.mass[0] * self.robot.model.gravity.vector)
+            taskNormalized.append(Hdot[self._mask] * self._K) 
+            self.taskNormalized = taskNormalized
             task.append(Hdot[self._mask])
             drift.append(b[self._mask])
             Jtask.append(JH[self._mask,:])

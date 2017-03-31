@@ -209,7 +209,7 @@ class CentroidalMomentum(Plot):
         fig = plt.figure()
         fig.canvas.set_window_title(self.windowTitle)
         
-        task = [np.array(self.task[i].task).squeeze() for i in xrange(self.participantsNo)]
+        task = [np.array(self.task[i].taskNormalized).squeeze() for i in xrange(self.participantsNo)]
         task_hat = np.mean(task,0)
         taskStd_hat = np.std(task,0)
         
@@ -221,7 +221,7 @@ class CentroidalMomentum(Plot):
         ax.plot(task_hat[:,0],'-r', linewidth=3.0)
         ax.plot(taskPlus[:,0],'-k',color = '0.75', linewidth=1.0, linestyle='--')
         ax.plot(taskMin[:,0],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
-        plt.ylabel('$[N]$')
+        plt.ylabel('$[N \cdot BW^{-1}]$')
         plt.legend(['mean','mean $\pm$ std'],loc=4)
 
         ax = fig.add_subplot('212')
@@ -229,7 +229,7 @@ class CentroidalMomentum(Plot):
         ax.plot(task_hat[:,1],'-r', linewidth=3.0)
         ax.plot(taskPlus[:,1],'-k',color = '0.75', linewidth=1.0, linestyle='--')
         ax.plot(taskMin[:,1],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
-        plt.ylabel('$[N]$')
+        plt.ylabel('$[N \cdot BW^{-1}]$')
         plt.xlabel('Phase' + '%')
         plt.legend(['mean','mean $\pm$ std'],loc=1)
         plt.xlabel('Phase' + '%')
@@ -238,27 +238,19 @@ class CentroidalMomentum(Plot):
         fig = plt.figure()
         fig.canvas.set_window_title(self.windowTitle)
         
-        task = [np.array(self.task[i].task).squeeze() for i in xrange(self.participantsNo)]
+        task = [np.array(self.task[i].taskNormalized).squeeze() for i in xrange(self.participantsNo)]
         task_hat = np.mean(task,0)
         taskStd_hat = np.std(task,0)
         
         taskPlus = task_hat + taskStd_hat
         taskMin = task_hat - taskStd_hat
         
-        ax = fig.add_subplot('211')
-        plt.title('Antero-Posterior force task')
-        ax.plot(task_hat[:,0],'-r', linewidth=3.0)
-        ax.plot(taskPlus[:,0],'-k',color = '0.75', linewidth=1.0, linestyle='--')
-        ax.plot(taskMin[:,0],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
-        plt.ylabel('$[N]$')
-        plt.legend(['mean','mean $\pm$ std'],loc=1)
-
-        ax = fig.add_subplot('212')
+        ax = fig.add_subplot('111')
         plt.title('Vertical force task')
-        ax.plot(task_hat[:,1],'-r', linewidth=3.0)
-        ax.plot(taskPlus[:,1],'-k',color = '0.75', linewidth=1.0, linestyle='--')
-        ax.plot(taskMin[:,1],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
-        plt.ylabel('$[N]$')
+        ax.plot(task_hat,'-r', linewidth=3.0)
+        ax.plot(taskPlus,'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin,'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[N \cdot BW^{-1}]$')
         plt.xlabel('Phase' + '%')
         plt.legend(['mean','mean $\pm$ std'],loc=4)
         plt.xlabel('Phase' + '%')
@@ -267,27 +259,36 @@ class CentroidalMomentum(Plot):
         fig = plt.figure()
         fig.canvas.set_window_title(self.windowTitle)
         
-        task = [np.array(self.task[i].task).squeeze() for i in xrange(self.participantsNo)]
+        task = [np.array(self.task[i].taskNormalized).squeeze() for i in xrange(self.participantsNo)]
         task_hat = np.mean(task,0)
         taskStd_hat = np.std(task,0)
         
         taskPlus = task_hat + taskStd_hat
         taskMin = task_hat - taskStd_hat
         
-        ax = fig.add_subplot('111')
+        ax = fig.add_subplot('211')
         plt.title('Medial-Lateral force for stabilizing')
-        ax.plot(task_hat[:,0],'-r', linewidth=3.0)
-        ax.plot(taskPlus[:,0],'-k',color = '0.75', linewidth=1.0, linestyle='--')
-        ax.plot(taskMin[:,0],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
-        plt.ylabel('$[N]$')
+        ax.plot(task_hat[:,1],'-r', linewidth=3.0)
+        ax.plot(taskPlus[:,1],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin[:,1],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[N \cdot BW^{-1}]$')
         plt.legend(['mean','mean $\pm$ std'],loc=1)
         
     
+        ax = fig.add_subplot('212')
+        plt.title('Antero-Posterior force task')
+        ax.plot(task_hat[:,0],'-r', linewidth=3.0)
+        ax.plot(taskPlus[:,0],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin[:,0],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[N \cdot BW^{-1}]$')
+        plt.legend(['mean','mean $\pm$ std'],loc=1)
+
+
     def plotAngularMomentumImpulsion(self):
         fig = plt.figure()
         fig.canvas.set_window_title(self.windowTitle)
         
-        task = [np.array(self.task[i].task).squeeze() for i in xrange(self.participantsNo)]
+        task = [np.array(self.task[i].taskNormalized).squeeze() for i in xrange(self.participantsNo)]
         task_hat = np.mean(task,0)
         taskStd_hat = np.std(task,0)
         
@@ -296,17 +297,17 @@ class CentroidalMomentum(Plot):
         
         ax = fig.add_subplot('111')
         plt.title('Torque for impulsion task')
-        ax.plot(task_hat[:,0],'-r', linewidth=3.0)
-        ax.plot(taskPlus[:,0],'-k',color = '0.75', linewidth=1.0, linestyle='--')
-        ax.plot(taskMin[:,0],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
-        plt.ylabel('$[N \cdot m]$')
+        ax.plot(task_hat,'-r', linewidth=3.0)
+        ax.plot(taskPlus,'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin,'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[Nm \cdot BW^{-1} \cdot H^{-1}]$')
         plt.legend(['mean','mean $\pm$ std'],loc=1)
 
     def plotAngularMomentumStab(self):
         fig = plt.figure()
         fig.canvas.set_window_title(self.windowTitle)
         
-        task = [np.array(self.task[i].task).squeeze() for i in xrange(self.participantsNo)]
+        task = [np.array(self.task[i].taskNormalized).squeeze() for i in xrange(self.participantsNo)]
         task_hat = np.mean(task,0)
         taskStd_hat = np.std(task,0)
         
@@ -315,8 +316,8 @@ class CentroidalMomentum(Plot):
         
         ax = fig.add_subplot('111')
         plt.title('Torque for stabilization task')
-        ax.plot(task_hat[:,0],'-r', linewidth=3.0)
-        ax.plot(taskPlus[:,0],'-k',color = '0.75', linewidth=1.0, linestyle='--')
-        ax.plot(taskMin[:,0],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
-        plt.ylabel('$[N \cdot m]$')
+        ax.plot(task_hat,'-r', linewidth=3.0)
+        ax.plot(taskPlus,'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin,'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[Nm \cdot BW^{-1} \cdot H^{-1}]$')
         plt.legend(['mean','mean $\pm$ std'],loc=1)

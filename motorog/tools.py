@@ -1,4 +1,3 @@
-print 'tools'
 import numpy as np
 from bmtools.filters import filtfilt_butter
 import pinocchio as se3
@@ -46,7 +45,7 @@ def meanVelocities(model, x, t, cutoff, fs, filter_order):
         for i in range(1,tmax):
         # velocity
             if i >= 1:
-                dt = (t[i,r]-t[i-1,r])
+                dt = (t[i,r]-t[i-1,r]) #foward difference
                 q1 = x[i-1,:,r]
                 q2 = x[i,:,r]
                 diff = se3.differentiate(model, q1,  q2)/dt
@@ -55,7 +54,7 @@ def meanVelocities(model, x, t, cutoff, fs, filter_order):
         #filter
         for j in xrange(DoF):
             dataF[:,j,r] = filtfilt_butter(dataStr[:,j,r],
-                                           10,
+                                           cutoff,
                                            fs,
                                            filter_order)
     # stats
@@ -89,7 +88,7 @@ def meanAccelerations(v, t, cutoff, fs, filter_order):
         #filter
         for j in xrange(DoF):
             dataF[:,j,r] = filtfilt_butter(dataStr[:,j,r],
-                                           10,
+                                           cutoff,
                                            fs,
                                            filter_order)
     # stats

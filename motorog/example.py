@@ -1,3 +1,4 @@
+import pinocchio as se3
 import numpy as np
 import paths as lp
 import robot_config as rconf
@@ -32,6 +33,7 @@ def getRobot(i):
     model_path = lp.models_path+'/'+participantName+'.osim'
     mesh_path = lp.mesh_path
     robot = Wrapper(model_path, mesh_path, participantName, True)
+    robot.com(robot.q)
     return robot
 
 ''' *******************************  MAIN SCRIPT  ******************************* '''
@@ -53,8 +55,8 @@ FLMmask = np.array([True,True,True,False,False,False])
 LandV = []; LandLM_abs = []; LandLM_stab = []; LandAM = []; LandM_stab = []; LandNC = []; LandBack = [];
 LVmask  =   np.array([False, False, False, True, True, True])
 LAMmask =   np.array([False, False, False, False, True,False])
-LLM_Abs_mask =   np.array([True, False, True, False, False, False])
-LLM_Stab_mask =   np.array([False, True, False, False, False, False])
+LLM_Abs_mask =   np.array([False, False, True, False, False, False])
+LLM_Stab_mask =   np.array([True, True, False, False, False, False])
 LM_Stab_mask =   np.array([True, True, False, False, True, False])
 nc_mask = np.array([False, False, False, True, False, False])
 back_mask = np.array([False, False, False, True, True, True])
@@ -67,6 +69,13 @@ for i in xrange (participantsNo):
 
     (jump,fly,land) = getTrials(i)
     robots += [getRobot(i)]
+    # coefficient of force normalization for inter-subject comparison 
+    # BW^{-1}
+    KF = 1./(robots[i].data.mass[0] * 9.81)
+    # BW^{-1} * H^{-1}
+    # coefficient of torque normalization for inter-subject comparison 
+    KT = 1./(rconf.heights[i] * robots[i].data.mass[0] * 9.81)
+    # get frame indexes of interest for the UCM analysis
     IDX_NECK = robots[i].model.getFrameId('neck')
     IDX_RHAND = robots[i].model.getFrameId('mtp_r')
     IDX_PELVIS = robots[i].model.getFrameId('ground_pelvis')
@@ -74,10 +83,10 @@ for i in xrange (participantsNo):
 
     ''' *******************************  JUMP  ******************************* '''
     ''' Impulsion/Explosivness task is defined with the linear momentum rate in the Antero-Posterior and Vertical axis'''
-    JumpLM += [ucm.ucmMomentum(robots[i], jump, JLMmask)]
+    JumpLM += [ucm.ucmMomentum(robots[i], jump, JLMmask, KF, 1)]
     Vucm, Vcm, criteria = JumpLM[i].getUCMVariances()
     ''' Impulsion task is also defined with the angular momentum around the Antero-Posterior axis'''
-    JumpAM += [ucm.ucmMomentum(robots[i], jump, JAMmask)]
+    JumpAM += [ucm.ucmMomentum(robots[i], jump, JAMmask, 1, KT)]
     Vucm, Vcm, criteria = JumpAM[i].getUCMVariances()
     ''' Vision task to calculate the distance to the target '''
     JumpV += [ucm.ucmJoint(robots[i], jump, IDX_NECK, JVmask)]
@@ -101,14 +110,14 @@ for i in xrange (participantsNo):
 
     ''' *******************************  LAND  ******************************* '''
     ''' Damping and reducing GRFs task is defined with the linear momentum '''
-    LandLM_abs += [ucm.ucmMomentum(robots[i], land, LLM_Abs_mask)]
+    LandLM_abs += [ucm.ucmMomentum(robots[i], land, LLM_Abs_mask, 1, KF)]
     Vucm, Vcm, criteria = LandLM_abs[i].getUCMVariances()
-    LandLM_stab += [ucm.ucmMomentum(robots[i], land, LM_Stab_mask)]
+    LandLM_stab += [ucm.ucmMomentum(robots[i], land, LLM_Stab_mask, 1, KF)]
     Vucm, Vcm, criteria = LandLM_stab[i].getUCMVariances()
-    LandM_stab += [ucm.ucmMomentum(robots[i], land, LLM_Stab_mask)]
+    LandM_stab += [ucm.ucmMomentum(robots[i], land, LM_Stab_mask, 1, KF)]
     Vucm, Vcm, criteria = LandM_stab[i].getUCMVariances()
     ''' Angular stability task is also defined with the ang momentum around Antero-Posterior axis'''
-    LandAM += [ucm.ucmMomentum(robots[i], land, LAMmask)]
+    LandAM += [ucm.ucmMomentum(robots[i], land, LAMmask, 1, KT)]
     Vucm, Vcm, criteria = LandAM[i].getUCMVariances()
     ''' The head is stabilized during landing throught neck flexion'''
     LandV += [ucm.ucmJoint(robots[i], land, IDX_NECK, LVmask)]
@@ -151,26 +160,30 @@ plotVisionL = plotTasks.Joint(LandV,'neck_flexion')
 
 
 ''' *******************************  Prepare files for R  ******************************* '''
-nsubjects = 5; nphases = 3;
+nsubjects = 5;
 
 ''' Impulsion Phase '''
-ntasks = 3
+nphases = 4;
+ntasks = 2
 subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases)).T 
-phaseFactor = np.matrix([  10, 10, 10, 50, 50, 50, 90, 90, 90]*nsubjects).T
-taskFactor =  np.matrix([1,2,3]*nsubjects*nphases).T
+#j: 0(start)  40 60(A-P_F, AM_UCM) 70(BW) 100(end)
+phaseFactor = np.matrix([  0, 0, 40, 40,  70, 70, 99, 99]*nsubjects).T
+taskFactor =  np.matrix([1,2]*nsubjects*nphases).T
 
 C=[];
 for i in xrange (len(mconf.traceurs_list)):
     C += [
-        JumpV[i].criteria[10],
-        JumpLM[i].criteria[10],
-        JumpAM[i].criteria[10],
-        JumpV[i].criteria[50],
-        JumpLM[i].criteria[50],
-        JumpAM[i].criteria[50],
-        JumpV[i].criteria[90],
-        JumpLM[i].criteria[90],
-        JumpAM[i].criteria[90],
+        #JumpV[i].criteria[10],
+        JumpLM[i].criteria[0],
+        JumpAM[i].criteria[0],
+        #JumpV[i].criteria[50],
+        JumpLM[i].criteria[40],
+        JumpAM[i].criteria[40],
+        #JumpV[i].criteria[90],
+        JumpLM[i].criteria[70],
+        JumpAM[i].criteria[70],
+        JumpLM[i].criteria[99],
+        JumpAM[i].criteria[99],
     ]
 
 np.savetxt("TableCriteriaImpulse.csv", 
@@ -178,6 +191,7 @@ np.savetxt("TableCriteriaImpulse.csv",
            delimiter=",")
 
 ''' Fly Phase  '''
+nphases =3
 ntasks = 1
 subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases)).T 
 phaseFactor = np.matrix([  10, 50, 90]*nsubjects).T
@@ -198,26 +212,31 @@ np.savetxt("TableCriteriaFly.csv",
 
 
 ''' Landing Phase '''
-ntasks = 4
+nphases = 4
+ntasks = 3
 subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases)).T 
-phaseFactor = np.matrix([  10, 10, 10, 10, 50, 50, 50, 50, 90, 90, 90, 90]*nsubjects).T
-taskFactor =  np.matrix([1,2,3,4]*nsubjects*nphases).T
+#l: 5(start) 20(maxForce) 40(lowerForce/stab) 100(end) 
+phaseFactor = np.matrix([  5, 5, 5, 20, 20, 20, 40, 40, 40, 99, 99, 99]*nsubjects).T
+taskFactor =  np.matrix([1,2,3]*nsubjects*nphases).T
 
 C=[];
 for i in xrange (len(mconf.traceurs_list)):
     C += [
-        LandV[i].criteria[10],
-        LandLM_abs[i].criteria[10],
-        LandLM_stab[i].criteria[10],
-        LandAM[i].criteria[10],
-        LandV[i].criteria[50],
-        LandLM_abs[i].criteria[50],
-        LandLM_stab[i].criteria[50],
-        LandAM[i].criteria[50],
-        LandV[i].criteria[90],
-        LandLM_abs[i].criteria[90],
-        LandLM_stab[i].criteria[90],
-        LandAM[i].criteria[90],
+        #LandV[i].criteria[10],
+        LandLM_abs[i].criteria[5],
+        LandLM_stab[i].criteria[5],
+        LandAM[i].criteria[5],
+        #LandV[i].criteria[50],
+        LandLM_abs[i].criteria[20],
+        LandLM_stab[i].criteria[20],
+        LandAM[i].criteria[20],
+        #LandV[i].criteria[90],
+        LandLM_abs[i].criteria[40],
+        LandLM_stab[i].criteria[40],
+        LandAM[i].criteria[40],
+        LandLM_abs[i].criteria[99],
+        LandLM_stab[i].criteria[99],
+        LandAM[i].criteria[99],
     ]
 
 np.savetxt("TableCriteriaLand.csv", 

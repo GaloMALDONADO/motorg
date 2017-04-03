@@ -245,9 +245,26 @@ np.savetxt("TableCriteriaLand.csv",
 
 
 ''' Display '''
-avatar = robots[0]
+
+avatar0 = robots[0]
+avatar1 = robots[1]
+avatar2 = robots[2]
+avatar3 = robots[3]
+avatar4 = robots[4]
+
 #launch with gepetto viewer
-viewer = Viewer('avatar viewer',avatar)
+viewer = Viewer('avatar viewer0',avatar0)
+viewer.addRobot(avatar1)
+viewer.addRobot(avatar2)
+viewer.addRobot(avatar3)
+viewer.addRobot(avatar4)
+viewer.viewer.gui.setBackgroundColor1(viewer.windowID,(255,255,255,0))
+
+viewer.viewer.gui.setVisibility('world/Melvin/floor','OFF')
+viewer.viewer.gui.setVisibility('world/Cyril/floor','OFF')
+viewer.viewer.gui.setVisibility('world/Michael/floor','OFF')
+viewer.viewer.gui.setVisibility('world/Lucas/floor','OFF')
+#viewer.viewer.gui.setVisibility('world/Yoan/floor','OFF')
 
 task = JumpV
 jq=[]
@@ -268,8 +285,27 @@ for i in xrange (participantsNo):
 lq_mean =  np.mean(np.array(lq),0)
 
 
-viewer.display(lq_mean[99],avatar.name) 
 
+
+#viewer.display(lq_mean[99],avatar.name) 
+
+jump0 = jump[0]['pinocchio_data']
+land0 = land[0]['pinocchio_data']
+jump1 = jump[1]['pinocchio_data']
+land1 = land[1]['pinocchio_data']
+jump2 = jump[2]['pinocchio_data']
+land2 = land[2]['pinocchio_data']
+jump3 = jump[3]['pinocchio_data']
+land3 = land[3]['pinocchio_data']
+jump4 = jump[4]['pinocchio_data']
+land4 = land[4]['pinocchio_data']
+
+viewer.display(jump0[0],avatar0.name) 
+viewer.display(jump1[0],avatar1.name) 
+viewer.display(jump2[0],avatar2.name) 
+viewer.display(jump3[0],avatar3.name) 
+
+viewer.display(land4[5],avatar4.name)
 
 '''
 (jump,fly,land) = getTrials(0)

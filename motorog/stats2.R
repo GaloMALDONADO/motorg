@@ -8,8 +8,8 @@ rm(list = ls())
 # Task 1: impulsion through antero-posterior and vertical force
 # Task 2: impulsion through antero posterior angular momentum (around M-L axis at the center of mass)
 # ------------------------------------------------------------------------
-p='/galo/devel/gepetto/motorg/motorog/' #home
-#p='/local/gmaldona/devel/motorg/motorog/' #lab
+#p='/galo/devel/gepetto/motorg/motorog/' #home
+p='/local/gmaldona/devel/motorg/motorog/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -110,9 +110,9 @@ jump.means <- structure(list('1'=c(meanImpLM1,meanImpAM1),
 
 barx = barplot(as.matrix(jump.means), main="Jump",
                 xlab="Phase of the motion", ylab="Index of Motor Task Control",
-                xlim=c(0,13),ylim=c(0,4),
+                xlim=c(0,13),ylim=c(-2.5,4),
                 col=c("blue","red"),
-                legend = c( "Impulsion Linear Momentum","Impulsion Angular Momentum"), beside=TRUE)
+                legend = c( "Force Task","Torque Task"), beside=TRUE)
 
 jump.stds <- structure(list('1'=c(stdImpLM1,stdImpAM1),
                              '40'=c(stdImpLM40, stdImpAM40),
@@ -137,6 +137,38 @@ arrows(barx,xx-erci, barx,xx, angle=90, code=3, length=0.05)
 # unconmment to plot with SD
 #arrows(barx,x+er, barx,xx, angle=90, code=3, length=0.05)
 
+
+# --------- add significant effects to plot 
+displayEffects <- function(x, y, offset1, offset2, s='*'){
+  # draw first horizontal line
+  lines(x[1:2],c(y, y), type = "l", pch=22, lty=2)
+  # draw ticks
+  lines(x[c(1,1)],c(y, y-offset1), type = "l", pch=22, lty=2)
+  lines(x[c(2,2)],c(y, y-offset2), type = "l", pch=22, lty=2)
+  # draw asterics
+  text(x[1]+((x[2]-x[1])/2),y+offset,s)
+}
+
+# capture x coordinates of bars
+x <- barx
+# create the y coordinate of the line
+y <- 2
+# set an offset for tick lengths
+offset1 <- 0.2
+offset2 <- 0.2
+
+displayEffects(x[1:2], 2.1, offset1, 1.3, '*')
+displayEffects(x[3:4], 0.7, offset1, offset2, '*')
+displayEffects(x[5:6], 1.5, offset1, 0.95, '*')
+displayEffects(x[7:8], 2.5, offset1, 0.6, '*')
+
+vector <- c((x[1]+x[2])/2, (x[7]+x[8])/2)
+displayEffects(array(vector), -1.95, -1.7, -1.7, '**')
+vector <- c((x[3]+x[4])/2, (x[7]+x[8])/2)
+displayEffects(array(vector), -1.4, -1.15, -1.15, '**')
+vector <- c((x[5]+x[6])/2, (x[7]+x[8])/2)
+displayEffects(array(vector), -0.9, -0.65, -0.65, '**')
+
 # ----------------------------- Repeated Measures Anova ---------------------------
 # compute repetitive measures anova
 aovstats <-aov(SOT_IMPULSE$Ratio ~ 
@@ -145,37 +177,37 @@ aovstats <-aov(SOT_IMPULSE$Ratio ~
                data = SOT_IMPULSE)
 summary(aovstats)
 # tasks are significantly differents p = 0.00425 ** <0.01
-# phases are significantly differents p = 6.15e-06 *** < 0
+# phases are significantly differents p = 6.15e-06 *** < 0.05
 # task:phases interactions are not significantly different
 
 # Effect Size
 # of the tasks
-aov_sum_sq = 5.580
-aov_resid = 0.651
+aov_sum_sq = 5.779
+aov_resid = 0.674
 etacarrePartiel<-aov_sum_sq/(aov_sum_sq+aov_resid)
 # 89% of the variance of tha ratios explains the variation of the tasks
 ftailleEffet<-sqrt(etacarrePartiel/(1-etacarrePartiel))
-# effect fort : ftaill = 2.78 (f/2 = 1.39). Effect is independent of the size
+# effect fort : ftaill = 2.928 (f/2 = 1.464). Effect is independent of the size
 
 # of phases
-aov_sum_sq = 9.233
-aov_resid = 1.189
+aov_sum_sq = 8.662
+aov_resid = 1.035
 etacarrePartiel<-aov_sum_sq/(aov_sum_sq+aov_resid)
-# 88.5% of the variance of tha ratios explains the variation of the tasks
+# 89.3% of the variance of tha ratios explains the variation of the tasks
 ftailleEffet<-sqrt(etacarrePartiel/(1-etacarrePartiel))
-
+# strong effect : ftail = 2.89 (f/2 = 1.445). Effect is independent of the size
 
 # POST-HOC
 # Compare tasks
 pairwise.t.test(SOT_IMPULSE$Ratio, SOT_IMPULSE$Task, p.adj = "bonf",paired=TRUE)
-# impulsionLM and impulsionAM are significantly different p = 6e-06
+# impulsionLM and impulsionAM are significantly different p = 6.2e-06
 # Linear Momentum > Angular Momentum
 
 # compare phases
 pairwise.t.test(SOT_IMPULSE$Ratio, SOT_IMPULSE$Phase, p.adj = "bonf",paired=TRUE)
-# 0 diff than 99, p=0.007
-# 40 diff than 99, p=7.4e-0.5
-# 70 diff than 99, p=0.0012
+# 0 diff than 99, p=0.0116
+# 40 diff than 99, p=5.5e-05
+# 70 diff than 99, p=0.0014
 
 
 
@@ -195,8 +227,8 @@ pairwise.t.test(SOT_IMPULSE$Ratio, SOT_IMPULSE$Phase, p.adj = "bonf",paired=TRUE
 # Task 3: Torque around M-L axis at the CoM
 # ----------------------------------------------
 rm(list = ls())
-p='/galo/devel/gepetto/motorg/motorog/' #home
-#p='/local/gmaldona/devel/motorg/motorog/' #lab
+#p='/galo/devel/gepetto/motorg/motorog/' #home
+p='/local/gmaldona/devel/motorg/motorog/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -368,7 +400,16 @@ arrows(barx,xx-erci, barx,xx, angle=90, code=3, length=0.05)
 #arrows(barx,x+er, barx,xx, angle=90, code=3, length=0.05)
 
 
-
+# --------- add significant effects to plot 
+displayEffects <- function(x, y, offset1, offset2, s='*'){
+  # draw first horizontal line
+  lines(x[1:2],c(y, y), type = "l", pch=22, lty=2)
+  # draw ticks
+  lines(x[c(1,1)],c(y, y-offset1), type = "l", pch=22, lty=2)
+  lines(x[c(2,2)],c(y, y-offset2), type = "l", pch=22, lty=2)
+  # draw asterics
+  text(x[1]+((x[2]-x[1])/2),y+offset,s)
+}
 
 
 
@@ -377,57 +418,43 @@ arrows(barx,xx-erci, barx,xx, angle=90, code=3, length=0.05)
 statsaov2 <-aov(SOT_LAND$Ratio ~ (SOT_LAND$Task*SOT_LAND$Phase) + 
                   Error(SOT_LAND$Participant / (SOT_LAND$Task*SOT_LAND$Phase)), 
                 data = SOT_LAND)
-summary(statsaov2) # here I am *************************************************
-# tasks are significantly differents p = 1.05e-06
-# tasks and phase are significantly differents p=2.77e-08
+summary(statsaov2) 
+# tasks are significantly differents p = 1.96e-06 ***
+# phases are not significantly differents
+# tasks:phase interactions are significant p=7.9e-08 ***
+
 
 # Effect Size
 # of the tasks
-etacarrePartiel<-102.98/(102.98+9.54 )
-# 91% of the variance of tha ratios explains the variation of the tasks
+aov_sum_sq = 11.149
+aov_resid = 0.433
+etacarrePartiel<-aov_sum_sq/(aov_sum_sq+aov_resid)
+# 96% of the variance of tha ratios explains the variation of the tasks 
 ftailleEffet<-sqrt(etacarrePartiel/(1-etacarrePartiel))
-# effect fort : ftaill = 3.28. Effect is independent of the size
-# of the tasks and phase interaction
-etacarrePartiel<-7.566/(7.566+1.501)
-# 83% of the variance of tha ratios explains the variation of the tasks
+# strong effect : ftaill = 5.074 (f/3 = 1.69). Effect is independent of the size
+
+# of phases
+aov_sum_sq = 6.398
+aov_resid = 1.416
+etacarrePartiel<-aov_sum_sq/(aov_sum_sq+aov_resid)
+# 81.8% of the variance of tha ratios explains the variation of the tasks with the phases
 ftailleEffet<-sqrt(etacarrePartiel/(1-etacarrePartiel))
-# strong effect 2.245. Effect independent of the size
+# strong effect: ftaill = 2.125 (f/3 = 0.70). Effect is independent of the size
 
 # POST-HOC
 # Compare tasks
-pairwise.t.test(SOT_LAND$Ratio, 
-                SOT_LAND$Task, 
-                p.adj = "bonf",paired=TRUE)
-# damping and stifness are significantly different p = 5.5e-07
-# stifness and stability CM are significantly different p = 1.2e-13
-# stifness and stability AngMom are significantly different p = 1.1e-11
-# stability CM and stability AngMom are significantly different p = 5.7e-06
-# Not significant difference between damping and tasks 3 and 4
+pairwise.t.test(SOT_LAND$Ratio, SOT_LAND$Task, p.adj = "bonf",paired=TRUE)
+# task 1 (V force) signifficantly different from task 3 (Torque CoM)
+# task 2 (Stability Forces) signifficantly different from task 3 (Torque CoM)
+# task 1 (V force) signifficantly different from task 2 (Stability Forces) 
 
-
-# POST-HOC
-# Compare tasks
-pairwise.t.test(SOT_LAND$Ratio, 
-                SOT_LAND$Task, 
-                p.adj = "bonf",paired=TRUE)
-# damping and stifness are not significantly different p = 0.48
-# damping and stability CM are significantly different p = 0.00094
-# stifness and stability CM are significantly different p = 6.3e-07
-# Angular Momentum >> Stability CM > Damping
-# stability through angular momentum > Damping > stability of center of mass x,y > stifness
-
-pairwise.t.test(SOT_LAND$Ratio, 
-                SOT_LAND$Phase, 
-                p.adj = "bonf",paired=TRUE)
-# not signifficant diferents of the phases
-
-pairwise.t.test(SOT_LAND$Ratio, 
-                SOT_LAND$Task:SOT_LAND$Phase, 
-                p.adj = "bonf",paired=TRUE)
-# damping is significantly different at 50 % than at 100%
-# damping is significantly different than stifness at 50% each
-# stifness is significantly different thant stability CM at 1%, 50$ at 100% each
-# stifness is significantly different thant stability AngMom 50% and 100%
-# stability CM is significantly different than stability AngMom at 100%
+# compare phases
+pairwise.t.test(SOT_LAND$Ratio, SOT_LAND$Task:SOT_LAND$Phase, p.adj = "bonf",paired=TRUE)
+# 1:99 with 3:99, p = 0.025
+# 2:20 with 1:20, p = 0.05
+# 2:20 with 3:40, p = 0.019
+# 2:20 with 3:99, p = 0.042
+# 2:40 with 3:40, p = 0.019
+# 2:99 with 3:99, p = 0.022
 
 

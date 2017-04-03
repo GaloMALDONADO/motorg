@@ -16,7 +16,7 @@ class UCM:
         self.time = np.linspace(1,100,100)
         self.dt = 0.0025
         self.fs = 400
-        self.cutoff = 35
+        self.cutoff = 30
         self.filter_order = 4
 
     def nullspace(self, Jq):
@@ -441,7 +441,7 @@ class ucmMomentum(UCM):
             JH = se3.ccrba(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
             H = self.robot.data.hg.np.A.copy()
             b = self._getBiais(self.q_mean[i], self.dq_mean[i])
-            Hdot = (JH * self.ddq_mean[i].T) + b - (self.robot.data.mass[0] * self.robot.model.gravity.vector)
+            Hdot = (JH * self.ddq_mean[i].T) + b #- (self.robot.data.mass[0] * self.robot.model.gravity.vector)
             taskNormalized.append(Hdot[self._mask] * self._K) 
             self.taskNormalized = taskNormalized
             task.append(Hdot[self._mask])

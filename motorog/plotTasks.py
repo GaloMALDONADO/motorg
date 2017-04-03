@@ -217,7 +217,7 @@ class CentroidalMomentum(Plot):
         taskMin = task_hat - taskStd_hat
         
         ax = fig.add_subplot('211')
-        plt.title('Antero-Posterior Linear Impulsion Task')
+        plt.title('Impulsion: antero-posterior force')
         ax.plot(task_hat[:,0],'-r', linewidth=3.0)
         ax.plot(taskPlus[:,0],'-k',color = '0.75', linewidth=1.0, linestyle='--')
         ax.plot(taskMin[:,0],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
@@ -225,7 +225,7 @@ class CentroidalMomentum(Plot):
         plt.legend(['mean','mean $\pm$ std'],loc=4)
 
         ax = fig.add_subplot('212')
-        plt.title('Vertical Linear Impulsion Task')
+        plt.title('Impulsion: vertical force')
         ax.plot(task_hat[:,1],'-r', linewidth=3.0)
         ax.plot(taskPlus[:,1],'-k',color = '0.75', linewidth=1.0, linestyle='--')
         ax.plot(taskMin[:,1],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
@@ -246,7 +246,7 @@ class CentroidalMomentum(Plot):
         taskMin = task_hat - taskStd_hat
         
         ax = fig.add_subplot('111')
-        plt.title('Vertical force task')
+        plt.title('Landing: vertical force')
         ax.plot(task_hat,'-r', linewidth=3.0)
         ax.plot(taskPlus,'-k',color = '0.75', linewidth=1.0, linestyle='--')
         ax.plot(taskMin,'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
@@ -267,7 +267,7 @@ class CentroidalMomentum(Plot):
         taskMin = task_hat - taskStd_hat
         
         ax = fig.add_subplot('211')
-        plt.title('Medial-Lateral force for stabilizing')
+        plt.title('Landing: medial-lateral force')
         ax.plot(task_hat[:,1],'-r', linewidth=3.0)
         ax.plot(taskPlus[:,1],'-k',color = '0.75', linewidth=1.0, linestyle='--')
         ax.plot(taskMin[:,1],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
@@ -276,7 +276,7 @@ class CentroidalMomentum(Plot):
         
     
         ax = fig.add_subplot('212')
-        plt.title('Antero-Posterior force task')
+        plt.title('Landing: antero-posterior force')
         ax.plot(task_hat[:,0],'-r', linewidth=3.0)
         ax.plot(taskPlus[:,0],'-k',color = '0.75', linewidth=1.0, linestyle='--')
         ax.plot(taskMin[:,0],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
@@ -296,7 +296,7 @@ class CentroidalMomentum(Plot):
         taskMin = task_hat - taskStd_hat
         
         ax = fig.add_subplot('111')
-        plt.title('Torque for impulsion task')
+        plt.title('Impulsion: torque in sagittal plane')
         ax.plot(task_hat,'-r', linewidth=3.0)
         ax.plot(taskPlus,'-k',color = '0.75', linewidth=1.0, linestyle='--')
         ax.plot(taskMin,'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
@@ -315,7 +315,7 @@ class CentroidalMomentum(Plot):
         taskMin = task_hat - taskStd_hat
         
         ax = fig.add_subplot('111')
-        plt.title('Torque for stabilization task')
+        plt.title('Landing: torque in sagittal plane')
         ax.plot(task_hat,'-r', linewidth=3.0)
         ax.plot(taskPlus,'-k',color = '0.75', linewidth=1.0, linestyle='--')
         ax.plot(taskMin,'-k' ,color = '0.75',linewidth=1.0, linestyle='--')

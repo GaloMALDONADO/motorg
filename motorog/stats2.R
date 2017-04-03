@@ -8,8 +8,8 @@ rm(list = ls())
 # Task 1: impulsion through antero-posterior and vertical force
 # Task 2: impulsion through antero posterior angular momentum (around M-L axis at the center of mass)
 # ------------------------------------------------------------------------
-#p='/galo/devel/gepetto/motorg/motorog/' #home
-p='/local/gmaldona/devel/motorg/motorog/' #lab
+p='/galo/devel/gepetto/motorg/motorog/' #home
+#p='/local/gmaldona/devel/motorg/motorog/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -112,7 +112,7 @@ barx = barplot(as.matrix(jump.means), main="Jump",
                 xlab="Phase of the motion", ylab="Index of Motor Task Control",
                 xlim=c(0,13),ylim=c(-2.5,4),
                 col=c("blue","red"),
-                legend = c( "Force Task","Torque Task"), beside=TRUE)
+                legend = c( "Force task","Torque task"), beside=TRUE)
 
 jump.stds <- structure(list('1'=c(stdImpLM1,stdImpAM1),
                              '40'=c(stdImpLM40, stdImpAM40),
@@ -146,7 +146,7 @@ displayEffects <- function(x, y, offset1, offset2, s='*'){
   lines(x[c(1,1)],c(y, y-offset1), type = "l", pch=22, lty=2)
   lines(x[c(2,2)],c(y, y-offset2), type = "l", pch=22, lty=2)
   # draw asterics
-  text(x[1]+((x[2]-x[1])/2),y+offset,s)
+  text(x[1]+((x[2]-x[1])/2),y+0.2,s)
 }
 
 # capture x coordinates of bars
@@ -227,8 +227,8 @@ pairwise.t.test(SOT_IMPULSE$Ratio, SOT_IMPULSE$Phase, p.adj = "bonf",paired=TRUE
 # Task 3: Torque around M-L axis at the CoM
 # ----------------------------------------------
 rm(list = ls())
-#p='/galo/devel/gepetto/motorg/motorog/' #home
-p='/local/gmaldona/devel/motorg/motorog/' #lab
+p='/galo/devel/gepetto/motorg/motorog/' #home
+#p='/local/gmaldona/devel/motorg/motorog/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -373,9 +373,9 @@ land.means <- structure(list('5'=c(meanForce5,  meanStab5, meanTau5),
                        class = "data.frame", row.names = c(NA, -3L))
 barx = barplot(as.matrix(land.means), main="Landing",
                xlab="Phase of the motion", ylab="Index of Motor Task Control",
-               xlim=c(0,15),ylim=c(0,4.5),
+               xlim=c(0,15),ylim=c(-2,5.5),
                col=c("red","green","blue"),
-               legend = c( "Vertical Force","Stability Forces","Torque CoM"), beside=TRUE)
+               legend = c( "Force task","Stability force task","Stability torque task"), beside=TRUE)
 
 land.stds <- structure(list('5'=c(stdForce5,  stdStab5, stdTau5),
                             '20'=c(stdForce20, stdStab20, stdTau20),
@@ -408,14 +408,33 @@ displayEffects <- function(x, y, offset1, offset2, s='*'){
   lines(x[c(1,1)],c(y, y-offset1), type = "l", pch=22, lty=2)
   lines(x[c(2,2)],c(y, y-offset2), type = "l", pch=22, lty=2)
   # draw asterics
-  text(x[1]+((x[2]-x[1])/2),y+offset,s)
+  text(x[1]+((x[2]-x[1])/2),y+0.2,s)
 }
 
+
+# capture x coordinates of bars
+x <- barx
+
+displayEffects(x[1:2], 2., 0.2, 1.3, '*')
+displayEffects(x[2:3], -0.5, -0.3, -0.3, '*')
+displayEffects( c(x[1],x[3] ),  2.4, .8, 1.3, '*')
+
+displayEffects(x[4:5], 2.4, 0.9, 0.2, '*')
+displayEffects(x[5:6], -0.5, -0.3, -0.3, '*')
+displayEffects( c(x[4],x[6] ),  2.8, .8, 1.6, '*')
+
+displayEffects(x[7:8], 1.7, 0.9, 0.2, '*')
+displayEffects(x[8:9], -0.6, -0.4, -0.4, '*')
+displayEffects( c(x[7],x[9] ),  2.1, .8, 1.6, '*')
+
+displayEffects(x[10:11], 3, 1.3, 0.2, '*')
+displayEffects(x[11:12], -2, -1.8, -1.8, '*')
+displayEffects( c(x[10],x[12] ),  3.4, 1.7, 3.4, '*')
 
 
 # ----------------------------- Repeated Measures Anova ---------------------------
 # compute repetitive measures anova
-statsaov2 <-aov(SOT_LAND$Ratio ~ (SOT_LAND$Task*SOT_LAND$Phase) + 
+statsaov2 <-aov(SOT_LAND$Ratio ~ (SOT_LAND$Task+SOT_LAND$Phase) + 
                   Error(SOT_LAND$Participant / (SOT_LAND$Task*SOT_LAND$Phase)), 
                 data = SOT_LAND)
 summary(statsaov2) 

@@ -8,8 +8,8 @@ rm(list = ls())
 # Task 1: impulsion through antero-posterior and vertical force
 # Task 2: impulsion through antero posterior angular momentum (around M-L axis at the center of mass)
 # ------------------------------------------------------------------------
-p='/galo/devel/gepetto/motorg/motorog/' #home
-#p='/local/gmaldona/devel/motorg/motorog/' #lab
+#p='/galo/devel/gepetto/motorg/motorog/' #home
+p='/local/gmaldona/devel/motorg/motorog/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -58,6 +58,8 @@ stdImpLM1 = sd(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="1" & SOT_IMPULSE$Phase=="0"]
 ciImpLM1 = t * stdImpLM1 / sqrt(nparticipants)
 ciPlusImpLM1 = meanImpLM1 + ciImpLM1 
 ciMinImpLM1 = meanImpLM1 - ciImpLM1 
+#----------------------------------------*********************+5fasd
+t.test(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="1" & SOT_IMPULSE$Phase=="0"], mu = 0)
 
 meanImpLM40 = mean(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="1" & SOT_IMPULSE$Phase=="40"])
 stdImpLM40 = sd(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="1" & SOT_IMPULSE$Phase=="40"])
@@ -82,6 +84,8 @@ stdImpAM1 = sd(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="2" & SOT_IMPULSE$Phase=="0"]
 ciImpAM1 = t * stdImpAM1 / sqrt(nparticipants)
 ciPlusImpAM1 = meanImpAM1 + ciImpAM1
 ciMinImpAM1 = meanImpAM1 - ciImpAM1
+#----------------------------------------*********************+5fasd
+t.test(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="2" & SOT_IMPULSE$Phase=="0"], mu = 0)
 
 meanImpAM40= mean(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="2" & SOT_IMPULSE$Phase=="40"])
 stdImpAM40= sd(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="2" & SOT_IMPULSE$Phase=="40"])
@@ -227,8 +231,8 @@ pairwise.t.test(SOT_IMPULSE$Ratio, SOT_IMPULSE$Phase, p.adj = "bonf",paired=TRUE
 # Task 3: Torque around M-L axis at the CoM
 # ----------------------------------------------
 rm(list = ls())
-p='/galo/devel/gepetto/motorg/motorog/' #home
-#p='/local/gmaldona/devel/motorg/motorog/' #lab
+#p='/galo/devel/gepetto/motorg/motorog/' #home
+p='/local/gmaldona/devel/motorg/motorog/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)

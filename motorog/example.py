@@ -307,6 +307,77 @@ viewer.display(jump3[0],avatar3.name)
 
 viewer.display(land4[5],avatar4.name)
 
+
+
+
+''' ***************** MOMENTUM IN PARKOUR STUDY ****************** '''
+import matplotlib.pyplot as plt
+
+
+
+''' Landing Phase '''
+nphases = 4
+ntasks = 3
+coordinates = 25
+subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases*coordinates)).T 
+#l: 5(start) 20(maxForce) 40(lowerForce/stab) 100(end) 
+phaseFactor = np.matrix([  5, 5, 5, 20, 20, 20, 40, 40, 40, 99, 99, 99]*nsubjects*coordinates).T
+taskFactor =  np.matrix([1,2,3]*nsubjects*nphases*coordinates).T
+coordinateFactor = np.matrix(range(coordinates)*nsubjects*nphases*ntasks).T
+
+
+y = JumpAM[0].contribution[0]
+names=jointNames[1:].A1
+N = len(y)
+x = range(N)
+width = 1/1.5
+plt.bar(x, y, color="blue", align='center')
+plt.xticks(x, names, rotation='vertical')
+
+def getMomentumData(task, t):
+    # Aij
+    # i task index
+    # j qdot index
+    idim, jdim = task.JTask[t].shape
+    Aj = np.zeros(jdim)
+    if idim == 1 :
+        for j in xrange(jdim):
+            Aj[j] = task.contribution[t].A1[j] * task.dq_mean[t].A1[j]
+        return Aj
+    else :
+        for j in xrange(jdim):
+            for i in xrange(idim):
+                Aj[j] += task.JTask[t][i].A1[j] * task.dq_mean[t].A1[j]
+        return Aj
+
+
+Aj=[]
+for i in xrange (len(mconf.traceurs_list)):
+    Aj += [LandLM_abs[i].contribution[5]]
+    Aj += [np.sum(LandLM_stab[i].contribution[5],1)]
+    Aj += [LandAM[i].contribution[5]]
+    Aj += [LandLM_abs[i].contribution[20]]
+    Aj += [np.sum(LandLM_stab[i].contribution[20],1)]
+    Aj += [LandAM[i].contribution[20]]
+    Aj += [LandLM_abs[i].contribution[40]]
+    Aj += [np.sum(LandLM_stab[i].contribution[40],1)]
+    Aj += [LandAM[i].contribution[40]]
+    Aj += [LandLM_abs[i].contribution[99]]
+    Aj += [np.sum(LandLM_stab[i].contribution[99],1)]
+    Aj += [LandAM[i].contribution[99]]
+
+
+M=np.matrix(Aj).A1
+np.savetxt("TableMomentaLand.csv", 
+           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(M).T]), 
+           delimiter=",")
+
+
+
+# centroidal momentum ellipsoid
+
+
+
 '''
 (jump,fly,land) = getTrials(0)
 motion = fly

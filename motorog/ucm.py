@@ -434,7 +434,8 @@ class ucmMomentum(UCM):
         return f_com.np
 
     def _getDynTask(self):
-        task=[]; Jtask=[]; drift=[] ;taskNormalized=[];
+        task=[]; Jtask=[]; drift=[] ;taskNormalized=[]; contribution=[]; momenta=[];
+        
         for i in range(0, 100):
             self.updateAll(self.q_mean[i],self.dq_mean[i],self.ddq_mean[i])
             se3.forwardKinematics(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
@@ -444,9 +445,15 @@ class ucmMomentum(UCM):
             Hdot = (JH * self.ddq_mean[i].T) + b #- (self.robot.data.mass[0] * self.robot.model.gravity.vector)
             taskNormalized.append(Hdot[self._mask] * self._K) 
             self.taskNormalized = taskNormalized
+            M = []
+            for i in range(1,26):
+                M.append((self.robot.model.inertias[i].matrix()*self.robot.data.v[i].vector)[self._mask])
+            contribution.append(np.array(M).squeeze())
+            self.contribution = contribution
             task.append(Hdot[self._mask])
             drift.append(b[self._mask])
             Jtask.append(JH[self._mask,:])
+            momenta.append(JH[self._mask,:]*self.dq_mean[i].T)
         return task, Jtask, drift
         
     def _getReferenceTask(self, motions):

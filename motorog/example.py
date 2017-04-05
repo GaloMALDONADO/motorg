@@ -312,6 +312,73 @@ viewer.display(land4[5],avatar4.name)
 
 ''' ***************** MOMENTUM IN PARKOUR STUDY ****************** '''
 import matplotlib.pyplot as plt
+''' Impulsion Phase '''
+nphases = 4;
+ntasks = 2
+coordinates = 25
+subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases*coordinates)).T 
+#j: 0(start)  40 60(A-P_F, AM_UCM) 70(BW) 100(end)
+phaseFactor = np.matrix([  0, 0, 40, 40,  70, 70, 99, 99]*nsubjects*coordinates).T
+taskFactor =  np.matrix([1,2]*nsubjects*nphases*coordinates).T
+coordinateFactor = np.matrix(range(coordinates)*nsubjects*nphases*ntasks).T
+
+Aj=[];
+for i in xrange (len(mconf.traceurs_list)):
+    Aj += [np.sum(JumpLM[i].contribution[0],1)]
+    Aj += [JumpAM[i].contribution[0]]
+    Aj += [np.sum(JumpLM[i].contribution[40],1)]
+    Aj += [JumpAM[i].contribution[40]]
+    Aj += [np.sum(JumpLM[i].contribution[70],1)]
+    Aj += [JumpAM[i].contribution[70]]
+    Aj += [np.sum(JumpLM[i].contribution[99],1)]
+    Aj += [JumpAM[i].contribution[99]]
+    
+M=np.matrix(Aj).A1
+np.savetxt("TableMomentaJump.csv", 
+           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(M).T]), 
+           delimiter=",")
+
+
+#means and std
+# linear momentum
+data5 = []; data40 = []; data70 = []; data99 = [];
+for i in xrange (len(mconf.traceurs_list)):
+    data5 += [np.sum(JumpLM[i].contribution[5],1)]
+    data40 += [np.sum(JumpLM[i].contribution[40],1)]
+    data70 += [np.sum(JumpLM[i].contribution[70],1)]
+    data99 += [np.sum(JumpLM[i].contribution[99],1)]
+
+table_JumpLM = np.matrix([np.mean(np.matrix(data5), 0).A1, 
+                          np.mean(np.matrix(data40), 0).A1, 
+                          np.mean(np.matrix(data70), 0).A1, 
+                          np.mean(np.matrix(data99), 0).A1])
+table_JumpLM_std = np.matrix([np.std(np.matrix(data5), 0).A1, 
+                              np.std(np.matrix(data40), 0).A1, 
+                              np.std(np.matrix(data70), 0).A1, 
+                              np.std(np.matrix(data99), 0).A1])
+np.savetxt("means/JumpLM.csv", table_JumpLM, delimiter=",")
+np.savetxt("std/JumpLM.csv", table_JumpLM_std, delimiter=",")
+
+# angular momentum
+data5 = []; data40 = []; data70 = []; data99 = [];
+for i in xrange (len(mconf.traceurs_list)):
+    data5 = JumpAM[i].contribution[5]
+    data40 = JumpAM[i].contribution[40] 
+    data70 = JumpAM[i].contribution[70] 
+    data99 = JumpAM[i].contribution[99] 
+
+table_JumpAM = np.matrix([np.mean(np.matrix(data5).T, 1).A1, 
+                          np.mean(np.matrix(data40).T, 1).A1, 
+                          np.mean(np.matrix(data70).T, 1).A1, 
+                          np.mean(np.matrix(data99).T, 1).A1])
+table_JumpAM_std = np.matrix([np.std(np.matrix(data5).T, 1).A1, 
+                              np.std(np.matrix(data40).T, 1).A1, 
+                              np.std(np.matrix(data70).T, 1).A1, 
+                              np.std(np.matrix(data99).T, 1).A1])
+np.savetxt("means/JumpAM.csv", table_JumpAM, delimiter=",")
+np.savetxt("std/JumpAM.csv", table_JumpAM_std, delimiter=",")
+
+
 
 
 
@@ -373,6 +440,60 @@ np.savetxt("TableMomentaLand.csv",
            delimiter=",")
 
 
+#means and std
+
+# vertical
+data5 = []; data20 = []; data40 = []; data99 = [];
+for i in xrange (len(mconf.traceurs_list)):
+    data5 = LandLM_abs[i].contribution[5]
+    data20 = LandLM_abs[i].contribution[20]
+    data40 = LandLM_abs[i].contribution[40]
+    data99 = LandLM_abs[i].contribution[99]
+
+table_LandLM_abs = np.matrix([np.mean(np.matrix(data5).T, 1).A1, 
+                              np.mean(np.matrix(data20).T, 1).A1, 
+                              np.mean(np.matrix(data40).T, 1).A1, 
+                              np.mean(np.matrix(data99).T, 1).A1])
+table_LandLM_abs_std = np.matrix([np.std(np.matrix(data5).T, 1).A1, 
+                                  np.std(np.matrix(data20).T, 1).A1, 
+                                  np.std(np.matrix(data40).T, 1).A1, 
+                                  np.std(np.matrix(data99).T, 1).A1])
+np.savetxt("means/LandLM_abs.csv", table_LandLM_abs, delimiter=",")
+np.savetxt("std/LandLM_abs.csv", table_LandLM_abs_std, delimiter=",")
+
+# stability
+data5 = []; data20 = []; data40 = []; data99 = [];
+for i in xrange (len(mconf.traceurs_list)):
+    data5 = np.sum(LandLM_stab[i].contribution[5],1)
+    data20 = np.sum(LandLM_stab[i].contribution[20],1) 
+    data40 = np.sum(LandLM_stab[i].contribution[40],1) 
+    data99 = np.sum(LandLM_stab[i].contribution[99],1) 
+
+table_LandLM_stab = np.matrix([np.mean(np.matrix(data5).T, 1).A1, 
+                              np.mean(np.matrix(data20).T, 1).A1, 
+                              np.mean(np.matrix(data40).T, 1).A1, 
+                              np.mean(np.matrix(data99).T, 1).A1])
+np.savetxt("means/LandLM_stab.csv", table_LandLM_stab, delimiter=",")
+np.savetxt("std/LandLM_stab.csv", table_LandLM_stab, delimiter=",")
+
+# angular momentum
+data5 = []; data20 = []; data40 = []; data99 = [];
+for i in xrange (len(mconf.traceurs_list)):
+    data5 = LandAM[i].contribution[5]
+    data20 = LandAM[i].contribution[20]
+    data40 = LandAM[i].contribution[40]
+    data99 = LandAM[i].contribution[99]
+
+table_LandAM = np.matrix([np.mean(np.matrix(data5).T, 1).A1, 
+                          np.mean(np.matrix(data20).T, 1).A1, 
+                          np.mean(np.matrix(data40).T, 1).A1, 
+                          np.mean(np.matrix(data99).T, 1).A1])
+table_LandAM_std = np.matrix([np.std(np.matrix(data5).T, 1).A1, 
+                              np.std(np.matrix(data20).T, 1).A1, 
+                              np.std(np.matrix(data40).T, 1).A1, 
+                              np.std(np.matrix(data99).T, 1).A1])
+np.savetxt("means/LandAM.csv", table_LandAM, delimiter=",")
+np.savetxt("std/LandAM.csv", table_LandAM_std, delimiter=",")
 
 # centroidal momentum ellipsoid
 

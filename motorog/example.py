@@ -322,62 +322,188 @@ phaseFactor = np.matrix([  0, 0, 40, 40,  70, 70, 99, 99]*nsubjects*coordinates)
 taskFactor =  np.matrix([1,2]*nsubjects*nphases*coordinates).T
 coordinateFactor = np.matrix(range(coordinates)*nsubjects*nphases*ntasks).T
 
-Aj=[];
+Ajx=[]; Ajy=[]; Ajz=[]; Ajxx=[]; Ajyy=[]; Ajzz=[]
 for i in xrange (len(mconf.traceurs_list)):
-    Aj += [np.sum(JumpLM[i].contribution[0],1)]
-    Aj += [JumpAM[i].contribution[0]]
-    Aj += [np.sum(JumpLM[i].contribution[40],1)]
-    Aj += [JumpAM[i].contribution[40]]
-    Aj += [np.sum(JumpLM[i].contribution[70],1)]
-    Aj += [JumpAM[i].contribution[70]]
-    Aj += [np.sum(JumpLM[i].contribution[99],1)]
-    Aj += [JumpAM[i].contribution[99]]
+    Ajx += [JumpLM[i].contribution[0][:,0]]
+    Ajx += [JumpAM[i].contribution[0][:,0]]
+    Ajx += [JumpLM[i].contribution[40][:,0]]
+    Ajx += [JumpAM[i].contribution[40][:,0]]
+    Ajx += [JumpLM[i].contribution[70][:,0]]
+    Ajx += [JumpAM[i].contribution[70][:,0]]
+    Ajx += [JumpLM[i].contribution[99][:,0]]
+    Ajx += [JumpAM[i].contribution[99][:,0]]
     
-M=np.matrix(Aj).A1
-np.savetxt("TableMomentaJump.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(M).T]), 
+    Ajy += [JumpLM[i].contribution[0][:,1]]
+    Ajy += [JumpAM[i].contribution[0][:,1]]
+    Ajy += [JumpLM[i].contribution[40][:,1]]
+    Ajy += [JumpAM[i].contribution[40][:,1]]
+    Ajy += [JumpLM[i].contribution[70][:,1]]
+    Ajy += [JumpAM[i].contribution[70][:,1]]
+    Ajy += [JumpLM[i].contribution[99][:,1]]
+    Ajy += [JumpAM[i].contribution[99][:,1]]
+
+    Ajz += [JumpLM[i].contribution[0][:,2]]
+    Ajz += [JumpAM[i].contribution[0][:,2]]
+    Ajz += [JumpLM[i].contribution[40][:,2]]
+    Ajz += [JumpAM[i].contribution[40][:,2]]
+    Ajz += [JumpLM[i].contribution[70][:,2]]
+    Ajz += [JumpAM[i].contribution[70][:,2]]
+    Ajz += [JumpLM[i].contribution[99][:,2]]
+    Ajz += [JumpAM[i].contribution[99][:,2]]
+
+    Ajxx += [JumpLM[i].contribution[0][:,3]]
+    Ajxx += [JumpAM[i].contribution[0][:,3]]
+    Ajxx += [JumpLM[i].contribution[40][:,3]]
+    Ajxx += [JumpAM[i].contribution[40][:,3]]
+    Ajxx += [JumpLM[i].contribution[70][:,3]]
+    Ajxx += [JumpAM[i].contribution[70][:,3]]
+    Ajxx += [JumpLM[i].contribution[99][:,3]]
+    Ajxx += [JumpAM[i].contribution[99][:,3]]
+
+    Ajyy += [JumpLM[i].contribution[0][:,4]]
+    Ajyy += [JumpAM[i].contribution[0][:,4]]
+    Ajyy += [JumpLM[i].contribution[40][:,4]]
+    Ajyy += [JumpAM[i].contribution[40][:,4]]
+    Ajyy += [JumpLM[i].contribution[70][:,4]]
+    Ajyy += [JumpAM[i].contribution[70][:,4]]
+    Ajyy += [JumpLM[i].contribution[99][:,4]]
+    Ajyy += [JumpAM[i].contribution[99][:,4]]
+
+    Ajzz += [JumpLM[i].contribution[0][:,5]]
+    Ajzz += [JumpAM[i].contribution[0][:,5]]
+    Ajzz += [JumpLM[i].contribution[40][:,5]]
+    Ajzz += [JumpAM[i].contribution[40][:,5]]
+    Ajzz += [JumpLM[i].contribution[70][:,5]]
+    Ajzz += [JumpAM[i].contribution[70][:,5]]
+    Ajzz += [JumpLM[i].contribution[99][:,5]]
+    Ajzz += [JumpAM[i].contribution[99][:,5]]
+    
+Mx = np.matrix(Ajx).A1
+My = np.matrix(Ajy).A1
+Mz = np.matrix(Ajz).A1
+Mxx = np.matrix(Ajxx).A1
+Myy = np.matrix(Ajyy).A1
+Mzz = np.matrix(Ajzz).A1
+
+np.savetxt("TableMomentaJumpx.csv", 
+           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(Mx).T]), 
            delimiter=",")
+np.savetxt("TableMomentaJumpy.csv", 
+           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(My).T]), 
+           delimiter=",")
+np.savetxt("TableMomentaJumpz.csv", 
+           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(Mz).T]), 
+           delimiter=",")
+np.savetxt("TableMomentaJumpxx.csv", 
+           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(Mxx).T]), 
+           delimiter=",")
+np.savetxt("TableMomentaJumpyy.csv", 
+           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(Myy).T]), 
+           delimiter=",")
+np.savetxt("TableMomentaJumpzz.csv", 
+           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(Mzz).T]), 
+           delimiter=",")
+
 
 
 #means and std
 # linear momentum
-data5 = []; data40 = []; data70 = []; data99 = [];
-for i in xrange (len(mconf.traceurs_list)):
-    data5 += [np.sum(JumpLM[i].contribution[5],1)]
-    data40 += [np.sum(JumpLM[i].contribution[40],1)]
-    data70 += [np.sum(JumpLM[i].contribution[70],1)]
-    data99 += [np.sum(JumpLM[i].contribution[99],1)]
+data0x = []; data40x = []; data70x = []; data99x = [];
+data0y = []; data40y = []; data70y = []; data99y = [];
+data0z = []; data40z = []; data70z = []; data99z = [];
+data0xx = []; data40xx = []; data70xx = []; data99xx = [];
+data0yy = []; data40yy = []; data70yy = []; data99yy = [];
+data0zz = []; data40zz = []; data70zz = []; data99zz = [];
+for i in xrange (len(mconf.traceurs_list)):   
+    data0x += [JumpLM[i].contribution[0][:,0]]
+    data40x += [JumpLM[i].contribution[40][:,0]]
+    data70x += [JumpLM[i].contribution[70][:,0]]
+    data99x += [JumpLM[i].contribution[99][:,0]]
+    data0y += [JumpLM[i].contribution[0][:,1]]
+    data40y += [JumpLM[i].contribution[40][:,1]]
+    data70y += [JumpLM[i].contribution[70][:,1]]
+    data99y += [JumpLM[i].contribution[99][:,1]]
+    data0z += [JumpLM[i].contribution[0][:,2]]
+    data40z += [JumpLM[i].contribution[40][:,2]]
+    data70z += [JumpLM[i].contribution[70][:,2]]
+    data99z += [JumpLM[i].contribution[99][:,2]]
+    data0xx += [JumpLM[i].contribution[0][:,3]]
+    data40xx += [JumpLM[i].contribution[40][:,3]]
+    data70xx += [JumpLM[i].contribution[70][:,3]]
+    data99xx += [JumpLM[i].contribution[99][:,3]]
+    data0yy += [JumpLM[i].contribution[0][:,4]]
+    data40yy += [JumpLM[i].contribution[40][:,4]]
+    data70yy += [JumpLM[i].contribution[70][:,4]]
+    data99yy += [JumpLM[i].contribution[99][:,4]]
+    data0zz += [JumpLM[i].contribution[0][:,5]]
+    data40zz += [JumpLM[i].contribution[40][:,5]]
+    data70zz += [JumpLM[i].contribution[70][:,5]]
+    data99zz += [JumpLM[i].contribution[99][:,5]]
 
-table_JumpLM = np.matrix([np.mean(np.matrix(data5), 0).A1, 
-                          np.mean(np.matrix(data40), 0).A1, 
-                          np.mean(np.matrix(data70), 0).A1, 
-                          np.mean(np.matrix(data99), 0).A1])
-table_JumpLM_std = np.matrix([np.std(np.matrix(data5), 0).A1, 
-                              np.std(np.matrix(data40), 0).A1, 
-                              np.std(np.matrix(data70), 0).A1, 
-                              np.std(np.matrix(data99), 0).A1])
-np.savetxt("means/JumpLM.csv", table_JumpLM, delimiter=",")
-np.savetxt("std/JumpLM.csv", table_JumpLM_std, delimiter=",")
+table_JumpMx = np.matrix([np.mean(np.matrix(data0x), 0).A1, 
+                          np.mean(np.matrix(data40x), 0).A1, 
+                          np.mean(np.matrix(data70x), 0).A1, 
+                          np.mean(np.matrix(data99x), 0).A1])
+table_JumpM_stdx = np.matrix([np.std(np.matrix(data0x), 0).A1, 
+                              np.std(np.matrix(data40x), 0).A1, 
+                              np.std(np.matrix(data70x), 0).A1, 
+                              np.std(np.matrix(data99x), 0).A1])
+table_JumpMy = np.matrix([np.mean(np.matrix(data0y), 0).A1, 
+                          np.mean(np.matrix(data40y), 0).A1, 
+                          np.mean(np.matrix(data70y), 0).A1, 
+                          np.mean(np.matrix(data99y), 0).A1])
+table_JumpM_stdy = np.matrix([np.std(np.matrix(data0y), 0).A1, 
+                              np.std(np.matrix(data40y), 0).A1, 
+                              np.std(np.matrix(data70y), 0).A1, 
+                              np.std(np.matrix(data99y), 0).A1])
+table_JumpMz = np.matrix([np.mean(np.matrix(data0z), 0).A1, 
+                           np.mean(np.matrix(data40z), 0).A1, 
+                           np.mean(np.matrix(data70z), 0).A1, 
+                           np.mean(np.matrix(data99z), 0).A1])
+table_JumpM_stdz = np.matrix([np.std(np.matrix(data0z), 0).A1, 
+                              np.std(np.matrix(data40z), 0).A1, 
+                              np.std(np.matrix(data70z), 0).A1, 
+                              np.std(np.matrix(data99z), 0).A1])
 
-# angular momentum
-data5 = []; data40 = []; data70 = []; data99 = [];
-for i in xrange (len(mconf.traceurs_list)):
-    data5 = JumpAM[i].contribution[5]
-    data40 = JumpAM[i].contribution[40] 
-    data70 = JumpAM[i].contribution[70] 
-    data99 = JumpAM[i].contribution[99] 
+table_JumpMxx = np.matrix([np.mean(np.matrix(data0xx), 0).A1, 
+                           np.mean(np.matrix(data40xx), 0).A1, 
+                           np.mean(np.matrix(data70xx), 0).A1, 
+                           np.mean(np.matrix(data99xx), 0).A1])
+table_JumpM_stdxx = np.matrix([np.std(np.matrix(data0xx), 0).A1, 
+                               np.std(np.matrix(data40xx), 0).A1, 
+                               np.std(np.matrix(data70xx), 0).A1, 
+                               np.std(np.matrix(data99xx), 0).A1])
+table_JumpMyy = np.matrix([np.mean(np.matrix(data0yy), 0).A1, 
+                           np.mean(np.matrix(data40yy), 0).A1, 
+                           np.mean(np.matrix(data70yy), 0).A1, 
+                           np.mean(np.matrix(data99yy), 0).A1])
+table_JumpM_stdyy = np.matrix([np.std(np.matrix(data0yy), 0).A1, 
+                               np.std(np.matrix(data40yy), 0).A1, 
+                               np.std(np.matrix(data70yy), 0).A1, 
+                               np.std(np.matrix(data99yy), 0).A1])
+table_JumpMzz = np.matrix([np.mean(np.matrix(data0zz), 0).A1, 
+                           np.mean(np.matrix(data40zz), 0).A1, 
+                           np.mean(np.matrix(data70zz), 0).A1, 
+                           np.mean(np.matrix(data99zz), 0).A1])
+table_JumpM_stdzz = np.matrix([np.std(np.matrix(data0zz), 0).A1, 
+                               np.std(np.matrix(data40zz), 0).A1, 
+                               np.std(np.matrix(data70zz), 0).A1, 
+                               np.std(np.matrix(data99zz), 0).A1])
 
-table_JumpAM = np.matrix([np.mean(np.matrix(data5).T, 1).A1, 
-                          np.mean(np.matrix(data40).T, 1).A1, 
-                          np.mean(np.matrix(data70).T, 1).A1, 
-                          np.mean(np.matrix(data99).T, 1).A1])
-table_JumpAM_std = np.matrix([np.std(np.matrix(data5).T, 1).A1, 
-                              np.std(np.matrix(data40).T, 1).A1, 
-                              np.std(np.matrix(data70).T, 1).A1, 
-                              np.std(np.matrix(data99).T, 1).A1])
-np.savetxt("means/JumpAM.csv", table_JumpAM, delimiter=",")
-np.savetxt("std/JumpAM.csv", table_JumpAM_std, delimiter=",")
 
+np.savetxt("means/JumpLMx.csv", table_JumpMx, delimiter=",")
+np.savetxt("std/JumpLMx.csv", table_JumpM_stdx, delimiter=",")
+np.savetxt("means/JumpLMy.csv", table_JumpMy, delimiter=",")
+np.savetxt("std/JumpLMy.csv", table_JumpM_stdy, delimiter=",")
+np.savetxt("means/JumpLMz.csv", table_JumpMz, delimiter=",")
+np.savetxt("std/JumpLMz.csv", table_JumpM_stdz, delimiter=",")
+
+np.savetxt("means/JumpAMx.csv", table_JumpMxx, delimiter=",")
+np.savetxt("std/JumpAMx.csv", table_JumpM_stdxx, delimiter=",")
+np.savetxt("means/JumpAMy.csv", table_JumpMyy, delimiter=",")
+np.savetxt("std/JumpAMy.csv", table_JumpM_stdyy, delimiter=",")
+np.savetxt("means/JumpAMz.csv", table_JumpMzz, delimiter=",")
+np.savetxt("std/JumpAMz.csv", table_JumpM_stdzz, delimiter=",")
 
 
 

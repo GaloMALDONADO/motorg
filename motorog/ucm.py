@@ -433,12 +433,27 @@ class ucmMomentum(UCM):
         f_com = cXi.act(f_ff)
         return f_com.np
 
+    def _getMomentaCoM(self,com,i):
+        M = self.robot.model.inertias[i].matrix()*self.robot.data.v[i].vector
+        iHi = se3.Force(np.matrix(M,dtype='float64').T)
+        data = self.robot.data
+        cXi = se3.SE3.Identity()
+        oXi = data.oMi[i]
+        cXi.rotation = oXi.rotation
+        cXi.translation = oXi.translation - com
+        cMi = cXi.act(iHi)
+        return cMi.np.A1*(self._K)
+        #linM = np.matrix(M[0:3]).A1*(self._K*9.81)
+        #angM = M_com.np.A1[3:6] *(self._K*9.81)
+        #f = np.hstack([linM, angM])
+        #return f #f_com.np.A1
+
     def _getDynTask(self):
         task=[]; Jtask=[]; drift=[] ;taskNormalized=[]; contribution=[]; momenta=[];
         
         for i in range(0, 100):
             self.updateAll(self.q_mean[i],self.dq_mean[i],self.ddq_mean[i])
-            se3.forwardKinematics(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
+            se3.forwardKinematics(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i], self.ddq_mean[i])
             JH = se3.ccrba(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
             H = self.robot.data.hg.np.A.copy()
             b = self._getBiais(self.q_mean[i], self.dq_mean[i])
@@ -446,8 +461,9 @@ class ucmMomentum(UCM):
             taskNormalized.append(Hdot[self._mask] * self._K) 
             self.taskNormalized = taskNormalized
             M = []
+            p_com = self.robot.com(self.q_mean)
             for i in range(1,26):
-                M.append((self.robot.model.inertias[i].matrix()*self.robot.data.v[i].vector)[self._mask])
+                M.append(self._getMomentaCoM(p_com,i))
             contribution.append(np.array(M).squeeze())
             self.contribution = contribution
             task.append(Hdot[self._mask])

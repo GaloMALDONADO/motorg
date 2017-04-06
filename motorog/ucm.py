@@ -433,16 +433,24 @@ class ucmMomentum(UCM):
         f_com = cXi.act(f_ff)
         return f_com.np
 
-    def _getMomentaCoM(self,com,i):
-        M = self.robot.model.inertias[i].matrix()*self.robot.data.v[i].vector
-        iHi = se3.Force(np.matrix(M,dtype='float64').T)
-        data = self.robot.data
-        cXi = se3.SE3.Identity()
-        oXi = data.oMi[i]
-        cXi.rotation = oXi.rotation
-        cXi.translation = oXi.translation - com
-        cMi = cXi.act(iHi)
-        return cMi.np.A1*(self._K)
+    def _getMomentaCoM(self,com,s):
+        #iHi = self.robot.model.inertias[i].se3Action(self.robot.data.v[i])
+        Y = self.robot.model.inertias[s]
+        V = self.robot.data.v[s] 
+        iHi = se3.Inertia.vxiv(Y,V)
+        cMo = se3.SE3.Identity()
+        cMo.translation = com
+        cMi = cMo * self.robot.data.oMi[s]
+        return cMi.act(iHi).np.A1
+        
+        #cXi = se3.SE3.Identity()
+        #oXi = data.oMi[i]
+        #cXi = cXo * oXi
+        #cXi.rotation = oXi.rotation
+        #cXi.translation = oXi.translation - com
+        #cHi = cXi.act(iHi)
+        #return cHi.np.A1*(self._K)
+        
         #linM = np.matrix(M[0:3]).A1*(self._K*9.81)
         #angM = M_com.np.A1[3:6] *(self._K*9.81)
         #f = np.hstack([linM, angM])
@@ -450,7 +458,7 @@ class ucmMomentum(UCM):
 
     def _getDynTask(self):
         task=[]; Jtask=[]; drift=[] ;taskNormalized=[]; contribution=[]; momenta=[];
-        
+        h=[]
         for i in range(0, 100):
             self.updateAll(self.q_mean[i],self.dq_mean[i],self.ddq_mean[i])
             se3.forwardKinematics(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i], self.ddq_mean[i])
@@ -462,10 +470,12 @@ class ucmMomentum(UCM):
             self.taskNormalized = taskNormalized
             M = []
             p_com = self.robot.com(self.q_mean)
-            for i in range(1,26):
-                M.append(self._getMomentaCoM(p_com,i))
+            for s in range(1,26):
+                M.append((self._getMomentaCoM(p_com,s) )*self._K)
             contribution.append(np.array(M).squeeze())
             self.contribution = contribution
+            h.append(H)
+            self.h = h
             task.append(Hdot[self._mask])
             drift.append(b[self._mask])
             Jtask.append(JH[self._mask,:])

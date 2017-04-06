@@ -8,8 +8,8 @@ rm(list = ls())
 # Task 1: impulsion through antero-posterior and vertical force
 # Task 2: impulsion through antero posterior angular momentum (around M-L axis at the center of mass)
 # ------------------------------------------------------------------------
-#p='/galo/devel/gepetto/motorg/motorog/' #home
-p='/local/gmaldona/devel/motorg/motorog/' #lab
+p='/galo/devel/gepetto/motorg/motorog/' #home
+#p='/local/gmaldona/devel/motorg/motorog/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -279,7 +279,7 @@ class = "data.frame", row.names = c(NA, -4L))
 op = par(mar=c(8,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(jump.means.x), main="Jump Linear Momentum X",
                 ylab=expression(kg %.% m %.% s^-1 %.% BM^-1),
-               xlim=c(0,30),ylim=c(-120,100),
+               xlim=c(0,30),ylim=c(-80,80),
                col=c("red","green","blue","yellow"),
                legend = c( "1%","40%", "70%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)
@@ -288,7 +288,7 @@ rm(op)
 op = par(mar=c(8,4,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(jump.means.y), main="Jump Linear Momentum Y",
                ylab=expression(kg %.% m %.% s^-1 %.% BM^-1),
-               xlim=c(0,30),ylim=c(-220,80),
+               xlim=c(0,30),ylim=c(-80,80),
                col=c("red","green","blue","yellow"),
                legend = c( "1%","40%", "70%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)
@@ -297,7 +297,7 @@ rm(op)
 op = par(mar=c(8,4,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(jump.means.z), main="Jump Linear Momentum Z",
                ylab=expression(kg %.% m %.% s^-1 %.% BM^-1),
-               xlim=c(0,30),ylim=c(-3,20),
+               xlim=c(0,30),ylim=c(-80,80),
                col=c("red","green","blue","yellow"),
                legend = c( "1%","40%", "70%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)
@@ -312,7 +312,7 @@ rm(op)
 op = par(mar=c(8,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(jump.means.xx), main="Jump Angular Momentum X",
                ylab=expression(kg %.% m %.% s^-1 %.% BM^-1 %.% H),
-               xlim=c(0,30),ylim=c(-200000,200000),
+               xlim=c(0,30),ylim=c(-1800,1800),
                col=c("red","green","blue","yellow"),
                legend = c( "1%","40%", "70%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)
@@ -321,7 +321,7 @@ rm(op)
 op = par(mar=c(8,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(jump.means.yy), main="Jump Angular Momentum Y",
                ylab=expression(kg %.% m %.% s^-1 %.% BM^-1 %.% H),
-               xlim=c(0,30),ylim=c(-200,200),
+               xlim=c(0,30),ylim=c(-1800,1800),
                col=c("red","green","blue","yellow"),
                legend = c( "1%","40%", "70%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)
@@ -330,7 +330,7 @@ rm(op)
 op = par(mar=c(8,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(jump.means.zz), main="Jump Angular Momentum Z",
                ylab=expression(kg %.% m %.% s^-1 %.% BM^-1 %.% H),
-               xlim=c(0,30),ylim=c(-200,200),
+               xlim=c(0,30),ylim=c(-1800,1800),
                col=c("red","green","blue","yellow"),
                legend = c( "1%","40%", "70%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)

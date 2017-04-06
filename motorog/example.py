@@ -314,96 +314,39 @@ viewer.display(land4[5],avatar4.name)
 import matplotlib.pyplot as plt
 ''' Impulsion Phase '''
 nphases = 4;
-ntasks = 2
-coordinates = 25
-subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases*coordinates)).T 
+segments = 25
+subjects = np.matrix(np.repeat(np.linspace(1,5,5), nphases*segments)).T 
 #j: 0(start)  40 60(A-P_F, AM_UCM) 70(BW) 100(end)
-phaseFactor = np.matrix([  0, 0, 40, 40,  70, 70, 99, 99]*nsubjects*coordinates).T
-taskFactor =  np.matrix([1,2]*nsubjects*nphases*coordinates).T
-coordinateFactor = np.matrix(range(coordinates)*nsubjects*nphases*ntasks).T
+phaseFactor = np.matrix([  0, 40, 70,  99]*nsubjects*segments).T
+segmentFactor = np.matrix(range(segments)*nsubjects*nphases).T
 
-Ajx=[]; Ajy=[]; Ajz=[]; Ajxx=[]; Ajyy=[]; Ajzz=[]
+H_ap=[]; H_v=[]; L=[]; 
 for i in xrange (len(mconf.traceurs_list)):
-    Ajx += [JumpLM[i].contribution[0][:,0]]
-    Ajx += [JumpAM[i].contribution[0][:,0]]
-    Ajx += [JumpLM[i].contribution[40][:,0]]
-    Ajx += [JumpAM[i].contribution[40][:,0]]
-    Ajx += [JumpLM[i].contribution[70][:,0]]
-    Ajx += [JumpAM[i].contribution[70][:,0]]
-    Ajx += [JumpLM[i].contribution[99][:,0]]
-    Ajx += [JumpAM[i].contribution[99][:,0]]
-    
-    Ajy += [JumpLM[i].contribution[0][:,1]]
-    Ajy += [JumpAM[i].contribution[0][:,1]]
-    Ajy += [JumpLM[i].contribution[40][:,1]]
-    Ajy += [JumpAM[i].contribution[40][:,1]]
-    Ajy += [JumpLM[i].contribution[70][:,1]]
-    Ajy += [JumpAM[i].contribution[70][:,1]]
-    Ajy += [JumpLM[i].contribution[99][:,1]]
-    Ajy += [JumpAM[i].contribution[99][:,1]]
+    H_ap += [JumpLM[i].contribution[0][:,0]]
+    H_v += [JumpLM[i].contribution[0][:,2]]
+    L += [JumpAM[i].contribution[0][:,4]]
+    H_ap += [JumpLM[i].contribution[40][:,0]]
+    H_v += [JumpLM[i].contribution[40][:,2]]
+    L += [JumpAM[i].contribution[40][:,4]]
+    H_ap += [JumpLM[i].contribution[70][:,0]]
+    H_v += [JumpLM[i].contribution[70][:,2]]
+    L += [JumpAM[i].contribution[70][:,4]]
+    H_ap += [JumpLM[i].contribution[99][:,0]]
+    H_v += [JumpLM[i].contribution[99][:,2]]
+    L += [JumpAM[i].contribution[99][:,4]]
 
-    Ajz += [JumpLM[i].contribution[0][:,2]]
-    Ajz += [JumpAM[i].contribution[0][:,2]]
-    Ajz += [JumpLM[i].contribution[40][:,2]]
-    Ajz += [JumpAM[i].contribution[40][:,2]]
-    Ajz += [JumpLM[i].contribution[70][:,2]]
-    Ajz += [JumpAM[i].contribution[70][:,2]]
-    Ajz += [JumpLM[i].contribution[99][:,2]]
-    Ajz += [JumpAM[i].contribution[99][:,2]]
-
-    Ajxx += [JumpLM[i].contribution[0][:,3]]
-    Ajxx += [JumpAM[i].contribution[0][:,3]]
-    Ajxx += [JumpLM[i].contribution[40][:,3]]
-    Ajxx += [JumpAM[i].contribution[40][:,3]]
-    Ajxx += [JumpLM[i].contribution[70][:,3]]
-    Ajxx += [JumpAM[i].contribution[70][:,3]]
-    Ajxx += [JumpLM[i].contribution[99][:,3]]
-    Ajxx += [JumpAM[i].contribution[99][:,3]]
-
-    Ajyy += [JumpLM[i].contribution[0][:,4]]
-    Ajyy += [JumpAM[i].contribution[0][:,4]]
-    Ajyy += [JumpLM[i].contribution[40][:,4]]
-    Ajyy += [JumpAM[i].contribution[40][:,4]]
-    Ajyy += [JumpLM[i].contribution[70][:,4]]
-    Ajyy += [JumpAM[i].contribution[70][:,4]]
-    Ajyy += [JumpLM[i].contribution[99][:,4]]
-    Ajyy += [JumpAM[i].contribution[99][:,4]]
-
-    Ajzz += [JumpLM[i].contribution[0][:,5]]
-    Ajzz += [JumpAM[i].contribution[0][:,5]]
-    Ajzz += [JumpLM[i].contribution[40][:,5]]
-    Ajzz += [JumpAM[i].contribution[40][:,5]]
-    Ajzz += [JumpLM[i].contribution[70][:,5]]
-    Ajzz += [JumpAM[i].contribution[70][:,5]]
-    Ajzz += [JumpLM[i].contribution[99][:,5]]
-    Ajzz += [JumpAM[i].contribution[99][:,5]]
-    
-Mx = np.matrix(Ajx).A1
-My = np.matrix(Ajy).A1
-Mz = np.matrix(Ajz).A1
-Mxx = np.matrix(Ajxx).A1
-Myy = np.matrix(Ajyy).A1
-Mzz = np.matrix(Ajzz).A1
-
-np.savetxt("TableMomentaJumpx.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(Mx).T]), 
+hap = np.matrix(H_ap).A1
+hv = np.matrix(H_v).A1
+l = np.matrix(L).A1
+np.savetxt("TableMomentaJumpLinMomAP.csv", 
+           np.hstack([subjects,phaseFactor,segmentFactor,np.matrix(hap).T]), 
            delimiter=",")
-np.savetxt("TableMomentaJumpy.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(My).T]), 
+np.savetxt("TableMomentaJumpLinMomV.csv", 
+           np.hstack([subjects,phaseFactor,segmentFactor,np.matrix(hv).T]), 
            delimiter=",")
-np.savetxt("TableMomentaJumpz.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(Mz).T]), 
+np.savetxt("TableMomentaJumpAngMom.csv", 
+           np.hstack([subjects,phaseFactor,segmentFactor,np.matrix(l).T]), 
            delimiter=",")
-np.savetxt("TableMomentaJumpxx.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(Mxx).T]), 
-           delimiter=",")
-np.savetxt("TableMomentaJumpyy.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(Myy).T]), 
-           delimiter=",")
-np.savetxt("TableMomentaJumpzz.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(Mzz).T]), 
-           delimiter=",")
-
 
 
 #means and std

@@ -334,3 +334,153 @@ barx = barplot(as.matrix(land.means.zz), main="Land Angular Momentum Z",
                col=c("red","green","blue","yellow"),
                legend = c( "1%","40%", "70%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# *****************************************************************************
+rm(list = ls())
+# LAND
+pathName = paste(p,'means/LandLM_abs.csv',sep="")
+meanDataLM_abs = read.csv(pathName, header = FALSE, col.names = names)
+
+pathName = paste(p,'means/LandLM_stab.csv',sep="")
+meanDataLM_stab = read.csv(pathName, header = FALSE, col.names = names)
+
+pathName = paste(p,'means/LandAM.csv',sep="")
+meanDataAM = read.csv(pathName, header = FALSE, col.names = names)
+
+pathName = paste(p,'std/LandLM_abs.csv',sep="")
+stdDataLM = read.csv(pathName, header = FALSE, col.names = names)
+
+pathName = paste(p,'std/LandLM_stab.csv',sep="")
+meanDataLM_stab = read.csv(pathName, header = FALSE, col.names = names)
+
+pathName = paste(p,'std/LandAM.csv',sep="")
+stdDataAM = read.csv(pathName, header = FALSE, col.names = names)
+
+simp_names = list('pelvis','thigh_r','leg_r','thigh_l','leg_l','back','neck')
+
+
+# ABSORPTION
+land_abs.means <- structure(list('pelvis'=c(meanDataLM_abs[1,1], meanDataLM_abs[2,1], meanDataLM_abs[3,1], meanDataLM_abs[4,1]),
+                                 'thigh_r'=c(meanDataLM_abs[1,2], meanDataLM_abs[2,2], meanDataLM_abs[3,2], meanDataLM_abs[4,2]),
+                                 'leg_r'=c(meanDataLM_abs[1,3], meanDataLM_abs[2,3], meanDataLM_abs[3,3], meanDataLM_abs[4,3]),
+                                 'thigh_l'=c(meanDataLM_abs[1,7], meanDataLM_abs[2,7], meanDataLM_abs[3,7], meanDataLM_abs[4,7]),
+                                 'leg_l'=c(meanDataLM_abs[1,8], meanDataLM_abs[2,8], meanDataLM_abs[3,8], meanDataLM_abs[4,8]),
+                                 'back'=c(meanDataLM_abs[1,12], meanDataLM_abs[2,12], meanDataLM_abs[3,12], meanDataLM_abs[4,12]),
+                                 'neck'=c(meanDataLM_abs[1,13], meanDataLM_abs[2,13], meanDataLM_abs[3,13], meanDataLM_abs[4,13])
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -4L))
+
+#
+land_abs.stds <- structure(list('pelvis'=c(stdDataLM_abs[1,1], stdDataLM_abs[2,1], stdDataLM_abs[3,1], stdDataLM_abs[4,1]),
+                                'thigh_r'=c(stdDataLM_abs[1,2], stdDataLM_abs[2,2], stdDataLM_abs[3,2], stdDataLM_abs[4,2]),
+                                'leg_r'=c(stdDataLM_abs[1,3], stdDataLM_abs[2,3], stdDataLM_abs[3,3], stdDataLM_abs[4,3]),
+                                'thigh_l'=c(stdDataLM_abs[1,7], stdDataLM_abs[2,7], stdDataLM_abs[3,7], stdDataLM_abs[4,7]),
+                                'leg_l'=c(stdDataLM_abs[1,8], stdDataLM_abs[2,8], stdDataLM_abs[3,8], stdDataLM_abs[4,8]),
+                                'back'=c(stdDataLM_abs[1,12], stdDataLM_abs[2,12], stdDataLM_abs[3,12], stdDataLM_abs[4,12]),
+                                'neck'=c(stdDataLM_abs[1,13], stdDataLM_abs[2,13], stdDataLM_abs[3,13], stdDataLM_abs[4,13])
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -4L))
+
+land_abs.ci <- structure(list('pelvis'=c(t*stdDataLM_abs[1,1]/sqrt(nparticipants), t*stdDataLM_abs[2,1]/sqrt(nparticipants), t*stdDataLM_abs[3,1]/sqrt(nparticipants), t*stdDataLM_abs[4,1]/sqrt(nparticipants)),
+                              'thigh_r'=c(t*stdDataLM_abs[1,2]/sqrt(nparticipants), t*stdDataLM_abs[2,2]/sqrt(nparticipants), t*stdDataLM_abs[3,2]/sqrt(nparticipants), t*stdDataLM_abs[4,2]/sqrt(nparticipants)),
+                              'leg_r'=c(t*stdDataLM_abs[1,3]/sqrt(nparticipants), t*stdDataLM_abs[2,3]/sqrt(nparticipants), t*stdDataLM_abs[3,3]/sqrt(nparticipants), t*stdDataLM_abs[4,3]/sqrt(nparticipants)),
+                              'thigh_l'=c(t*stdDataLM_abs[1,7]/sqrt(nparticipants), t*stdDataLM_abs[2,7]/sqrt(nparticipants), t*stdDataLM_abs[3,7]/sqrt(nparticipants), t*stdDataLM_abs[4,7]/sqrt(nparticipants)),
+                              'leg_l'=c(t*stdDataLM_abs[1,8]/sqrt(nparticipants), t*stdDataLM_abs[2,8]/sqrt(nparticipants), t*stdDataLM_abs[3,8]/sqrt(nparticipants), t*stdDataLM_abs[4,8]/sqrt(nparticipants)),
+                              'back'=c(t*stdDataLM_abs[1,12]/sqrt(nparticipants), t*stdDataLM_abs[2,12]/sqrt(nparticipants), t*stdDataLM_abs[3,12]/sqrt(nparticipants), t*stdDataLM_abs[4,12]/sqrt(nparticipants)),
+                              'neck'=c(t*stdDataLM_abs[1,13]/sqrt(nparticipants), t*stdDataLM_abs[2,13]/sqrt(nparticipants), t*stdDataLM_abs[3,13]/sqrt(nparticipants), t*stdDataLM_abs[4,13]/sqrt(nparticipants))
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -4L))
+
+
+
+op = par(mar=c(4,4,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
+barx = barplot(as.matrix(land_abs.means), main="Jump Linear Momentum",
+               ylab="kg.m/s",
+               xlim=c(0,35),ylim=c(-70,10),
+               col=c("red","green","blue","yellow"),
+               legend = c( "1%","40%", "70%", "100%"),  las=2, cex.names = 1, beside=TRUE) #beside=TRUE,xlab="joint",
+rm(op)
+
+
+xx=as.matrix(land_abs.means)
+er=as.matrix(land_abs.stds)
+erci=as.matrix(land_abs.ci)
+arrows(barx,xx+erci, barx,xx, angle=90, code=3, length=0.05)
+arrows(barx,xx-erci, barx,xx, angle=90, code=3, length=0.05)
+
+
+
+
+
+
+
+
+
+
+# STABILITY **************************************************************************
+land_stab.means <- structure(list('pelvis'=c(meanDataLM_stab[1,1], meanDataLM_stab[2,1], meanDataLM_stab[3,1], meanDataLM_stab[4,1]),
+                                  'thigh_r'=c(meanDataLM_stab[1,2], meanDataLM_stab[2,2], meanDataLM_stab[3,2], meanDataLM_stab[4,2]),
+                                  'leg_r'=c(meanDataLM_stab[1,3], meanDataLM_stab[2,3], meanDataLM_stab[3,3], meanDataLM_stab[4,3]),
+                                  'thigh_l'=c(meanDataLM_stab[1,7], meanDataLM_stab[2,7], meanDataLM_stab[3,7], meanDataLM_stab[4,7]),
+                                  'leg_l'=c(meanDataLM_stab[1,8], meanDataLM_stab[2,8], meanDataLM_stab[3,8], meanDataLM_stab[4,8]),
+                                  'back'=c(meanDataLM_stab[1,12], meanDataLM_stab[2,12], meanDataLM_stab[3,12], meanDataLM_stab[4,12]),
+                                  'neck'=c(meanDataLM_stab[1,13], meanDataLM_stab[2,13], meanDataLM_stab[3,13], meanDataLM_stab[4,13])
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -4L))
+
+#
+land_stab.stds <- structure(list('pelvis'=c(stdDataLM_stab[1,1], stdDataLM_stab[2,1], stdDataLM_stab[3,1], stdDataLM_stab[4,1]),
+                                 'thigh_r'=c(stdDataLM_stab[1,2], stdDataLM_stab[2,2], stdDataLM_stab[3,2], stdDataLM_stab[4,2]),
+                                 'leg_r'=c(stdDataLM_stab[1,3], stdDataLM_stab[2,3], stdDataLM_stab[3,3], stdDataLM_stab[4,3]),
+                                 'thigh_l'=c(stdDataLM_stab[1,7], stdDataLM_stab[2,7], stdDataLM_stab[3,7], stdDataLM_stab[4,7]),
+                                 'leg_l'=c(stdDataLM_stab[1,8], stdDataLM_stab[2,8], stdDataLM_stab[3,8], stdDataLM_stab[4,8]),
+                                 'back'=c(stdDataLM_stab[1,12], stdDataLM_stab[2,12], stdDataLM_stab[3,12], stdDataLM_stab[4,12]),
+                                 'neck'=c(stdDataLM_stab[1,13], stdDataLM_stab[2,13], stdDataLM_stab[3,13], stdDataLM_stab[4,13])
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -4L))
+
+land_stab.ci <- structure(list('pelvis'=c(t*stdDataLM_stab[1,1]/sqrt(nparticipants), t*stdDataLM_stab[2,1]/sqrt(nparticipants), t*stdDataLM_stab[3,1]/sqrt(nparticipants), t*stdDataLM_stab[4,1]/sqrt(nparticipants)),
+                               'thigh_r'=c(t*stdDataLM_stab[1,2]/sqrt(nparticipants), t*stdDataLM_stab[2,2]/sqrt(nparticipants), t*stdDataLM_stab[3,2]/sqrt(nparticipants), t*stdDataLM_stab[4,2]/sqrt(nparticipants)),
+                               'leg_r'=c(t*stdDataLM_stab[1,3]/sqrt(nparticipants), t*stdDataLM_stab[2,3]/sqrt(nparticipants), t*stdDataLM_stab[3,3]/sqrt(nparticipants), t*stdDataLM_stab[4,3]/sqrt(nparticipants)),
+                               'thigh_l'=c(t*stdDataLM_stab[1,7]/sqrt(nparticipants), t*stdDataLM_stab[2,7]/sqrt(nparticipants), t*stdDataLM_stab[3,7]/sqrt(nparticipants), t*stdDataLM_stab[4,7]/sqrt(nparticipants)),
+                               'leg_l'=c(t*stdDataLM_stab[1,8]/sqrt(nparticipants), t*stdDataLM_stab[2,8]/sqrt(nparticipants), t*stdDataLM_stab[3,8]/sqrt(nparticipants), t*stdDataLM_stab[4,8]/sqrt(nparticipants)),
+                               'back'=c(t*stdDataLM_stab[1,12]/sqrt(nparticipants), t*stdDataLM_stab[2,12]/sqrt(nparticipants), t*stdDataLM_stab[3,12]/sqrt(nparticipants), t*stdDataLM_stab[4,12]/sqrt(nparticipants)),
+                               'neck'=c(t*stdDataLM_stab[1,13]/sqrt(nparticipants), t*stdDataLM_stab[2,13]/sqrt(nparticipants), t*stdDataLM_stab[3,13]/sqrt(nparticipants), t*stdDataLM_stab[4,13]/sqrt(nparticipants))
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -4L))
+
+op = par(mar=c(4,4,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
+barx = barplot(as.matrix(land_stab.means), main="Jump Linear Momentum Stability",
+               ylab="kg.m/s",
+               xlim=c(0,35),ylim=c(-20,80),
+               col=c("red","green","blue","yellow"),
+               legend = c( "1%","40%", "70%", "100%"),  las=2, cex.names = 1, beside=TRUE) #beside=TRUE,xlab="joint",
+rm(op)
+
+
+xx=as.matrix(land_stab.means)
+er=as.matrix(land_stab.stds)
+erci=as.matrix(land_stab.ci)
+arrows(barx,xx+erci, barx,xx, angle=90, code=3, length=0.05)
+arrows(barx,xx-erci, barx,xx, angle=90, code=3, length=0.05)

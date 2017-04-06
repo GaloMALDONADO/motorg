@@ -16,7 +16,7 @@ class UCM:
         self.time = np.linspace(1,100,100)
         self.dt = 0.0025
         self.fs = 400
-        self.cutoff = 30
+        self.cutoff = 10
         self.filter_order = 4
 
     def nullspace(self, Jq):
@@ -434,13 +434,20 @@ class ucmMomentum(UCM):
         return f_com.np
 
     def _getMomentaCoM(self,com,s):
-        #iHi = self.robot.model.inertias[i].se3Action(self.robot.data.v[i])
         Y = self.robot.model.inertias[s]
         V = self.robot.data.v[s] 
-        iHi = se3.Inertia.vxiv(Y,V)
-        cMo = se3.SE3.Identity()
-        cMo.translation = com
-        cMi = cMo * self.robot.data.oMi[s]
+        #iHi = se3.Inertia.vxiv(Y,V)
+        iHi = se3.Force(Y.matrix()*V.vector)
+        oMc = se3.SE3.Identity()
+        oMc.translation = com
+        #oMc.rotation = self.robot.data.oMi[1].rotation
+        cMi = oMc.actInv( self.robot.data.oMi[s] )
+        #print '4'
+        #print iHi.np.A1[4]
+        #print '5'
+        #print iHi.np.A1[5]
+        #print oMc.translation
+        #print self.robot.data.oMi[s].translation
         return cMi.act(iHi).np.A1
         
         #cXi = se3.SE3.Identity()
@@ -451,10 +458,30 @@ class ucmMomentum(UCM):
         #cHi = cXi.act(iHi)
         #return cHi.np.A1*(self._K)
         
-        #linM = np.matrix(M[0:3]).A1*(self._K*9.81)
-        #angM = M_com.np.A1[3:6] *(self._K*9.81)
-        #f = np.hstack([linM, angM])
-        #return f #f_com.np.A1
+        
+    def _contribution(self,s,i):
+        copyY = []; copyV = [];
+        for b in xrange(0,26):
+            copyY += [self.robot.model.inertias[b].copy()]
+            #copyV += [self.robot.data.v[b].copy()]
+            if b != s :
+                self.robot.model.inertias[b] = se3.Inertia.Zero()
+                #self.robot.data.v[b] = se3.Motion.Zero()
+                #v = np.zeros * self.dq_mean[i] 
+        
+        self.updateAll(self.q_mean[i],self.dq_mean[i],self.ddq_mean[i])
+        se3.forwardKinematics(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i], self.ddq_mean[i])
+        se3.ccrba(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
+        Hs = self.robot.data.hg.np.A.copy()
+        
+        for b in xrange(0,26):
+            self.robot.model.inertias[b] = np.matrix(copyY).A1[b].copy()
+            #self.robot.data.v[b] = np.matrix(copyV).A1[b].copy()
+            
+        self.updateAll(self.q_mean[i],self.dq_mean[i],self.ddq_mean[i])
+        se3.forwardKinematics(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i], self.ddq_mean[i])
+        se3.ccrba(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
+        return Hs
 
     def _getDynTask(self):
         task=[]; Jtask=[]; drift=[] ;taskNormalized=[]; contribution=[]; momenta=[];
@@ -464,18 +491,21 @@ class ucmMomentum(UCM):
             se3.forwardKinematics(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i], self.ddq_mean[i])
             JH = se3.ccrba(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
             H = self.robot.data.hg.np.A.copy()
+            h.append(H*self._K)
+            self.h = h
             b = self._getBiais(self.q_mean[i], self.dq_mean[i])
             Hdot = (JH * self.ddq_mean[i].T) + b #- (self.robot.data.mass[0] * self.robot.model.gravity.vector)
             taskNormalized.append(Hdot[self._mask] * self._K) 
             self.taskNormalized = taskNormalized
-            M = []
-            p_com = self.robot.com(self.q_mean)
+            M = []; M2=[]
+            p_com = self.robot.com(self.q_mean[i])
+            
             for s in range(1,26):
-                M.append((self._getMomentaCoM(p_com,s) )*self._K)
+                M.append(self._getMomentaCoM(p_com,s) *self._K)
+                #M2.append(self._contribution(s,i)*self._K)
+
             contribution.append(np.array(M).squeeze())
             self.contribution = contribution
-            h.append(H)
-            self.h = h
             task.append(Hdot[self._mask])
             drift.append(b[self._mask])
             Jtask.append(JH[self._mask,:])

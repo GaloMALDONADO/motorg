@@ -307,11 +307,76 @@ viewer.display(jump3[0],avatar3.name)
 
 viewer.display(land4[5],avatar4.name)
 
+''' Rate of Change '''
+#TODO
 
+
+#TODO : plot total linear and angular momenta CoM
 
 
 ''' ***************** MOMENTUM IN PARKOUR STUDY ****************** '''
 import matplotlib.pyplot as plt
+JLM_ap = []; JLM_ml=[]; JLM_v=[]; JAM_y=[]; JAM_x=[]; JAM_z=[]; 
+for i in xrange (len(mconf.traceurs_list)):
+    JLM_ap += [-np.array(JumpLM[i].h)[:,0]]
+    JLM_ml += [np.array(JumpLM[i].h)[:,1]]
+    JLM_v += [np.array(JumpLM[i].h)[:,2]]
+    JAM_y += [-np.array(JumpAM[i].h)[:,3]]
+    JAM_x += [np.array(JumpAM[i].h)[:,4]]
+    JAM_z += [np.array(JumpAM[i].h)[:,5]]
+
+hmean=np.vstack([np.mean(np.array(JLM_ml).squeeze(),0),
+                 np.mean(np.array(JLM_ap).squeeze(),0),
+                 np.mean(np.array(JLM_v).squeeze(),0),
+                 np.mean(np.array(JAM_x).squeeze(),0),
+                 np.mean(np.array(JAM_y).squeeze(),0),
+                 np.mean(np.array(JAM_z).squeeze(),0)
+             ]).T
+hstd=np.vstack([np.std(np.array(JLM_ml).squeeze(),0),
+                np.std(np.array(JLM_ap).squeeze(),0),
+                np.std(np.array(JLM_v).squeeze(),0),
+                np.std(np.array(JAM_x).squeeze(),0),
+                np.std(np.array(JAM_y).squeeze(),0),
+                np.std(np.array(JAM_z).squeeze(),0)
+            ]).T
+
+
+fig = plt.figure()
+fig.canvas.set_window_title('Takeoff Motion')
+Plus = hmean + hstd
+Min = hmean - hstd
+
+ax = fig.add_subplot('211')
+#ax.plot(hmean[:,0],'-r', linewidth=3.0)
+#ax.plot(Plus[:,0],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+#ax.plot(Min[:,0],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+ax.plot(hmean[:,1],'-r', linewidth=4.0)
+ax.plot(hmean[:,2],':g', linewidth=4.0)
+ax.plot(Plus[:,1],'-k',color = '0.75', linewidth=3.0, linestyle='--')
+plt.legend(['mean (antero posterior)','mean (vertical)','mean $\pm$ std'],loc=2)
+ax.plot(Min[:,1],'-k' ,color = '0.75',linewidth=3.0, linestyle='--')
+ax.plot(Plus[:,2],'-k',color = '0.75', linewidth=3.0, linestyle='--')
+ax.plot(Min[:,2],'-k' ,color = '0.75',linewidth=3.0, linestyle='--')
+plt.ylabel('Linear Momentum \n $[kg \cdot m \cdot s^{-1} \cdot BW^{-1}]$',{'fontsize': 18})
+
+ax = fig.add_subplot('212')
+ax.plot(hmean[:,3],'-b', linewidth=4.0)
+ax.plot(Plus[:,3],'-k',color = '0.75', linewidth=3.0, linestyle='--')
+ax.plot(Min[:,3],'-k' ,color = '0.75',linewidth=3.0, linestyle='--')
+plt.legend(['mean (sagittal plane)','mean $\pm$ std'],loc=2)
+#plt.legend(['sagittal plane'],loc=1)
+#ax.plot(hmean[:,4],'-g', linewidth=3.0)
+#ax.plot(Plus[:,4],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+#ax.plot(Min[:,4],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+#ax.plot(hmean[:,5],'-b', linewidth=3.0)
+#ax.plot(Plus[:,5],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+#ax.plot(Min[:,5],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+plt.ylabel('Angular Momentum \n $[Kg \cdot m^{2} \cdot s^{-1} \cdot  BW^{-1} \cdot H^{-1}]$',{'fontsize': 18})
+
+
+
+
+
 ''' Impulsion Phase '''
 nphases = 4;
 segments = 25
@@ -338,19 +403,18 @@ for i in xrange (len(mconf.traceurs_list)):
 hap = np.matrix(H_ap).A1
 hv = np.matrix(H_v).A1
 l = np.matrix(L).A1
-np.savetxt("TableMomentaJumpLinMomAP.csv", 
+np.savetxt("tables/momenta/TableMomentaJumpLinMomAP.csv", 
            np.hstack([subjects,phaseFactor,segmentFactor,np.matrix(hap).T]), 
            delimiter=",")
-np.savetxt("TableMomentaJumpLinMomV.csv", 
+np.savetxt("tables/momenta/TableMomentaJumpLinMomV.csv", 
            np.hstack([subjects,phaseFactor,segmentFactor,np.matrix(hv).T]), 
            delimiter=",")
-np.savetxt("TableMomentaJumpAngMom.csv", 
+np.savetxt("tables/momenta/TableMomentaJumpAngMom.csv", 
            np.hstack([subjects,phaseFactor,segmentFactor,np.matrix(l).T]), 
            delimiter=",")
 
 
 #means and std
-# linear momentum
 data0x = []; data40x = []; data70x = []; data99x = [];
 data0y = []; data40y = []; data70y = []; data99y = [];
 data0z = []; data40z = []; data70z = []; data99z = [];
@@ -434,119 +498,69 @@ table_JumpM_stdzz = np.matrix([np.std(np.matrix(data0zz), 0).A1,
                                np.std(np.matrix(data99zz), 0).A1])
 
 
-np.savetxt("means/JumpLMx.csv", table_JumpMx, delimiter=",")
-np.savetxt("std/JumpLMx.csv", table_JumpM_stdx, delimiter=",")
-np.savetxt("means/JumpLMy.csv", table_JumpMy, delimiter=",")
-np.savetxt("std/JumpLMy.csv", table_JumpM_stdy, delimiter=",")
-np.savetxt("means/JumpLMz.csv", table_JumpMz, delimiter=",")
-np.savetxt("std/JumpLMz.csv", table_JumpM_stdz, delimiter=",")
+np.savetxt("tables/momenta/mean/JumpLMx.csv", table_JumpMx, delimiter=",")
+np.savetxt("tables/momenta/std/JumpLMx.csv", table_JumpM_stdx, delimiter=",")
+np.savetxt("tables/momenta/mean/JumpLMy.csv", table_JumpMy, delimiter=",")
+np.savetxt("tables/momenta/std/JumpLMy.csv", table_JumpM_stdy, delimiter=",")
+np.savetxt("tables/momenta/mean/JumpLMz.csv", table_JumpMz, delimiter=",")
+np.savetxt("tables/momenta/std/JumpLMz.csv", table_JumpM_stdz, delimiter=",")
 
-np.savetxt("means/JumpAMx.csv", table_JumpMxx, delimiter=",")
-np.savetxt("std/JumpAMx.csv", table_JumpM_stdxx, delimiter=",")
-np.savetxt("means/JumpAMy.csv", table_JumpMyy, delimiter=",")
-np.savetxt("std/JumpAMy.csv", table_JumpM_stdyy, delimiter=",")
-np.savetxt("means/JumpAMz.csv", table_JumpMzz, delimiter=",")
-np.savetxt("std/JumpAMz.csv", table_JumpM_stdzz, delimiter=",")
+np.savetxt("tables/momenta/mean/JumpAMx.csv", table_JumpMxx, delimiter=",")
+np.savetxt("tables/momenta/std/JumpAMx.csv", table_JumpM_stdxx, delimiter=",")
+np.savetxt("tables/momenta/mean/JumpAMy.csv", table_JumpMyy, delimiter=",")
+np.savetxt("tables/momenta/std/JumpAMy.csv", table_JumpM_stdyy, delimiter=",")
+np.savetxt("tables/momenta/mean/JumpAMz.csv", table_JumpMzz, delimiter=",")
+np.savetxt("tables/momenta/std/JumpAMz.csv", table_JumpM_stdzz, delimiter=",")
 
 
 
 
 ''' Landing Phase '''
-nphases = 4
-ntasks = 2
-coordinates = 25
-subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases*coordinates)).T 
+nphases = 4;
+segments = 25
+subjects = np.matrix(np.repeat(np.linspace(1,5,5), nphases*segments)).T 
 #l: 5(start) 20(maxForce) 40(lowerForce/stab) 100(end) 
-phaseFactor = np.matrix([  5, 5, 20, 20, 40, 40,  99, 99]*nsubjects*coordinates).T
-taskFactor =  np.matrix([1,2]*nsubjects*nphases*coordinates).T
-coordinateFactor = np.matrix(range(coordinates)*nsubjects*nphases*ntasks).T
+phaseFactor = np.matrix([  5, 20, 40,  99]*nsubjects*segments).T
+segmentFactor = np.matrix(range(segments)*nsubjects*nphases).T
 
-Ajx=[]; Ajy=[]; Ajz=[]; Ajxx=[]; Ajyy=[]; Ajzz=[]
+H_v=[]; H_ap=[]; L=[]; H_ml=[];
 for i in xrange (len(mconf.traceurs_list)):
-    Ajx += [LandLM_abs[i].contribution[5][:,0]]
-    Ajx += [LandAM[i].contribution[5][:,0]]
-    Ajx += [LandLM_abs[i].contribution[20][:,0]]
-    Ajx += [LandAM[i].contribution[20][:,0]]
-    Ajx += [LandLM_abs[i].contribution[40][:,0]]
-    Ajx += [LandAM[i].contribution[40][:,0]]
-    Ajx += [LandLM_abs[i].contribution[99][:,0]]
-    Ajx += [LandAM[i].contribution[99][:,0]]
-    
-    Ajy += [LandLM_abs[i].contribution[5][:,1]]
-    Ajy += [LandAM[i].contribution[5][:,1]]
-    Ajy += [LandLM_abs[i].contribution[20][:,1]]
-    Ajy += [LandAM[i].contribution[20][:,1]]
-    Ajy += [LandLM_abs[i].contribution[40][:,1]]
-    Ajy += [LandAM[i].contribution[40][:,1]]
-    Ajy += [LandLM_abs[i].contribution[99][:,1]]
-    Ajy += [LandAM[i].contribution[99][:,1]]
+    H_ml += [JumpLM[i].contribution[5][:,1]]
+    H_ap += [JumpLM[i].contribution[5][:,0]]
+    H_v += [JumpLM[i].contribution[5][:,2]]
+    L += [JumpAM[i].contribution[5][:,4]]
+    H_ml += [JumpLM[i].contribution[20][:,1]]
+    H_ap += [JumpLM[i].contribution[20][:,0]]
+    H_v += [JumpLM[i].contribution[20][:,2]]
+    L += [JumpAM[i].contribution[20][:,4]]
+    H_ml += [JumpLM[i].contribution[40][:,1]]
+    H_ap += [JumpLM[i].contribution[40][:,0]]
+    H_v += [JumpLM[i].contribution[40][:,2]]
+    L += [JumpAM[i].contribution[40][:,4]]
+    H_ml += [JumpLM[i].contribution[99][:,1]]
+    H_ap += [JumpLM[i].contribution[99][:,0]]
+    H_v += [JumpLM[i].contribution[99][:,2]]
+    L += [JumpAM[i].contribution[99][:,4]]
 
-    Ajz += [LandLM_abs[i].contribution[5][:,2]]
-    Ajz += [LandAM[i].contribution[5][:,2]]
-    Ajz += [LandLM_abs[i].contribution[20][:,2]]
-    Ajz += [LandAM[i].contribution[20][:,2]]
-    Ajz += [LandLM_abs[i].contribution[40][:,2]]
-    Ajz += [LandAM[i].contribution[40][:,2]]
-    Ajz += [LandLM_abs[i].contribution[99][:,2]]
-    Ajz += [LandAM[i].contribution[99][:,2]]
-
-    Ajxx += [LandLM_abs[i].contribution[5][:,3]]
-    Ajxx += [LandAM[i].contribution[5][:,3]]
-    Ajxx += [LandLM_abs[i].contribution[20][:,3]]
-    Ajxx += [LandAM[i].contribution[20][:,3]]
-    Ajxx += [LandLM_abs[i].contribution[40][:,3]]
-    Ajxx += [LandAM[i].contribution[40][:,3]]
-    Ajxx += [LandLM_abs[i].contribution[99][:,3]]
-    Ajxx += [LandAM[i].contribution[99][:,3]]
-
-    Ajyy += [LandLM_abs[i].contribution[5][:,4]]
-    Ajyy += [LandAM[i].contribution[5][:,4]]
-    Ajyy += [LandLM_abs[i].contribution[20][:,4]]
-    Ajyy += [LandAM[i].contribution[20][:,4]]
-    Ajyy += [LandLM_abs[i].contribution[40][:,4]]
-    Ajyy += [LandAM[i].contribution[40][:,4]]
-    Ajyy += [LandLM_abs[i].contribution[99][:,4]]
-    Ajyy += [LandAM[i].contribution[99][:,4]]
-
-    Ajzz += [LandLM_abs[i].contribution[5][:,5]]
-    Ajzz += [LandAM[i].contribution[5][:,5]]
-    Ajzz += [LandLM_abs[i].contribution[20][:,5]]
-    Ajzz += [LandAM[i].contribution[20][:,5]]
-    Ajzz += [LandLM_abs[i].contribution[40][:,5]]
-    Ajzz += [LandAM[i].contribution[40][:,5]]
-    Ajzz += [LandLM_abs[i].contribution[99][:,5]]
-    Ajzz += [LandAM[i].contribution[99][:,5]]
-    
-Mx = np.matrix(Ajx).A1
-My = np.matrix(Ajy).A1
-Mz = np.matrix(Ajz).A1
-Mxx = np.matrix(Ajxx).A1
-Myy = np.matrix(Ajyy).A1
-Mzz = np.matrix(Ajzz).A1
-
-np.savetxt("TableMomentaLandx.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(Mx).T]), 
+hml = np.matrix(H_ml).A1
+hap = np.matrix(H_ap).A1
+hv = np.matrix(H_v).A1
+l = np.matrix(L).A1
+np.savetxt("tables/momenta/TableMomentaLandLinMomML.csv", 
+           np.hstack([subjects,phaseFactor,segmentFactor,np.matrix(hml).T]), 
            delimiter=",")
-np.savetxt("TableMomentaLandy.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(My).T]), 
+np.savetxt("tables/momenta/TableMomentaLandLinMomAP.csv", 
+           np.hstack([subjects,phaseFactor,segmentFactor,np.matrix(hap).T]), 
            delimiter=",")
-np.savetxt("TableMomentaLandz.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(Mz).T]), 
+np.savetxt("tables/momenta/TableMomentaLandLinMomV.csv", 
+           np.hstack([subjects,phaseFactor,segmentFactor,np.matrix(hv).T]), 
            delimiter=",")
-np.savetxt("TableMomentaLandxx.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(Mxx).T]), 
+np.savetxt("tables/momenta/TableMomentaLandAngMom.csv", 
+           np.hstack([subjects,phaseFactor,segmentFactor,np.matrix(l).T]), 
            delimiter=",")
-np.savetxt("TableMomentaLandyy.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(Myy).T]), 
-           delimiter=",")
-np.savetxt("TableMomentaLandzz.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,coordinateFactor,np.matrix(Mzz).T]), 
-           delimiter=",")
-
 
 
 #means and std
-# linear momentum
 data0x = []; data40x = []; data70x = []; data99x = [];
 data0y = []; data40y = []; data70y = []; data99y = [];
 data0z = []; data40z = []; data70z = []; data99z = [];
@@ -630,21 +644,19 @@ table_JumpM_stdzz = np.matrix([np.std(np.matrix(data0zz), 0).A1,
                                np.std(np.matrix(data99zz), 0).A1])
 
 
-np.savetxt("means/LandLMx.csv", table_JumpMx, delimiter=",")
-np.savetxt("std/LandLMx.csv", table_JumpM_stdx, delimiter=",")
-np.savetxt("means/LandLMy.csv", table_JumpMy, delimiter=",")
-np.savetxt("std/LandLMy.csv", table_JumpM_stdy, delimiter=",")
-np.savetxt("means/LandLMz.csv", table_JumpMz, delimiter=",")
-np.savetxt("std/LandLMz.csv", table_JumpM_stdz, delimiter=",")
+np.savetxt("tables/momenta/mean/LandLMx.csv", table_JumpMx, delimiter=",")
+np.savetxt("tables/momenta/std/LandLMx.csv", table_JumpM_stdx, delimiter=",")
+np.savetxt("tables/momenta/mean/LandLMy.csv", table_JumpMy, delimiter=",")
+np.savetxt("tables/momenta/std/LandLMy.csv", table_JumpM_stdy, delimiter=",")
+np.savetxt("tables/momenta/mean/LandLMz.csv", table_JumpMz, delimiter=",")
+np.savetxt("tables/momenta/std/LandLMz.csv", table_JumpM_stdz, delimiter=",")
 
-np.savetxt("means/LandAMx.csv", table_JumpMxx, delimiter=",")
-np.savetxt("std/LandAMx.csv", table_JumpM_stdxx, delimiter=",")
-np.savetxt("means/LandAMy.csv", table_JumpMyy, delimiter=",")
-np.savetxt("std/LandAMy.csv", table_JumpM_stdyy, delimiter=",")
-np.savetxt("means/LandAMz.csv", table_JumpMzz, delimiter=",")
-np.savetxt("std/LandAMz.csv", table_JumpM_stdzz, delimiter=",")
-
-
+np.savetxt("tables/momenta/mean/LandAMx.csv", table_JumpMxx, delimiter=",")
+np.savetxt("tables/momenta/std/LandAMx.csv", table_JumpM_stdxx, delimiter=",")
+np.savetxt("tables/momenta/mean/LandAMy.csv", table_JumpMyy, delimiter=",")
+np.savetxt("tables/momenta/std/LandAMy.csv", table_JumpM_stdyy, delimiter=",")
+np.savetxt("tables/momenta/mean/LandAMz.csv", table_JumpMzz, delimiter=",")
+np.savetxt("tables/momenta/std/LandAMz.csv", table_JumpM_stdzz, delimiter=",")
 
 
 
@@ -659,6 +671,8 @@ np.savetxt("std/LandAMz.csv", table_JumpM_stdzz, delimiter=",")
 
 
 
+
+'''
 
 
 y = JumpAM[0].contribution[0]
@@ -765,7 +779,7 @@ np.savetxt("std/LandAM.csv", table_LandAM_std, delimiter=",")
 
 # centroidal momentum ellipsoid
 
-
+'''
 
 '''
 (jump,fly,land) = getTrials(0)

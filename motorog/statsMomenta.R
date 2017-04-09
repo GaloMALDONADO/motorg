@@ -8,8 +8,8 @@ rm(list = ls())
 # Task 1: impulsion through antero-posterior and vertical force
 # Task 2: impulsion through antero posterior angular momentum (around M-L axis at the center of mass)
 # ------------------------------------------------------------------------
-p='/galo/devel/gepetto/motorg/motorog/' #home
-#p='/local/gmaldona/devel/motorg/motorog/' #lab
+p='/galo/devel/gepetto/motorg/motorog/tables/momenta/' #home
+#p='/local/gmaldona/devel/motorg/motorog/tables/momenta/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -84,11 +84,11 @@ pairwise.t.test(l$Momenta, l$Segment, p.adj = "bonf",paired=TRUE)
 
 
 # ----------------------- Means - Std - Confidence Interval --------------------------
-pathName = paste(p,'means/JumpLMx.csv',sep="")
+pathName = paste(p,'mean/JumpLMx.csv',sep="")
 meanDataLMx = read.csv(pathName, header = FALSE, col.names = names)
-pathName = paste(p,'means/JumpLMy.csv',sep="")
+pathName = paste(p,'mean/JumpLMy.csv',sep="")
 meanDataLMy = read.csv(pathName, header = FALSE, col.names = names)
-pathName = paste(p,'means/JumpLMz.csv',sep="")
+pathName = paste(p,'mean/JumpLMz.csv',sep="")
 meanDataLMz = read.csv(pathName, header = FALSE, col.names = names)
 pathName = paste(p,'std/JumpLMx.csv',sep="")
 stdDataLMx = read.csv(pathName, header = FALSE, col.names = names)
@@ -97,11 +97,11 @@ stdDataLMy = read.csv(pathName, header = FALSE, col.names = names)
 pathName = paste(p,'std/JumpLMz.csv',sep="")
 stdDataLMz = read.csv(pathName, header = FALSE, col.names = names)
 
-pathName = paste(p,'means/JumpAMx.csv',sep="")
+pathName = paste(p,'mean/JumpAMx.csv',sep="")
 meanDataAMx = read.csv(pathName, header = FALSE, col.names = names)
-pathName = paste(p,'means/JumpAMy.csv',sep="")
+pathName = paste(p,'mean/JumpAMy.csv',sep="")
 meanDataAMy = read.csv(pathName, header = FALSE, col.names = names)
-pathName = paste(p,'means/JumpAMz.csv',sep="")
+pathName = paste(p,'mean/JumpAMz.csv',sep="")
 meanDataAMz = read.csv(pathName, header = FALSE, col.names = names)
 pathName = paste(p,'std/JumpAMx.csv',sep="")
 stdDataAMx = read.csv(pathName, header = FALSE, col.names = names)
@@ -305,7 +305,7 @@ class = "data.frame", row.names = c(NA, -4L))
 
 # STD ----------------------------------------
 # Linear Momentum x
-jump.means.x <- structure(list('pelvis'=c(stdDataLMx[1,1], stdDataLMx[2,1], stdDataLMx[3,1], stdDataLMx[4,1]),
+jump.std.x <- structure(list('pelvis'=c(stdDataLMx[1,1], stdDataLMx[2,1], stdDataLMx[3,1], stdDataLMx[4,1]),
                                'thigh_r'=c(stdDataLMx[1,2], stdDataLMx[2,2], stdDataLMx[3,2], stdDataLMx[4,2]),
                                'leg_r'=c(stdDataLMx[1,3], stdDataLMx[2,3], stdDataLMx[3,3], stdDataLMx[4,3]),
                                'ankle_r'=c(stdDataLMx[1,4], stdDataLMx[2,4], stdDataLMx[3,4], stdDataLMx[4,4]),
@@ -337,7 +337,7 @@ class = "data.frame", row.names = c(NA, -4L))
 
 
 # Linear Momentum Y
-jump.means.y <- structure(list('pelvis'=c(stdDataLMy[1,1], stdDataLMy[2,1], stdDataLMy[3,1], stdDataLMy[4,1]),
+jump.std.y <- structure(list('pelvis'=c(stdDataLMy[1,1], stdDataLMy[2,1], stdDataLMy[3,1], stdDataLMy[4,1]),
                                'thigh_r'=c(stdDataLMy[1,2], stdDataLMy[2,2], stdDataLMy[3,2], stdDataLMy[4,2]),
                                'leg_r'=c(stdDataLMy[1,3], stdDataLMy[2,3], stdDataLMy[3,3], stdDataLMy[4,3]),
                                'ankle_r'=c(stdDataLMy[1,4], stdDataLMy[2,4], stdDataLMy[3,4], stdDataLMy[4,4]),
@@ -368,7 +368,7 @@ class = "data.frame", row.names = c(NA, -4L))
 
 
 # Linear Momentum Z
-jump.means.z <- structure(list('pelvis'=c(stdDataLMz[1,1], stdDataLMz[2,1], stdDataLMz[3,1], stdDataLMz[4,1]),
+jump.std.z <- structure(list('pelvis'=c(stdDataLMz[1,1], stdDataLMz[2,1], stdDataLMz[3,1], stdDataLMz[4,1]),
                                'thigh_r'=c(stdDataLMz[1,2], stdDataLMz[2,2], stdDataLMz[3,2], stdDataLMz[4,2]),
                                'leg_r'=c(stdDataLMz[1,3], stdDataLMz[2,3], stdDataLMz[3,3], stdDataLMz[4,3]),
                                'ankle_r'=c(stdDataLMz[1,4], stdDataLMz[2,4], stdDataLMz[3,4], stdDataLMz[4,4]),
@@ -499,14 +499,14 @@ class = "data.frame", row.names = c(NA, -4L))
 op = par(mar=c(8,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(-jump.means.x), main="Jump Linear Momentum A-P",
                 ylab=expression(kg %.% m %.% s^-1 %.% BW^-1),
-               xlim=c(0,30),ylim=c(0.,0.15),
+               xlim=c(0,35),ylim=c(0,0.16),
                col=c("red","green","blue","yellow"),
                legend = c( "1%","40%", "70%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)
 
 
 op = par(mar=c(8,4,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
-barx = barplot(as.matrix(jump.means.y), main="Jump Linear Momentum A-P",
+barx = barplot(as.matrix(jump.means.y), main="Jump Linear Momentum M-L",
                ylab=expression(kg %.% m %.% s^-1 %.% BM^-1),
                xlim=c(0,30),ylim=c(-0.0,0.15),
                col=c("red","green","blue","yellow"),
@@ -523,13 +523,6 @@ barx = barplot(as.matrix(jump.means.z), main="Jump Linear Momentum Vertical",
 rm(op)
 
 
-op = par(mar=c(8,4,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
-barx = barplot(as.matrix(jump.means.x), main="Jump Linear Momentum A-P",
-               ylab=expression(kg %.% m %.% s^-1 %.% BM^-1),
-               xlim=c(0,30),ylim=c(-0.15,0.),
-               col=c("red","green","blue","yellow"),
-               legend = c( "1%","40%", "70%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
-rm(op)
 
 
 # unconmment to plot with SD
@@ -815,16 +808,16 @@ takeoff.ci.yy <- structure(list(
 class = "data.frame", row.names = c(NA, -7L))
 
 op = par(mar=c(5,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
-barx = barplot(as.matrix(takeoff.means.yy), 
+barx = barplot(as.matrix(-takeoff.means.yy), 
                ylab=expression(kg %.% m^2 %.% s^-1 %.% BW^-1 %.% H^-1),
-               xlim=c(0,35),ylim=c(-0.006,0.005),
+               xlim=c(0,35),ylim=c(-0.004,0.008),
                col=c("red","green","blue","yellow","purple","azure2","cadetblue"),
                legend = c( 'back','pelvis','thigh_r','thigh_l','head','leg_r','leg_l'),  
                las=2, cex.names = 1, beside=TRUE,args.legend = list(x=35,horiz=TRUE)) #beside=TRUE,xlab="joint",main="Take-off Angular Momentum in Sagittal Plane",
 rm(op)
 
 
-xx=as.matrix(takeoff.means.yy)
+xx=as.matrix(-takeoff.means.yy)
 er=as.matrix(takeoff.stds.yy)
 erci=as.matrix(takeoff.ci.yy)
 arrows(barx,xx+erci, barx,xx, angle=90, code=3, length=0.05)

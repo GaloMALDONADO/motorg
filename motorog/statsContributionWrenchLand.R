@@ -13,114 +13,32 @@ names<- c('pelvis','thigh_r','leg_r','ankle_r','subtalar_r','mtp_r','thigh_l','l
           'arm_l','elbow_l','radioulnar_l','radius_lunate_l','lunate_hand_l','fingers_l')
 
 # ---------------------- Read the data -----------------------------------
-pathName = paste(p,'TableMomentaLandLinMomML.csv',sep="")
-h_ml = read.csv(pathName, header = FALSE, col.names = list('Participant', 'Phase', 'Segment' ,'Momenta'))
-h_ml$Participant<-as.factor(h_ml$Participant)
-h_ml$Phase<-as.factor(h_ml$Phase)
-h_ml$Segment<-as.factor(h_ml$Segment)
-
-pathName = paste(p,'TableMomentaLandLinMomAP.csv',sep="")
-h_ap = read.csv(pathName, header = FALSE, col.names = list('Participant', 'Phase', 'Segment' ,'Momenta'))
-h_ap$Participant<-as.factor(h_ap$Participant)
-h_ap$Phase<-as.factor(h_ap$Phase)
-h_ap$Segment<-as.factor(h_ap$Segment)
-
-pathName = paste(p,'TableMomentaLandLinMomV.csv',sep="")
-h_v = read.csv(pathName, header = FALSE, col.names = list('Participant', 'Phase', 'Segment' ,'Momenta'))
-h_v$Participant<-as.factor(h_v$Participant)
-h_v$Phase<-as.factor(h_v$Phase)
-h_v$Segment<-as.factor(h_v$Segment)
-
-pathName = paste(p,'TableMomentaLandAngMom.csv',sep="")
-l = read.csv(pathName, header = FALSE, col.names = list('Participant', 'Phase', 'Segment' ,'Momenta'))
-l$Participant<-as.factor(l$Participant)
-l$Phase<-as.factor(l$Phase)
-l$Segment<-as.factor(l$Segment)
-
-
-#
-aovstats <-aov(h_ml$Momenta ~ 
-                 (h_ml$Phase+h_ml$Segment) + 
-                 Error(h_ml$Participant  / (h_ml$Phase+h_ml$Segment)), 
-               data = h_ml)
-summary(aovstats)
-
-pairwise.t.test(h_ap$Momenta, h_ap$Phase, p.adj = "bonf",paired=TRUE)
-pairwise.t.test(h_ap$Momenta, h_ap$Segment, p.adj = "bonf",paired=TRUE)
-
-#
-aovstats <-aov(h_ap$Momenta ~ 
-                 (h_ap$Phase+h_ap$Segment) + 
-                 Error(h_ap$Participant  / (h_ap$Phase+h_ap$Segment)), 
-               data = h_ap)
-summary(aovstats)
-
-pairwise.t.test(h_ap$Momenta, h_ap$Phase, p.adj = "bonf",paired=TRUE)
-pairwise.t.test(h_ap$Momenta, h_ap$Segment, p.adj = "bonf",paired=TRUE)
-
-#
-aovstats <-aov(h_v$Momenta ~ 
-                 (h_v$Phase+h_v$Segment) + 
-                 Error(h_v$Participant  / (h_v$Phase+h_v$Segment)), 
-               data = h_v)
-summary(aovstats)
-
-pairwise.t.test(h_v$Momenta, h_v$Phase, p.adj = "bonf",paired=TRUE)
-pairwise.t.test(h_v$Momenta, h_v$Segment, p.adj = "bonf",paired=TRUE)
-
-
-#
-aovstats <-aov(l$Momenta ~ 
-                 (l$Phase+l$Segment) + 
-                 Error(l$Participant  / (l$Phase+l$Segment)), 
-               data = l)
-summary(aovstats)
-
-pairwise.t.test(l$Momenta, l$Phase, p.adj = "bonf",paired=TRUE)
-pairwise.t.test(l$Momenta, l$Segment, p.adj = "bonf",paired=TRUE)
-
-
-# 0 pelvis    1 rthigh    2 rleg    6 lthigh     7 lleg    11 back     12 head
-#elvis different from right thigh and left thigh, back
-#rthigh different from pelvis, rleg
-
-
-
-
-
-
-
-
-
-
-
-
 
 # ----------------------- Means - Std - Confidence Interval --------------------------
-pathName = paste(p,'mean/LandLMx.csv',sep="")
+pathName = paste(p,'mean/LandFLMx.csv',sep="")
 meanDataLMx = read.csv(pathName, header = FALSE, col.names = names)
-pathName = paste(p,'mean/LandLMy.csv',sep="")
+pathName = paste(p,'mean/LandFLMy.csv',sep="")
 meanDataLMy = read.csv(pathName, header = FALSE, col.names = names)
-pathName = paste(p,'mean/LandLMz.csv',sep="")
+pathName = paste(p,'mean/LandFLMz.csv',sep="")
 meanDataLMz = read.csv(pathName, header = FALSE, col.names = names)
-pathName = paste(p,'std/LandLMx.csv',sep="")
+pathName = paste(p,'std/LandFLMx.csv',sep="")
 stdDataLMx = read.csv(pathName, header = FALSE, col.names = names)
-pathName = paste(p,'std/LandLMy.csv',sep="")
+pathName = paste(p,'std/LandFLMy.csv',sep="")
 stdDataLMy = read.csv(pathName, header = FALSE, col.names = names)
-pathName = paste(p,'std/LandLMz.csv',sep="")
+pathName = paste(p,'std/LandFLMz.csv',sep="")
 stdDataLMz = read.csv(pathName, header = FALSE, col.names = names)
 
-pathName = paste(p,'mean/LandAMx.csv',sep="")
+pathName = paste(p,'mean/LandTAMx.csv',sep="")
 meanDataAMx = read.csv(pathName, header = FALSE, col.names = names)
-pathName = paste(p,'mean/LandAMy.csv',sep="")
+pathName = paste(p,'mean/LandTAMy.csv',sep="")
 meanDataAMy = read.csv(pathName, header = FALSE, col.names = names)
-pathName = paste(p,'mean/LandAMz.csv',sep="")
+pathName = paste(p,'mean/LandTAMz.csv',sep="")
 meanDataAMz = read.csv(pathName, header = FALSE, col.names = names)
-pathName = paste(p,'std/LandAMx.csv',sep="")
+pathName = paste(p,'std/LandTAMx.csv',sep="")
 stdDataAMx = read.csv(pathName, header = FALSE, col.names = names)
-pathName = paste(p,'std/LandAMy.csv',sep="")
+pathName = paste(p,'std/LandTAMy.csv',sep="")
 stdDataAMy = read.csv(pathName, header = FALSE, col.names = names)
-pathName = paste(p,'std/LandAMz.csv',sep="")
+pathName = paste(p,'std/LandTAMz.csv',sep="")
 stdDataAMz = read.csv(pathName, header = FALSE, col.names = names)
 
 
@@ -319,30 +237,30 @@ class = "data.frame", row.names = c(NA, -4L))
 # STD ----------------------------------------
 # Linear Momentum x
 land.std.x <- structure(list('pelvis'=c(stdDataLMx[1,1], stdDataLMx[2,1], stdDataLMx[3,1], stdDataLMx[4,1]),
-                               'thigh_r'=c(stdDataLMx[1,2], stdDataLMx[2,2], stdDataLMx[3,2], stdDataLMx[4,2]),
-                               'leg_r'=c(stdDataLMx[1,3], stdDataLMx[2,3], stdDataLMx[3,3], stdDataLMx[4,3]),
-                               'ankle_r'=c(stdDataLMx[1,4], stdDataLMx[2,4], stdDataLMx[3,4], stdDataLMx[4,4]),
-                               'subtalar_r'=c(stdDataLMx[1,5], stdDataLMx[2,5], stdDataLMx[3,5], stdDataLMx[4,5]),
-                               'mtp_r'=c(stdDataLMx[1,6], stdDataLMx[2,6], stdDataLMx[3,6], stdDataLMx[4,6]),
-                               'thigh_l'=c(stdDataLMx[1,7], stdDataLMx[2,7], stdDataLMx[3,7], stdDataLMx[4,7]),
-                               'leg_l'=c(stdDataLMx[1,8], stdDataLMx[2,8], stdDataLMx[3,8], stdDataLMx[4,8]),
-                               'ankle_l'=c(stdDataLMx[1,9], stdDataLMx[2,9], stdDataLMx[3,9], stdDataLMx[4,9]),
-                               'subtalar_l'=c(stdDataLMx[1,10], stdDataLMx[2,10], stdDataLMx[3,10], stdDataLMx[4,10]),
-                               'mtp_l'=c(stdDataLMx[1,11], stdDataLMx[2,11], stdDataLMx[3,11], stdDataLMx[4,11]),
-                               'back'=c(stdDataLMx[1,12], stdDataLMx[2,12], stdDataLMx[3,12], stdDataLMx[4,12]),
-                               'head'=c(stdDataLMx[1,13], stdDataLMx[2,13], stdDataLMx[3,13], stdDataLMx[4,13]),
-                               'arm_r'=c(stdDataLMx[1,14], stdDataLMx[2,14], stdDataLMx[3,14], stdDataLMx[4,14]),
-                               'elbow_r'=c(stdDataLMx[1,15], stdDataLMx[2,15], stdDataLMx[3,15], stdDataLMx[4,15]),
-                               'radioulnar_r'=c(stdDataLMx[1,16], stdDataLMx[2,16], stdDataLMx[3,16], stdDataLMx[4,16]),
-                               'radius_lunate_r'=c(stdDataLMx[1,17], stdDataLMx[2,17], stdDataLMx[3,17], stdDataLMx[4,17]),
-                               'lunate_hand_r'=c(stdDataLMx[1,18], stdDataLMx[2,18], stdDataLMx[3,18], stdDataLMx[4,18]),
-                               'fingers_r'=c(stdDataLMx[1,19], stdDataLMx[2,19], stdDataLMx[3,19], stdDataLMx[4,19]),
-                               'arm_l'=c(stdDataLMx[1,20], stdDataLMx[2,20], stdDataLMx[3,20], stdDataLMx[4,20]),
-                               'elbow_l'=c(stdDataLMx[1,21], stdDataLMx[2,21], stdDataLMx[3,21], stdDataLMx[4,21]),
-                               'radioulnar_l'=c(stdDataLMx[1,22], stdDataLMx[2,22], stdDataLMx[3,22], stdDataLMx[4,22]),
-                               'radius_lunate_l'=c(stdDataLMx[1,23], stdDataLMx[2,23], stdDataLMx[3,23], stdDataLMx[4,23]),
-                               'lunate_hand_l'=c(stdDataLMx[1,24], stdDataLMx[2,24], stdDataLMx[3,24], stdDataLMx[4,24]),
-                               'fingers_l'=c(stdDataLMx[1,25], stdDataLMx[2,25], stdDataLMx[3,25], stdDataLMx[4,25])
+                             'thigh_r'=c(stdDataLMx[1,2], stdDataLMx[2,2], stdDataLMx[3,2], stdDataLMx[4,2]),
+                             'leg_r'=c(stdDataLMx[1,3], stdDataLMx[2,3], stdDataLMx[3,3], stdDataLMx[4,3]),
+                             'ankle_r'=c(stdDataLMx[1,4], stdDataLMx[2,4], stdDataLMx[3,4], stdDataLMx[4,4]),
+                             'subtalar_r'=c(stdDataLMx[1,5], stdDataLMx[2,5], stdDataLMx[3,5], stdDataLMx[4,5]),
+                             'mtp_r'=c(stdDataLMx[1,6], stdDataLMx[2,6], stdDataLMx[3,6], stdDataLMx[4,6]),
+                             'thigh_l'=c(stdDataLMx[1,7], stdDataLMx[2,7], stdDataLMx[3,7], stdDataLMx[4,7]),
+                             'leg_l'=c(stdDataLMx[1,8], stdDataLMx[2,8], stdDataLMx[3,8], stdDataLMx[4,8]),
+                             'ankle_l'=c(stdDataLMx[1,9], stdDataLMx[2,9], stdDataLMx[3,9], stdDataLMx[4,9]),
+                             'subtalar_l'=c(stdDataLMx[1,10], stdDataLMx[2,10], stdDataLMx[3,10], stdDataLMx[4,10]),
+                             'mtp_l'=c(stdDataLMx[1,11], stdDataLMx[2,11], stdDataLMx[3,11], stdDataLMx[4,11]),
+                             'back'=c(stdDataLMx[1,12], stdDataLMx[2,12], stdDataLMx[3,12], stdDataLMx[4,12]),
+                             'head'=c(stdDataLMx[1,13], stdDataLMx[2,13], stdDataLMx[3,13], stdDataLMx[4,13]),
+                             'arm_r'=c(stdDataLMx[1,14], stdDataLMx[2,14], stdDataLMx[3,14], stdDataLMx[4,14]),
+                             'elbow_r'=c(stdDataLMx[1,15], stdDataLMx[2,15], stdDataLMx[3,15], stdDataLMx[4,15]),
+                             'radioulnar_r'=c(stdDataLMx[1,16], stdDataLMx[2,16], stdDataLMx[3,16], stdDataLMx[4,16]),
+                             'radius_lunate_r'=c(stdDataLMx[1,17], stdDataLMx[2,17], stdDataLMx[3,17], stdDataLMx[4,17]),
+                             'lunate_hand_r'=c(stdDataLMx[1,18], stdDataLMx[2,18], stdDataLMx[3,18], stdDataLMx[4,18]),
+                             'fingers_r'=c(stdDataLMx[1,19], stdDataLMx[2,19], stdDataLMx[3,19], stdDataLMx[4,19]),
+                             'arm_l'=c(stdDataLMx[1,20], stdDataLMx[2,20], stdDataLMx[3,20], stdDataLMx[4,20]),
+                             'elbow_l'=c(stdDataLMx[1,21], stdDataLMx[2,21], stdDataLMx[3,21], stdDataLMx[4,21]),
+                             'radioulnar_l'=c(stdDataLMx[1,22], stdDataLMx[2,22], stdDataLMx[3,22], stdDataLMx[4,22]),
+                             'radius_lunate_l'=c(stdDataLMx[1,23], stdDataLMx[2,23], stdDataLMx[3,23], stdDataLMx[4,23]),
+                             'lunate_hand_l'=c(stdDataLMx[1,24], stdDataLMx[2,24], stdDataLMx[3,24], stdDataLMx[4,24]),
+                             'fingers_l'=c(stdDataLMx[1,25], stdDataLMx[2,25], stdDataLMx[3,25], stdDataLMx[4,25])
 ), 
 .Names = names, 
 class = "data.frame", row.names = c(NA, -4L))
@@ -351,30 +269,30 @@ class = "data.frame", row.names = c(NA, -4L))
 
 # Linear Momentum Y
 land.std.y <- structure(list('pelvis'=c(stdDataLMy[1,1], stdDataLMy[2,1], stdDataLMy[3,1], stdDataLMy[4,1]),
-                               'thigh_r'=c(stdDataLMy[1,2], stdDataLMy[2,2], stdDataLMy[3,2], stdDataLMy[4,2]),
-                               'leg_r'=c(stdDataLMy[1,3], stdDataLMy[2,3], stdDataLMy[3,3], stdDataLMy[4,3]),
-                               'ankle_r'=c(stdDataLMy[1,4], stdDataLMy[2,4], stdDataLMy[3,4], stdDataLMy[4,4]),
-                               'subtalar_r'=c(stdDataLMy[1,5], stdDataLMy[2,5], stdDataLMy[3,5], stdDataLMy[4,5]),
-                               'mtp_r'=c(stdDataLMy[1,6], stdDataLMy[2,6], stdDataLMy[3,6], stdDataLMy[4,6]),
-                               'thigh_l'=c(stdDataLMy[1,7], stdDataLMy[2,7], stdDataLMy[3,7], stdDataLMy[4,7]),
-                               'leg_l'=c(stdDataLMy[1,8], stdDataLMy[2,8], stdDataLMy[3,8], stdDataLMy[4,8]),
-                               'ankle_l'=c(stdDataLMy[1,9], stdDataLMy[2,9], stdDataLMy[3,9], stdDataLMy[4,9]),
-                               'subtalar_l'=c(stdDataLMy[1,10], stdDataLMy[2,10], stdDataLMy[3,10], stdDataLMy[4,10]),
-                               'mtp_l'=c(stdDataLMy[1,11], stdDataLMy[2,11], stdDataLMy[3,11], stdDataLMy[4,11]),
-                               'back'=c(stdDataLMy[1,12], stdDataLMy[2,12], stdDataLMy[3,12], stdDataLMy[4,12]),
-                               'head'=c(stdDataLMy[1,13], stdDataLMy[2,13], stdDataLMy[3,13], stdDataLMy[4,13]),
-                               'arm_r'=c(stdDataLMy[1,14], stdDataLMy[2,14], stdDataLMy[3,14], stdDataLMy[4,14]),
-                               'elbow_r'=c(stdDataLMy[1,15], stdDataLMy[2,15], stdDataLMy[3,15], stdDataLMy[4,15]),
-                               'radioulnar_r'=c(stdDataLMy[1,16], stdDataLMy[2,16], stdDataLMy[3,16], stdDataLMy[4,16]),
-                               'radius_lunate_r'=c(stdDataLMy[1,17], stdDataLMy[2,17], stdDataLMy[3,17], stdDataLMy[4,17]),
-                               'lunate_hand_r'=c(stdDataLMy[1,18], stdDataLMy[2,18], stdDataLMy[3,18], stdDataLMy[4,18]),
-                               'fingers_r'=c(stdDataLMy[1,19], stdDataLMy[2,19], stdDataLMy[3,19], stdDataLMy[4,19]),
-                               'arm_l'=c(stdDataLMy[1,20], stdDataLMy[2,20], stdDataLMy[3,20], stdDataLMy[4,20]),
-                               'elbow_l'=c(stdDataLMy[1,21], stdDataLMy[2,21], stdDataLMy[3,21], stdDataLMy[4,21]),
-                               'radioulnar_l'=c(stdDataLMy[1,22], stdDataLMy[2,22], stdDataLMy[3,22], stdDataLMy[4,22]),
-                               'radius_lunate_l'=c(stdDataLMy[1,23], stdDataLMy[2,23], stdDataLMy[3,23], stdDataLMy[4,23]),
-                               'lunate_hand_l'=c(stdDataLMy[1,24], stdDataLMy[2,24], stdDataLMy[3,24], stdDataLMy[4,24]),
-                               'fingers_l'=c(stdDataLMy[1,25], stdDataLMy[2,25], stdDataLMy[3,25], stdDataLMy[4,25])
+                             'thigh_r'=c(stdDataLMy[1,2], stdDataLMy[2,2], stdDataLMy[3,2], stdDataLMy[4,2]),
+                             'leg_r'=c(stdDataLMy[1,3], stdDataLMy[2,3], stdDataLMy[3,3], stdDataLMy[4,3]),
+                             'ankle_r'=c(stdDataLMy[1,4], stdDataLMy[2,4], stdDataLMy[3,4], stdDataLMy[4,4]),
+                             'subtalar_r'=c(stdDataLMy[1,5], stdDataLMy[2,5], stdDataLMy[3,5], stdDataLMy[4,5]),
+                             'mtp_r'=c(stdDataLMy[1,6], stdDataLMy[2,6], stdDataLMy[3,6], stdDataLMy[4,6]),
+                             'thigh_l'=c(stdDataLMy[1,7], stdDataLMy[2,7], stdDataLMy[3,7], stdDataLMy[4,7]),
+                             'leg_l'=c(stdDataLMy[1,8], stdDataLMy[2,8], stdDataLMy[3,8], stdDataLMy[4,8]),
+                             'ankle_l'=c(stdDataLMy[1,9], stdDataLMy[2,9], stdDataLMy[3,9], stdDataLMy[4,9]),
+                             'subtalar_l'=c(stdDataLMy[1,10], stdDataLMy[2,10], stdDataLMy[3,10], stdDataLMy[4,10]),
+                             'mtp_l'=c(stdDataLMy[1,11], stdDataLMy[2,11], stdDataLMy[3,11], stdDataLMy[4,11]),
+                             'back'=c(stdDataLMy[1,12], stdDataLMy[2,12], stdDataLMy[3,12], stdDataLMy[4,12]),
+                             'head'=c(stdDataLMy[1,13], stdDataLMy[2,13], stdDataLMy[3,13], stdDataLMy[4,13]),
+                             'arm_r'=c(stdDataLMy[1,14], stdDataLMy[2,14], stdDataLMy[3,14], stdDataLMy[4,14]),
+                             'elbow_r'=c(stdDataLMy[1,15], stdDataLMy[2,15], stdDataLMy[3,15], stdDataLMy[4,15]),
+                             'radioulnar_r'=c(stdDataLMy[1,16], stdDataLMy[2,16], stdDataLMy[3,16], stdDataLMy[4,16]),
+                             'radius_lunate_r'=c(stdDataLMy[1,17], stdDataLMy[2,17], stdDataLMy[3,17], stdDataLMy[4,17]),
+                             'lunate_hand_r'=c(stdDataLMy[1,18], stdDataLMy[2,18], stdDataLMy[3,18], stdDataLMy[4,18]),
+                             'fingers_r'=c(stdDataLMy[1,19], stdDataLMy[2,19], stdDataLMy[3,19], stdDataLMy[4,19]),
+                             'arm_l'=c(stdDataLMy[1,20], stdDataLMy[2,20], stdDataLMy[3,20], stdDataLMy[4,20]),
+                             'elbow_l'=c(stdDataLMy[1,21], stdDataLMy[2,21], stdDataLMy[3,21], stdDataLMy[4,21]),
+                             'radioulnar_l'=c(stdDataLMy[1,22], stdDataLMy[2,22], stdDataLMy[3,22], stdDataLMy[4,22]),
+                             'radius_lunate_l'=c(stdDataLMy[1,23], stdDataLMy[2,23], stdDataLMy[3,23], stdDataLMy[4,23]),
+                             'lunate_hand_l'=c(stdDataLMy[1,24], stdDataLMy[2,24], stdDataLMy[3,24], stdDataLMy[4,24]),
+                             'fingers_l'=c(stdDataLMy[1,25], stdDataLMy[2,25], stdDataLMy[3,25], stdDataLMy[4,25])
 ), 
 .Names = names, 
 class = "data.frame", row.names = c(NA, -4L))
@@ -382,30 +300,30 @@ class = "data.frame", row.names = c(NA, -4L))
 
 # Linear Momentum Z
 land.std.z <- structure(list('pelvis'=c(stdDataLMz[1,1], stdDataLMz[2,1], stdDataLMz[3,1], stdDataLMz[4,1]),
-                               'thigh_r'=c(stdDataLMz[1,2], stdDataLMz[2,2], stdDataLMz[3,2], stdDataLMz[4,2]),
-                               'leg_r'=c(stdDataLMz[1,3], stdDataLMz[2,3], stdDataLMz[3,3], stdDataLMz[4,3]),
-                               'ankle_r'=c(stdDataLMz[1,4], stdDataLMz[2,4], stdDataLMz[3,4], stdDataLMz[4,4]),
-                               'subtalar_r'=c(stdDataLMz[1,5], stdDataLMz[2,5], stdDataLMz[3,5], stdDataLMz[4,5]),
-                               'mtp_r'=c(stdDataLMz[1,6], stdDataLMz[2,6], stdDataLMz[3,6], stdDataLMz[4,6]),
-                               'thigh_l'=c(stdDataLMz[1,7], stdDataLMz[2,7], stdDataLMz[3,7], stdDataLMz[4,7]),
-                               'leg_l'=c(stdDataLMz[1,8], stdDataLMz[2,8], stdDataLMz[3,8], stdDataLMz[4,8]),
-                               'ankle_l'=c(stdDataLMz[1,9], stdDataLMz[2,9], stdDataLMz[3,9], stdDataLMz[4,9]),
-                               'subtalar_l'=c(stdDataLMz[1,10], stdDataLMz[2,10], stdDataLMz[3,10], stdDataLMz[4,10]),
-                               'mtp_l'=c(stdDataLMz[1,11], stdDataLMz[2,11], stdDataLMz[3,11], stdDataLMz[4,11]),
-                               'back'=c(stdDataLMz[1,12], stdDataLMz[2,12], stdDataLMz[3,12], stdDataLMz[4,12]),
-                               'head'=c(stdDataLMz[1,13], stdDataLMz[2,13], stdDataLMz[3,13], stdDataLMz[4,13]),
-                               'arm_r'=c(stdDataLMz[1,14], stdDataLMz[2,14], stdDataLMz[3,14], stdDataLMz[4,14]),
-                               'elbow_r'=c(stdDataLMz[1,15], stdDataLMz[2,15], stdDataLMz[3,15], stdDataLMz[4,15]),
-                               'radioulnar_r'=c(stdDataLMz[1,16], stdDataLMz[2,16], stdDataLMz[3,16], stdDataLMz[4,16]),
-                               'radius_lunate_r'=c(stdDataLMz[1,17], stdDataLMz[2,17], stdDataLMz[3,17], stdDataLMz[4,17]),
-                               'lunate_hand_r'=c(stdDataLMz[1,18], stdDataLMz[2,18], stdDataLMz[3,18], stdDataLMz[4,18]),
-                               'fingers_r'=c(stdDataLMz[1,19], stdDataLMz[2,19], stdDataLMz[3,19], stdDataLMz[4,19]),
-                               'arm_l'=c(stdDataLMz[1,20], stdDataLMz[2,20], stdDataLMz[3,20], stdDataLMz[4,20]),
-                               'elbow_l'=c(stdDataLMz[1,21], stdDataLMz[2,21], stdDataLMz[3,21], stdDataLMz[4,21]),
-                               'radioulnar_l'=c(stdDataLMz[1,22], stdDataLMz[2,22], stdDataLMz[3,22], stdDataLMz[4,22]),
-                               'radius_lunate_l'=c(stdDataLMz[1,23], stdDataLMz[2,23], stdDataLMz[3,23], stdDataLMz[4,23]),
-                               'lunate_hand_l'=c(stdDataLMz[1,24], stdDataLMz[2,24], stdDataLMz[3,24], stdDataLMz[4,24]),
-                               'fingers_l'=c(stdDataLMz[1,25], stdDataLMz[2,25], stdDataLMz[3,25], stdDataLMz[4,25])
+                             'thigh_r'=c(stdDataLMz[1,2], stdDataLMz[2,2], stdDataLMz[3,2], stdDataLMz[4,2]),
+                             'leg_r'=c(stdDataLMz[1,3], stdDataLMz[2,3], stdDataLMz[3,3], stdDataLMz[4,3]),
+                             'ankle_r'=c(stdDataLMz[1,4], stdDataLMz[2,4], stdDataLMz[3,4], stdDataLMz[4,4]),
+                             'subtalar_r'=c(stdDataLMz[1,5], stdDataLMz[2,5], stdDataLMz[3,5], stdDataLMz[4,5]),
+                             'mtp_r'=c(stdDataLMz[1,6], stdDataLMz[2,6], stdDataLMz[3,6], stdDataLMz[4,6]),
+                             'thigh_l'=c(stdDataLMz[1,7], stdDataLMz[2,7], stdDataLMz[3,7], stdDataLMz[4,7]),
+                             'leg_l'=c(stdDataLMz[1,8], stdDataLMz[2,8], stdDataLMz[3,8], stdDataLMz[4,8]),
+                             'ankle_l'=c(stdDataLMz[1,9], stdDataLMz[2,9], stdDataLMz[3,9], stdDataLMz[4,9]),
+                             'subtalar_l'=c(stdDataLMz[1,10], stdDataLMz[2,10], stdDataLMz[3,10], stdDataLMz[4,10]),
+                             'mtp_l'=c(stdDataLMz[1,11], stdDataLMz[2,11], stdDataLMz[3,11], stdDataLMz[4,11]),
+                             'back'=c(stdDataLMz[1,12], stdDataLMz[2,12], stdDataLMz[3,12], stdDataLMz[4,12]),
+                             'head'=c(stdDataLMz[1,13], stdDataLMz[2,13], stdDataLMz[3,13], stdDataLMz[4,13]),
+                             'arm_r'=c(stdDataLMz[1,14], stdDataLMz[2,14], stdDataLMz[3,14], stdDataLMz[4,14]),
+                             'elbow_r'=c(stdDataLMz[1,15], stdDataLMz[2,15], stdDataLMz[3,15], stdDataLMz[4,15]),
+                             'radioulnar_r'=c(stdDataLMz[1,16], stdDataLMz[2,16], stdDataLMz[3,16], stdDataLMz[4,16]),
+                             'radius_lunate_r'=c(stdDataLMz[1,17], stdDataLMz[2,17], stdDataLMz[3,17], stdDataLMz[4,17]),
+                             'lunate_hand_r'=c(stdDataLMz[1,18], stdDataLMz[2,18], stdDataLMz[3,18], stdDataLMz[4,18]),
+                             'fingers_r'=c(stdDataLMz[1,19], stdDataLMz[2,19], stdDataLMz[3,19], stdDataLMz[4,19]),
+                             'arm_l'=c(stdDataLMz[1,20], stdDataLMz[2,20], stdDataLMz[3,20], stdDataLMz[4,20]),
+                             'elbow_l'=c(stdDataLMz[1,21], stdDataLMz[2,21], stdDataLMz[3,21], stdDataLMz[4,21]),
+                             'radioulnar_l'=c(stdDataLMz[1,22], stdDataLMz[2,22], stdDataLMz[3,22], stdDataLMz[4,22]),
+                             'radius_lunate_l'=c(stdDataLMz[1,23], stdDataLMz[2,23], stdDataLMz[3,23], stdDataLMz[4,23]),
+                             'lunate_hand_l'=c(stdDataLMz[1,24], stdDataLMz[2,24], stdDataLMz[3,24], stdDataLMz[4,24]),
+                             'fingers_l'=c(stdDataLMz[1,25], stdDataLMz[2,25], stdDataLMz[3,25], stdDataLMz[4,25])
 ), 
 .Names = names, 
 class = "data.frame", row.names = c(NA, -4L))
@@ -512,7 +430,7 @@ class = "data.frame", row.names = c(NA, -4L))
 op = par(mar=c(8,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(-land.means.x), main="Land Linear Momentum A-P",
                ylab=expression(kg %.% m %.% s^-1 %.% BW^-1),
-               xlim=c(0,30),ylim=c(0.0,0.15),
+               xlim=c(0,30),ylim=c(-0.5,0.15),
                col=c("red","green","blue","yellow"),
                legend = c( "5%","20%", "40%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)
@@ -521,7 +439,7 @@ rm(op)
 op = par(mar=c(8,4,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(land.means.y), main="Land Linear Momentum M-L",
                ylab=expression(kg %.% m %.% s^-1 %.% BM^-1),
-               xlim=c(0,30),ylim=c(-0.02,0.02),
+               xlim=c(0,30),ylim=c(-0.12,0.12),
                col=c("red","green","blue","yellow"),
                legend = c( "5%","20%", "40%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)
@@ -529,8 +447,8 @@ rm(op)
 
 op = par(mar=c(8,4,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(land.means.z), main="Land Linear Momentum Vertical",
-               ylab=expression(kg %.% m %.% s^-1 %.% BM^-1),
-               xlim=c(0,30),ylim=c(0,-0.35),
+               ylab=expression(kg %.% m %.% s^-1 %.% BW^-1),
+               xlim=c(0,30),ylim=c(-0.1,1.5),
                col=c("red","green","blue","yellow"),
                legend = c( "5%","20%", "40%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)
@@ -546,7 +464,7 @@ rm(op)
 op = par(mar=c(8,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(land.means.xx), main="Land Angular Momentum X",
                ylab=expression(kg %.% m %.% s^-1 %.% BM^-1 %.% H),
-               xlim=c(0,30),ylim=c(-0.02,0.01),
+               xlim=c(0,30),ylim=c(-0.2,0.1),
                col=c("red","green","blue","yellow"),
                legend = c( "5%","20%", "40%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)
@@ -555,7 +473,7 @@ rm(op)
 op = par(mar=c(8,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(land.means.yy), main="Land Angular Momentum Y",
                ylab=expression(kg %.% m %.% s^-1 %.% BM^-1 %.% H),
-               xlim=c(0,30),ylim=c(-0.02,0.01),
+               xlim=c(0,30),ylim=c(-0.2,0.1),
                col=c("red","green","blue","yellow"),
                legend = c( "5%","20%", "40%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)
@@ -565,7 +483,7 @@ rm(op)
 op = par(mar=c(8,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(land.means.zz), main="Land Angular Momentum Z",
                ylab=expression(kg %.% m %.% s^-1 %.% BM^-1 %.% H),
-               xlim=c(0,30),ylim=c(-0.02,0.01),
+               xlim=c(0,30),ylim=c(-0.2,0.1),
                col=c("red","green","blue","yellow"),
                legend = c( "5%","20%", "40%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)
@@ -723,7 +641,7 @@ class = "data.frame", row.names = c(NA, -6L))
 op = par(mar=c(4,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(landing.means.y), main="Landing Linear Momentum (ML)",
                ylab=expression(kg %.% m %.% s^-1 %.% BW^-1),
-               xlim=c(0,30),ylim=c(-0.01,0.01),
+               xlim=c(0,30),ylim=c(-0.15,0.15),
                col=c("red","green","blue","yellow","purple","azure2"),
                legend = c('arm_r','arm_l','forearm_r','forearm_l','hand_r','hand_l'), 
                las=2, cex.names = 1, beside=TRUE, args.legend = list(x=30,horiz=TRUE)) #beside=TRUE,xlab="joint",
@@ -773,7 +691,7 @@ class = "data.frame", row.names = c(NA, -7L))
 op = par(mar=c(4,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(-landing.means.x), main="Landing Linear Momentum (AP)",
                ylab=expression(kg %.% m %.% s^-1 %.% BW^-1),
-               xlim=c(0,35),ylim=c(-0.002,0.07),
+               xlim=c(0,35),ylim=c(-0.35,0.1),
                col=c("red","green","blue","yellow","purple","azure2","cadetblue"),
                legend = c( 'back','pelvis','thigh_r','thigh_l','head','leg_r','leg_l'), 
                las=2, cex.names = 1, beside=TRUE, args.legend = list(x=35,horiz=TRUE)) #beside=TRUE,xlab="joint",
@@ -821,7 +739,7 @@ class = "data.frame", row.names = c(NA, -5L))
 op = par(mar=c(4,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(landing.means.z), main="Landing Linear Momentum (V)",
                ylab=expression(kg %.% m %.% s^-1 %.% BW^-1),
-               xlim=c(0,25),ylim=c(-0.15,0),
+               xlim=c(0,25),ylim=c(-0.5,0.75),
                col=c("red","green","blue","yellow","purple"),
                legend = c( "back","pelvis", "head", "arm_r","arm_l"),  
                las=2, cex.names = 1, beside=TRUE,args.legend = list(x=25, y=-0.1,horiz=TRUE)) #beside=TRUE,xlab="joint",
@@ -882,10 +800,4 @@ er=as.matrix(landing.stds.yy)
 erci=as.matrix(landing.ci.yy)
 arrows(barx,xx+erci, barx,xx, angle=90, code=3, length=0.05)
 arrows(barx,xx-erci, barx,xx, angle=90, code=3, length=0.05)
-
-
-#pairwise.t.test(IMPULSE$Momenta, IMPULSE$Phase, p.adj = "bonf",paired=TRUE)
-#pairwise.t.test(IMPULSE$Momenta, IMPULSE$Coordinate, p.adj = "bonf",paired=TRUE)
-#pairwise.t.test(IMPULSE$Momenta, IMPULSE$Segment, p.adj = "bonf",paired=TRUE)
-
 

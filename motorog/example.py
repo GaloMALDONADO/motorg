@@ -50,7 +50,7 @@ JNCmask = np.array([False,False,False,True,False,False])
 #Fly
 FlyV = []; FlyLM = [];#FlyP = []; 
 FVmask=np.array([False,False,False,True,True,True])
-FLMmask = np.array([True,True,True,False,False,False])
+FLMmask = np.array([True,True,True,True,True,True])
 #Land
 LandV = []; LandLM_abs = []; LandLM_stab = []; LandAM = []; LandM_stab = []; LandNC = []; LandBack = [];
 LVmask  =   np.array([False, False, False, True, True, True])
@@ -308,14 +308,222 @@ viewer.display(jump3[0],avatar3.name)
 viewer.display(land4[5],avatar4.name)
 
 ''' Rate of Change '''
-#TODO
+#Study of contribution of joints 
+#means and std
+data0x = []; data40x = []; data70x = []; data99x = [];
+data0y = []; data40y = []; data70y = []; data99y = [];
+data0z = []; data40z = []; data70z = []; data99z = [];
+data0xx = []; data40xx = []; data70xx = []; data99xx = [];
+data0yy = []; data40yy = []; data70yy = []; data99yy = [];
+data0zz = []; data40zz = []; data70zz = []; data99zz = [];
+for i in xrange (len(mconf.traceurs_list)):   
+    data0x += [JumpLM[i].contributionF[0][:,0]]
+    data40x += [JumpLM[i].contributionF[40][:,0]]
+    data70x += [JumpLM[i].contributionF[70][:,0]]
+    data99x += [JumpLM[i].contributionF[99][:,0]]
+    data0y += [JumpLM[i].contributionF[0][:,1]]
+    data40y += [JumpLM[i].contributionF[40][:,1]]
+    data70y += [JumpLM[i].contributionF[70][:,1]]
+    data99y += [JumpLM[i].contributionF[99][:,1]]
+    data0z += [JumpLM[i].contributionF[0][:,2]]
+    data40z += [JumpLM[i].contributionF[40][:,2]]
+    data70z += [JumpLM[i].contributionF[70][:,2]]
+    data99z += [JumpLM[i].contributionF[99][:,2]]
+    data0xx += [JumpAM[i].contributionF[0][:,3]]
+    data40xx += [JumpAM[i].contributionF[40][:,3]]
+    data70xx += [JumpAM[i].contributionF[70][:,3]]
+    data99xx += [JumpAM[i].contributionF[99][:,3]]
+    data0yy += [JumpAM[i].contributionF[0][:,4]]
+    data40yy += [JumpAM[i].contributionF[40][:,4]]
+    data70yy += [JumpAM[i].contributionF[70][:,4]]
+    data99yy += [JumpAM[i].contributionF[99][:,4]]
+    data0zz += [JumpAM[i].contributionF[0][:,5]]
+    data40zz += [JumpAM[i].contributionF[40][:,5]]
+    data70zz += [JumpAM[i].contributionF[70][:,5]]
+    data99zz += [JumpAM[i].contributionF[99][:,5]]
+
+table_JumpMx = np.matrix([np.mean(np.matrix(data0x), 0).A1, 
+                          np.mean(np.matrix(data40x), 0).A1, 
+                          np.mean(np.matrix(data70x), 0).A1, 
+                          np.mean(np.matrix(data99x), 0).A1])
+table_JumpM_stdx = np.matrix([np.std(np.matrix(data0x), 0).A1, 
+                              np.std(np.matrix(data40x), 0).A1, 
+                              np.std(np.matrix(data70x), 0).A1, 
+                              np.std(np.matrix(data99x), 0).A1])
+table_JumpMy = np.matrix([np.mean(np.matrix(data0y), 0).A1, 
+                          np.mean(np.matrix(data40y), 0).A1, 
+                          np.mean(np.matrix(data70y), 0).A1, 
+                          np.mean(np.matrix(data99y), 0).A1])
+table_JumpM_stdy = np.matrix([np.std(np.matrix(data0y), 0).A1, 
+                              np.std(np.matrix(data40y), 0).A1, 
+                              np.std(np.matrix(data70y), 0).A1, 
+                              np.std(np.matrix(data99y), 0).A1])
+table_JumpMz = np.matrix([np.mean(np.matrix(data0z), 0).A1, 
+                          np.mean(np.matrix(data40z), 0).A1, 
+                          np.mean(np.matrix(data70z), 0).A1, 
+                          np.mean(np.matrix(data99z), 0).A1])
+table_JumpM_stdz = np.matrix([np.std(np.matrix(data0z), 0).A1, 
+                              np.std(np.matrix(data40z), 0).A1, 
+                              np.std(np.matrix(data70z), 0).A1, 
+                              np.std(np.matrix(data99z), 0).A1])
+
+table_JumpMxx = np.matrix([np.mean(np.matrix(data0xx), 0).A1, 
+                           np.mean(np.matrix(data40xx), 0).A1, 
+                           np.mean(np.matrix(data70xx), 0).A1, 
+                           np.mean(np.matrix(data99xx), 0).A1])
+table_JumpM_stdxx = np.matrix([np.std(np.matrix(data0xx), 0).A1, 
+                               np.std(np.matrix(data40xx), 0).A1, 
+                               np.std(np.matrix(data70xx), 0).A1, 
+                               np.std(np.matrix(data99xx), 0).A1])
+table_JumpMyy = np.matrix([np.mean(np.matrix(data0yy), 0).A1, 
+                           np.mean(np.matrix(data40yy), 0).A1, 
+                           np.mean(np.matrix(data70yy), 0).A1, 
+                           np.mean(np.matrix(data99yy), 0).A1])
+table_JumpM_stdyy = np.matrix([np.std(np.matrix(data0yy), 0).A1, 
+                               np.std(np.matrix(data40yy), 0).A1, 
+                               np.std(np.matrix(data70yy), 0).A1, 
+                               np.std(np.matrix(data99yy), 0).A1])
+table_JumpMzz = np.matrix([np.mean(np.matrix(data0zz), 0).A1, 
+                           np.mean(np.matrix(data40zz), 0).A1, 
+                           np.mean(np.matrix(data70zz), 0).A1, 
+                           np.mean(np.matrix(data99zz), 0).A1])
+table_JumpM_stdzz = np.matrix([np.std(np.matrix(data0zz), 0).A1, 
+                               np.std(np.matrix(data40zz), 0).A1, 
+                               np.std(np.matrix(data70zz), 0).A1, 
+                               np.std(np.matrix(data99zz), 0).A1])
 
 
-#TODO : plot total linear and angular momenta CoM
+np.savetxt("tables/momenta/mean/JumpFLMx.csv", table_JumpMx, delimiter=",")
+np.savetxt("tables/momenta/std/JumpFLMx.csv", table_JumpM_stdx, delimiter=",")
+np.savetxt("tables/momenta/mean/JumpFLMy.csv", table_JumpMy, delimiter=",")
+np.savetxt("tables/momenta/std/JumpFLMy.csv", table_JumpM_stdy, delimiter=",")
+np.savetxt("tables/momenta/mean/JumpFLMz.csv", table_JumpMz, delimiter=",")
+np.savetxt("tables/momenta/std/JumpFLMz.csv", table_JumpM_stdz, delimiter=",")
+
+np.savetxt("tables/momenta/mean/JumpTAMx.csv", table_JumpMxx, delimiter=",")
+np.savetxt("tables/momenta/std/JumpTAMx.csv", table_JumpM_stdxx, delimiter=",")
+np.savetxt("tables/momenta/mean/JumpTAMy.csv", table_JumpMyy, delimiter=",")
+np.savetxt("tables/momenta/std/JumpTAMy.csv", table_JumpM_stdyy, delimiter=",")
+np.savetxt("tables/momenta/mean/JumpTAMz.csv", table_JumpMzz, delimiter=",")
+np.savetxt("tables/momenta/std/JumpTAMz.csv", table_JumpM_stdzz, delimiter=",")
+
+
+#means and std
+data0x = []; data40x = []; data70x = []; data99x = [];
+data0y = []; data40y = []; data70y = []; data99y = [];
+data0z = []; data40z = []; data70z = []; data99z = [];
+data0xx = []; data40xx = []; data70xx = []; data99xx = [];
+data0yy = []; data40yy = []; data70yy = []; data99yy = [];
+data0zz = []; data40zz = []; data70zz = []; data99zz = [];
+for i in xrange (len(mconf.traceurs_list)):   
+    data0x += [LandLM_abs[i].contributionF[5][:,0]]
+    data40x += [LandLM_abs[i].contributionF[20][:,0]]
+    data70x += [LandLM_abs[i].contributionF[40][:,0]]
+    data99x += [LandLM_abs[i].contributionF[99][:,0]]
+    data0y += [LandLM_abs[i].contributionF[5][:,1]]
+    data40y += [LandLM_abs[i].contributionF[20][:,1]]
+    data70y += [LandLM_abs[i].contributionF[40][:,1]]
+    data99y += [LandLM_abs[i].contributionF[99][:,1]]
+    data0z += [LandLM_abs[i].contributionF[5][:,2]]
+    data40z += [LandLM_abs[i].contributionF[20][:,2]]
+    data70z += [LandLM_abs[i].contributionF[40][:,2]]
+    data99z += [LandLM_abs[i].contributionF[99][:,2]]
+    data0xx += [LandAM[i].contributionF[5][:,3]]
+    data40xx += [LandAM[i].contributionF[20][:,3]]
+    data70xx += [LandAM[i].contributionF[40][:,3]]
+    data99xx += [LandAM[i].contributionF[99][:,3]]
+    data0yy += [LandAM[i].contributionF[5][:,4]]
+    data40yy += [LandAM[i].contributionF[20][:,4]]
+    data70yy += [LandAM[i].contributionF[40][:,4]]
+    data99yy += [LandAM[i].contributionF[99][:,4]]
+    data0zz += [LandAM[i].contributionF[5][:,5]]
+    data40zz += [LandAM[i].contributionF[20][:,5]]
+    data70zz += [LandAM[i].contributionF[40][:,5]]
+    data99zz += [LandAM[i].contributionF[99][:,5]]
+
+table_JumpMx = np.matrix([np.mean(np.matrix(data0x), 0).A1, 
+                          np.mean(np.matrix(data40x), 0).A1, 
+                          np.mean(np.matrix(data70x), 0).A1, 
+                          np.mean(np.matrix(data99x), 0).A1])
+table_JumpM_stdx = np.matrix([np.std(np.matrix(data0x), 0).A1, 
+                              np.std(np.matrix(data40x), 0).A1, 
+                              np.std(np.matrix(data70x), 0).A1, 
+                              np.std(np.matrix(data99x), 0).A1])
+table_JumpMy = np.matrix([np.mean(np.matrix(data0y), 0).A1, 
+                          np.mean(np.matrix(data40y), 0).A1, 
+                          np.mean(np.matrix(data70y), 0).A1, 
+                          np.mean(np.matrix(data99y), 0).A1])
+table_JumpM_stdy = np.matrix([np.std(np.matrix(data0y), 0).A1, 
+                              np.std(np.matrix(data40y), 0).A1, 
+                              np.std(np.matrix(data70y), 0).A1, 
+                              np.std(np.matrix(data99y), 0).A1])
+table_JumpMz = np.matrix([np.mean(np.matrix(data0z), 0).A1, 
+                          np.mean(np.matrix(data40z), 0).A1, 
+                          np.mean(np.matrix(data70z), 0).A1, 
+                          np.mean(np.matrix(data99z), 0).A1])
+table_JumpM_stdz = np.matrix([np.std(np.matrix(data0z), 0).A1, 
+                              np.std(np.matrix(data40z), 0).A1, 
+                              np.std(np.matrix(data70z), 0).A1, 
+                              np.std(np.matrix(data99z), 0).A1])
+
+table_JumpMxx = np.matrix([np.mean(np.matrix(data0xx), 0).A1, 
+                           np.mean(np.matrix(data40xx), 0).A1, 
+                           np.mean(np.matrix(data70xx), 0).A1, 
+                           np.mean(np.matrix(data99xx), 0).A1])
+table_JumpM_stdxx = np.matrix([np.std(np.matrix(data0xx), 0).A1, 
+                               np.std(np.matrix(data40xx), 0).A1, 
+                               np.std(np.matrix(data70xx), 0).A1, 
+                               np.std(np.matrix(data99xx), 0).A1])
+table_JumpMyy = np.matrix([np.mean(np.matrix(data0yy), 0).A1, 
+                           np.mean(np.matrix(data40yy), 0).A1, 
+                           np.mean(np.matrix(data70yy), 0).A1, 
+                           np.mean(np.matrix(data99yy), 0).A1])
+table_JumpM_stdyy = np.matrix([np.std(np.matrix(data0yy), 0).A1, 
+                               np.std(np.matrix(data40yy), 0).A1, 
+                               np.std(np.matrix(data70yy), 0).A1, 
+                               np.std(np.matrix(data99yy), 0).A1])
+table_JumpMzz = np.matrix([np.mean(np.matrix(data0zz), 0).A1, 
+                           np.mean(np.matrix(data40zz), 0).A1, 
+                           np.mean(np.matrix(data70zz), 0).A1, 
+                           np.mean(np.matrix(data99zz), 0).A1])
+table_JumpM_stdzz = np.matrix([np.std(np.matrix(data0zz), 0).A1, 
+                               np.std(np.matrix(data40zz), 0).A1, 
+                               np.std(np.matrix(data70zz), 0).A1, 
+                               np.std(np.matrix(data99zz), 0).A1])
+
+
+np.savetxt("tables/momenta/mean/LandFLMx.csv", table_JumpMx, delimiter=",")
+np.savetxt("tables/momenta/std/LandFLMx.csv", table_JumpM_stdx, delimiter=",")
+np.savetxt("tables/momenta/mean/LandFLMy.csv", table_JumpMy, delimiter=",")
+np.savetxt("tables/momenta/std/LandFLMy.csv", table_JumpM_stdy, delimiter=",")
+np.savetxt("tables/momenta/mean/LandFLMz.csv", table_JumpMz, delimiter=",")
+np.savetxt("tables/momenta/std/LandFLMz.csv", table_JumpM_stdz, delimiter=",")
+
+np.savetxt("tables/momenta/mean/LandTAMx.csv", table_JumpMxx, delimiter=",")
+np.savetxt("tables/momenta/std/LandTAMx.csv", table_JumpM_stdxx, delimiter=",")
+np.savetxt("tables/momenta/mean/LandTAMy.csv", table_JumpMyy, delimiter=",")
+np.savetxt("tables/momenta/std/LandTAMy.csv", table_JumpM_stdyy, delimiter=",")
+np.savetxt("tables/momenta/mean/LandTAMz.csv", table_JumpMzz, delimiter=",")
+np.savetxt("tables/momenta/std/LandTAMz.csv", table_JumpM_stdzz, delimiter=",")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ''' ***************** MOMENTUM IN PARKOUR STUDY ****************** '''
 import matplotlib.pyplot as plt
+#plot total linear and angular momenta CoM
 JLM_ap = []; JLM_ml=[]; JLM_v=[]; JAM_y=[]; JAM_x=[]; JAM_z=[]; 
 for i in xrange (len(mconf.traceurs_list)):
     JLM_ap += [-np.array(JumpLM[i].h)[:,0]]
@@ -376,7 +584,7 @@ plt.ylabel('Angular Momentum \n $[Kg \cdot m^{2} \cdot s^{-1} \cdot  BW^{-1} \cd
 
 
 
-
+# Now get tables for stats
 ''' Impulsion Phase '''
 nphases = 4;
 segments = 25

@@ -8,8 +8,8 @@ rm(list = ls())
 # Task 1: impulsion through antero-posterior and vertical force
 # Task 2: impulsion through antero posterior angular momentum (around M-L axis at the center of mass)
 # ------------------------------------------------------------------------
-#p='/galo/devel/gepetto/motorg/motorog/tables/momenta/' #home
-p='/local/gmaldona/devel/motorg/motorog/tables/momenta/' #lab
+p='/galo/devel/gepetto/motorg/motorog/tables/momenta/' #home
+#p='/local/gmaldona/devel/motorg/motorog/tables/momenta/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -689,7 +689,7 @@ class = "data.frame", row.names = c(NA, -5L))
 op = par(mar=c(4,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(takeoff.means.z), main="Take-off Linear Momentum (V)",
                ylab=expression(kg %.% m %.% s^-1 %.% BW^-1),
-               xlim=c(0,25),ylim=c(-0.002,0.06),
+               xlim=c(0,25),ylim=c(-0.3,0.3),
                col=c("red","green","blue","yellow","purple"),
                legend = c( "back","pelvis", "head", "arm_r","arm_l"),  
                las=2, cex.names = 1, beside=TRUE,args.legend = list(x=25,horiz=TRUE)) #beside=TRUE,xlab="joint",

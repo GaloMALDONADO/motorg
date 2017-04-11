@@ -3,8 +3,8 @@ rm(list = ls())
 
 
 # ------------------------------------------------------------------------
-#p='/galo/devel/gepetto/motorg/motorog/tables/momenta/' #home
-p='/local/gmaldona/devel/motorg/motorog/tables/momenta/' #lab
+p='/galo/devel/gepetto/motorg/motorog/tables/momenta/' #home
+#p='/local/gmaldona/devel/motorg/motorog/tables/momenta/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -471,9 +471,9 @@ rm(op)
 
 
 op = par(mar=c(8,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
-barx = barplot(as.matrix(land.means.yy), main="Land Angular Momentum Y",
+barx = barplot(as.matrix(-land.means.yy), main="Land Angular Momentum Y",
                ylab=expression(kg %.% m %.% s^-1 %.% BM^-1 %.% H),
-               xlim=c(0,30),ylim=c(-0.2,0.1),
+               xlim=c(0,30),ylim=c(-0.07,0.07),
                col=c("red","green","blue","yellow"),
                legend = c( "5%","20%", "40%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)
@@ -789,7 +789,7 @@ class = "data.frame", row.names = c(NA, -7L))
 op = par(mar=c(5,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(-landing.means.yy), 
                ylab=expression(kg %.% m^2 %.% s^-1 %.% BW^-1 %.% H^-1),
-               xlim=c(0,35),ylim=c(-0.005, 0.013),
+               xlim=c(0,35),ylim=c(-0.08, 0.05),
                col=c("red","green","blue","yellow","purple","azure2","cadetblue"),
                legend = c( 'back','pelvis','thigh_r','thigh_l','head','leg_r','leg_l'),  
                las=2, cex.names = 1, beside=TRUE,args.legend = list(x=35,horiz=TRUE)) #beside=TRUE,xlab="joint",main="Landing Angular Momentum in Sagittal Plane",
@@ -801,3 +801,52 @@ erci=as.matrix(landing.ci.yy)
 arrows(barx,xx+erci, barx,xx, angle=90, code=3, length=0.05)
 arrows(barx,xx-erci, barx,xx, angle=90, code=3, length=0.05)
 
+
+
+
+## vertical torque
+# contribute: pelvis, thighs, legs, back, head
+simp_names = list('5%','20%','40%','100%')
+landing.means.zz <- structure(list(
+  '5%'= c(meanDataAMz[1,12], meanDataAMz[1,1], meanDataAMz[1,2], meanDataAMz[1,7], meanDataAMz[1,13], meanDataAMz[1,3], meanDataAMz[1,8]),
+  '20%' =c(meanDataAMz[2,12], meanDataAMz[2,1], meanDataAMz[2,2], meanDataAMz[2,7], meanDataAMz[2,13], meanDataAMz[2,3], meanDataAMz[2,8]),
+  '40%' = c(meanDataAMz[3,12], meanDataAMz[3,1], meanDataAMz[3,2], meanDataAMz[3,7], meanDataAMz[3,13], meanDataAMz[3,3], meanDataAMz[3,8]),
+  '100%' = c(meanDataAMz[4,12], meanDataAMz[4,1], meanDataAMz[4,2], meanDataAMz[4,7], meanDataAMz[4,13], meanDataAMz[4,3], meanDataAMz[4,8])
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -7L))
+
+#
+landing.stds.zz <- structure(list(
+  '5%'= c(stdDataAMz[1,12], stdDataAMz[1,1], stdDataAMz[1,2], stdDataAMz[1,7], stdDataAMz[1,13], stdDataAMz[1,3], stdDataAMz[1,8]),
+  '20%' =c(stdDataAMz[2,12], stdDataAMz[2,1], stdDataAMz[2,2], stdDataAMz[2,7], stdDataAMz[2,13], stdDataAMz[2,3], stdDataAMz[2,8]),
+  '40%' = c(stdDataAMz[3,12], stdDataAMz[3,1], stdDataAMz[3,2], stdDataAMz[3,7], stdDataAMz[3,13], stdDataAMz[3,3], stdDataAMz[3,8]),
+  '100%' = c(stdDataAMz[4,12], stdDataAMz[4,1], stdDataAMz[4,2], stdDataAMz[4,7], stdDataAMz[4,13], stdDataAMz[4,3], stdDataAMz[4,8])
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -7L))
+
+k=t/sqrt(nparticipants)
+landing.ci.zz <- structure(list(
+  '5%'= c(k*stdDataAMz[1,12], k*stdDataAMz[1,1], k*stdDataAMz[1,2], k*stdDataAMz[1,7], k*stdDataAMz[1,13], k*stdDataAMz[1,3], k*stdDataAMz[1,8]),
+  '20%' =c(k*stdDataAMz[2,12], k*stdDataAMz[2,1], k*stdDataAMz[2,2], k*stdDataAMz[2,7], k*stdDataAMz[2,13], k*stdDataAMz[2,3], k*stdDataAMz[2,8]),
+  '40%' = c(k*stdDataAMz[3,12], k*stdDataAMz[3,1], k*stdDataAMz[3,2], k*stdDataAMz[3,7], k*stdDataAMz[3,13], k*stdDataAMz[3,3], k*stdDataAMz[3,8]),
+  '100%' = c(k*stdDataAMz[4,12], k*stdDataAMz[4,1], k*stdDataAMz[4,2], k*stdDataAMz[4,7], k*stdDataAMz[4,13], k*stdDataAMz[4,3], k*stdDataAMz[4,8])
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -7L))
+
+op = par(mar=c(5,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
+barx = barplot(as.matrix(landing.means.zz), 
+               ylab=expression(kg %.% m^2 %.% s^-1 %.% BW^-1 %.% H^-1),
+               xlim=c(0,35),ylim=c(-0.02, 0.02),
+               col=c("red","green","blue","yellow","purple","azure2","cadetblue"),
+               legend = c( 'back','pelvis','thigh_r','thigh_l','head','leg_r','leg_l'),  
+               las=2, cex.names = 1, beside=TRUE,args.legend = list(x=35,horiz=TRUE)) #beside=TRUE,xlab="joint",main="Landing Angular Momentum in Sagittal Plane",
+rm(op)
+
+xx=as.matrix(landing.means.zz)
+er=as.matrix(landing.stds.zz)
+erci=as.matrix(landing.ci.zz)
+arrows(barx,xx+erci, barx,xx, angle=90, code=3, length=0.05)
+arrows(barx,xx-erci, barx,xx, angle=90, code=3, length=0.05)

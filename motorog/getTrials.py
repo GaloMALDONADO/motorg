@@ -19,12 +19,12 @@ for i in xrange (len(mconf.traceurs_list)):
     np.save('./motions/'+participantName+'_jump.npy', trial.jump)
     np.save('./motions/'+participantName+'_fly.npy', trial.fly)
     np.save('./motions/'+participantName+'_land.npy', trial.land)
-    np.save('./motions/'+participantName+'_jump_dq.npy', trial.jump)
-    np.save('./motions/'+participantName+'_fly_dq.npy', trial.fly)
-    np.save('./motions/'+participantName+'_land_dq.npy', trial.land)
-    np.save('./motions/'+participantName+'_jump_dq.npy', trial.jump)
-    np.save('./motions/'+participantName+'_fly_dq.npy', trial.fly)
-    np.save('./motions/'+participantName+'_land_dq.npy', trial.land)
+    np.save('./motions/'+participantName+'_jump_dq.npy', trial.jumpdq)
+    np.save('./motions/'+participantName+'_fly_dq.npy', trial.flydq)
+    np.save('./motions/'+participantName+'_land_dq.npy', trial.landdq)
+    np.save('./motions/'+participantName+'_jump_ddq.npy', trial.jumpddq)
+    np.save('./motions/'+participantName+'_fly_ddq.npy', trial.flyddq)
+    np.save('./motions/'+participantName+'_land_ddq.npy', trial.landddq)
     
 
     

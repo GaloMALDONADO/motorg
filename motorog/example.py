@@ -89,22 +89,22 @@ for i in xrange (participantsNo):
 
     ''' *******************************  JUMP  ******************************* '''
     ''' Impulsion/Explosivness task is defined with the linear momentum rate in the Antero-Posterior and Vertical axis'''
-    JumpLM += [ucm.ucmMomentum(robots[i], jump, JLMmask, KF, 1)]
+    JumpLM += [ucm.ucmMomentum(robots[i], jump, jump_dq, jump_ddq, JLMmask, KF, 1)]
     Vucm, Vcm, criteria = JumpLM[i].getUCMVariances()
     ''' Impulsion task is also defined with the angular momentum around the Antero-Posterior axis'''
-    JumpAM += [ucm.ucmMomentum(robots[i], jump, JAMmask, 1, KT)]
+    JumpAM += [ucm.ucmMomentum(robots[i], jump, jump_dq, jump_ddq, JAMmask, 1, KT)]
     Vucm, Vcm, criteria = JumpAM[i].getUCMVariances()
     ''' Vision task to calculate the distance to the target '''
-    JumpV += [ucm.ucmJoint(robots[i], jump, IDX_NECK, JVmask)]
+    JumpV += [ucm.ucmJoint(robots[i], jump, jump_dq, jump_ddq, IDX_NECK, JVmask)]
     Vucm, Vcm, criteria = JumpV[i].getUCMVariances()
     #JumpNC += [ucm.ucmJoint(robots[i], jump, IDX_RHAND, JNCmask)]
     #Vucm, Vcm, criteria = JumpNC[i].getUCMVariances()
 
     ''' *******************************  FLY *******************************  '''
     ''' Vision task is defined with the joint flexion of the neck to track the target '''
-    FlyV += [ucm.ucmJoint(robots[i], fly, IDX_NECK,FVmask)]
+    FlyV += [ucm.ucmJoint(robots[i], fly, fly_dq, fly_ddq, IDX_NECK,FVmask)]
     Vucm, Vcm, criteria = FlyV[i].getUCMVariances()
-    FlyLM += [ucm.ucmMomentum(robots[i], fly, FLMmask)]
+    FlyLM += [ucm.ucmMomentum(robots[i], fly, fly_dq, fly_ddq, FLMmask)]
     Vucm, Vcm, criteria = FlyLM[i].getUCMVariances()
     ''' Pelvis task is defined with the joint flexion of the pelvis '''
     #Pelvis += [ucm.ucmJoint(robots[i], fly, 
@@ -116,23 +116,23 @@ for i in xrange (participantsNo):
 
     ''' *******************************  LAND  ******************************* '''
     ''' Damping and reducing GRFs task is defined with the linear momentum '''
-    LandLM_abs += [ucm.ucmMomentum(robots[i], land, LLM_Abs_mask, 1, KF)]
+    LandLM_abs += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LLM_Abs_mask, 1, KF)]
     Vucm, Vcm, criteria = LandLM_abs[i].getUCMVariances()
-    LandLM_stab += [ucm.ucmMomentum(robots[i], land, LLM_Stab_mask, 1, KF)]
+    LandLM_stab += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LLM_Stab_mask, 1, KF)]
     Vucm, Vcm, criteria = LandLM_stab[i].getUCMVariances()
-    LandM_stab += [ucm.ucmMomentum(robots[i], land, LM_Stab_mask, 1, KF)]
+    LandM_stab += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LM_Stab_mask, 1, KF)]
     Vucm, Vcm, criteria = LandM_stab[i].getUCMVariances()
     ''' Angular stability task is also defined with the ang momentum around Antero-Posterior axis'''
-    LandAM += [ucm.ucmMomentum(robots[i], land, LAMmask, 1, KT)]
+    LandAM += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LAMmask, 1, KT)]
     Vucm, Vcm, criteria = LandAM[i].getUCMVariances()
     ''' The head is stabilized during landing throught neck flexion'''
-    LandV += [ucm.ucmJoint(robots[i], land, IDX_NECK, LVmask)]
+    LandV += [ucm.ucmJoint(robots[i], land, land_dq, land_ddq, IDX_NECK, LVmask)]
     Vucm, Vcm, criteria = LandV[i].getUCMVariances()
     # not controlled task
     #LandNC += [ucm.ucmMomentum(robots[i], land, nc_mask)]
     #Vucm, Vcm, criteria = LandNC[i].getUCMVariances()
     # back
-    LandBack += [ucm.ucmMomentum(robots[i], land, back_mask)]
+    LandBack += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, back_mask)]
     Vucm, Vcm, criteria = LandBack[i].getUCMVariances()
     ''' Landing stiffness through the Z displacement of the center of mass '''
     #Stiffness += [ucm.ucmCoM(robots[i], land, mask=np.array([False,False,True]))]

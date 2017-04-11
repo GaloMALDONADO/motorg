@@ -31,6 +31,37 @@ def meanConfiguration(robot,motion):
         dataStd += [robot.dof2pinocchio(np.std(data2,0).A1)]
     return np.matrix(dataMean), np.matrix(dataStd), dataStr
 
+
+def meanConfiguration2(robot,motion):
+    ''' 
+    Motion is a collection of configurations that
+    should be normalized between 0% and 100%
+    Get reference configuration and std:
+    dataMean = mean(q(t))                                                                      
+    dataStd = std(q(t))
+    '''
+    nRep = len(motion)
+    tmax = len(motion[0]['pinocchio_kine'])
+    #DoF = motion[0]['pinocchio_data'][0].A1.shape[0] 
+    DoF = 42
+    data = []
+    dataMean = []
+    dataStd = []
+    dataStr = np.zeros((tmax,DoF,nRep))
+    #for dof in xrange(DoF):
+    for t in xrange(tmax):
+        for i in xrange (nRep):
+            #data += [np.array(motion[i]['pinocchio_data'][t]).squeeze()]
+            #dataStr[t,:,i] = motion[i]['pinocchio_data'][t]
+            coordinates= motion[i]['pinocchio_kine'][t]
+            data += [np.array(coordinates).squeeze()]
+            dataStr[t,:,i] = coordinates
+        data2 = np.matrix(data)
+        dataMean += [np.mean(data2,0).A1]
+        dataStd += [np.std(data2,0).A1]
+    return np.matrix(dataMean), np.matrix(dataStd), dataStr
+
+
 def meanVelocities(model, x, t, cutoff, fs, filter_order):
     Nrep = x.shape[2]
     tmax = x.shape[0]

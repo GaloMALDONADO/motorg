@@ -21,11 +21,17 @@ def getTrials(i):
     jump = np.load('./motions/'+participantName+'_jump.npy')
     fly = np.load('./motions/'+participantName+'_fly.npy')  
     land = np.load('./motions/'+participantName+'_land.npy')
+    jump_dq = np.load('./motions/'+participantName+'_jump_dq.npy')
+    fly_dq = np.load('./motions/'+participantName+'_fly_dq.npy')  
+    land_dq = np.load('./motions/'+participantName+'_land_dq.npy')
+    jump_ddq = np.load('./motions/'+participantName+'_jump_ddq.npy')
+    fly_ddq = np.load('./motions/'+participantName+'_fly_ddq.npy')  
+    land_ddq = np.load('./motions/'+participantName+'_land_ddq.npy')
     #trial = References(mconf.traceurs_list[idxTraceur])
     #trial.loadModel()
     #trial.display()
     #trial.getTrials()
-    return jump,fly,land
+    return jump,fly,land, jump_dq,fly_dq,land_dq,jump_ddq,fly_ddq,land_ddq
 
 def getRobot(i):
     participantName = mconf.traceurs_list[i]
@@ -67,7 +73,7 @@ robots=[]
 participantsNo = len(mconf.traceurs_list)
 for i in xrange (participantsNo):
 
-    (jump,fly,land) = getTrials(i)
+    (jump,fly,land,jump_dq,fly_dq,land_dq,jump_ddq,fly_ddq,land_ddq) = getTrials(i)
     robots += [getRobot(i)]
     # coefficient of force normalization for inter-subject comparison 
     # BW^{-1}

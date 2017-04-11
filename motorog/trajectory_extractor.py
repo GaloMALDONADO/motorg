@@ -63,11 +63,21 @@ class References:
 
     def getTrials(self):
         self.trial = []; self.jump = []; self.fly = []; self.land = []
+        self.jump = []; self.fly = []; self.land = []
+        self.jumpdq = []; self.flydq = []; self.landdq = []
+        self.jumpddq = []; self.flyddq = []; self.landddq = []
         for trls in xrange(len(self.trial_names)):
             self.trial.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+self.trial_names[trls]))
             self.jump.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+self.jump_names[trls]))
             self.fly.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+self.fly_names[trls]))
             self.land.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+self.land_names[trls]))
+            name = os.path.splitext(self.land_names[trls])[0]
+            self.jumpdq.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+name+'dq.mot'))
+            self.flydq.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+name+'dq.mot'))
+            self.landdq.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+name+'dq.mot'))
+            self.jumpddq.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+name+'ddq.mot'))
+            self.flyddq.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+name+'ddq.mot'))
+            self.landddq.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+name+'ddq.mot'))
 
     def playAllTrials(self, dt=0.0025):
         for trls in xrange(len(self.trial_names)):

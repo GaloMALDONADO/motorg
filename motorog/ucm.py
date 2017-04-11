@@ -15,8 +15,8 @@ class UCM:
         self.tf = 100
         self.time = np.linspace(1,100,100)
         self.dt = 0.0025
-        self.fs = 400
-        self.cutoff = 10
+        self.fs = 400 #100
+        self.cutoff = 50
         self.filter_order = 4
 
     def nullspace(self, Jq):
@@ -55,12 +55,12 @@ class UCM:
         (self.dq_mean, self.dq_std, self.dq_data) = tools.meanVelocities(self.robot.model, 
                                                                          self.q_data, 
                                                                          self.time_data,
-                                                                         self.cutoff, 
+                                                                         20, 
                                                                          self.fs, 
                                                                          self.filter_order)
         (self.ddq_mean, self.ddq_std, self.ddq_data) = tools.meanAccelerations(self.dq_data, 
                                                                                self.time_data,
-                                                                               self.cutoff, 
+                                                                               50, 
                                                                                self.fs, 
                                                                                self.filter_order)
         
@@ -133,10 +133,10 @@ class UCM:
                 # which is a lineat appoximation of the controlled manifold
                 cm = devq.copy().T - ucm.copy()
                 # the variance per degree of freedom of the projected deviations is
-                #v_ucm += np.square(np.linalg.norm(ucm))
-                #v_cm  += np.square(np.linalg.norm(cm))
-                v_ucm += np.linalg.norm(ucm)
-                v_cm  += np.linalg.norm(cm)
+                v_ucm += np.square(np.linalg.norm(ucm))
+                v_cm  += np.square(np.linalg.norm(cm))
+                #v_ucm += np.linalg.norm(ucm)
+                #v_cm  += np.linalg.norm(cm)
                 
 
             Vucm.append(v_ucm)
@@ -422,8 +422,8 @@ class ucmMomentum(UCM):
         data = self.robot.data
         p_com = self.robot.com(q)#data.com[0]
         cXi = se3.SE3.Identity()
-        oXi = data.oMi[1]
-        cXi.rotation = oXi.rotation
+        oXi = data.oMi[12]
+        #cXi.rotation = oXi.rotation
         cXi.translation = oXi.translation - p_com
         m_gravity = model.gravity.copy()
         model.gravity.setZero()
@@ -455,7 +455,7 @@ class ucmMomentum(UCM):
         oMc = se3.SE3.Identity()
         oMc.translation = com
         # uncomment in case need to change the rotation of the reference frame
-        #oMc.rotation = self.robot.data.oMi[1].rotation 
+        #oMc.rotation = self.robot.data.oMi[12].rotation 
         cMi = oMc.actInv( self.robot.data.oMi[s] )
         
         cHi = cMi.act(iHi).np.A1
@@ -472,7 +472,7 @@ class ucmMomentum(UCM):
             JH = se3.ccrba(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
             H = self.robot.data.hg.np.A.copy()
             b = self._getBiais(self.q_mean[i], self.dq_mean[i])
-            Hdot = (JH * self.ddq_mean[i].T) + b 
+            Hdot = (JH * self.ddq_mean[i].T) + b #-  (self.robot.data.mass[0] * self.robot.model.gravity.vector)
             h.append(H*self._K)
             self.h = h
             taskNormalized.append(Hdot[self._mask] * self._K) 

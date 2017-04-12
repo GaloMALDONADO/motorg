@@ -47,12 +47,12 @@ class UCM:
         self.robot.tau = se3.rnea(self.robot.model, self.robot.data, q, v, a)
 
 
-    def getReferenceConfigurations(self, Qs):
+    def getReferenceConfigurations(self, Q):
         '''
-        meanConf, stdConf, data = meanConfiguration(Qs)
+        meanConf, stdConf, data = meanConfiguration(Q)
         '''
-        (self.time_mean, self.time_std, self.time_data) = tools.meanTime(Qs)
-        (self.q_mean, self.q_std, self.q_data) = tools.meanConfiguration(self.robot,Qs)
+        (self.time_mean, self.time_std, self.time_data) = tools.meanTime(Q)
+        (self.q_mean, self.q_std, self.q_data) = tools.meanConfiguration(self.robot,Q)
         (self.dq_mean, self.dq_std, self.dq_data) = tools.meanConfiguration2(self.robot,self.DQ)
         (self.ddq_mean, self.ddq_std, self.ddq_data) = tools.meanConfiguration2(self.robot,self.DDQ)
         #(self.dq_mean, self.dq_std, self.dq_data) = tools.meanVelocities(self.robot.model, 
@@ -118,14 +118,14 @@ class UCM:
 ''' Uncontrolled Manifold of the Momentum '''
 class ucmMomentum(UCM):
 
-    def __init__(self, robot, Qs, dq, ddq, mask, KF=1, KT=1, name="UCM of CoM"):
+    def __init__(self, robot, Q, dq, ddq, mask, KF=1, KT=1, name="UCM of CoM"):
         UCM.__init__(self, robot)
         self.name = name
         self.robot = robot
-        self.Qs = Qs
+        self.Q = Q
         self.DQ = dq
         self.DDQ = ddq
-        self.repNo = len(Qs)
+        self.repNo = len(Q)
         self._mask = mask
         self._KF = np.float64(KF)
         self._KT = np.float64(KT)
@@ -228,8 +228,8 @@ class ucmMomentum(UCM):
                 hc, hcd = self._getContribution(p_com,s) 
                 segH.append(hc*self._K)
                 segF.append(hcd*self._K)
-            contributionH.append(np.array(segH).squeeze())
-            contributionF.append(np.array(segF).squeeze())
+            contributionH.append(np.array(segH).squeeze()*self._K)
+            contributionF.append(np.array(segF).squeeze()*self._K)
             self.contribution = contributionH
             self.contributionF = contributionF
             
@@ -238,19 +238,20 @@ class ucmMomentum(UCM):
             
         return task, Jtask, drift
         
-    def _getReferenceTask(self, Qs):
+    def _getReferenceTask(self, Q):
         '''
         Xi_hat = mean(x(t))
         '''
         x=[]
         for i in xrange (self.repNo):
-            x += [self._getTask(Qs[i]['pinocchio_data'],Qs[i]['time'])]
+            x += [self._getTask(Q[i]['pinocchio_data'],Q[i]['time'])]
         meanV, stdV = meanVar(np.array(x).squeeze())
         self.repData = x
         return meanV, stdV
 
     def momentaExtraction(self):
         # create Dictionary
+        data = {'hg':[],'dhg':[],'hg_segments':[],'dhg_segments':[]}
         tmax = 100
         nRep = self.repNo
         q = np.zeros((tmax,49,nRep))
@@ -258,13 +259,13 @@ class ucmMomentum(UCM):
         ddq = np.zeros((tmax,42,nRep))
         data_Hg = np.zeros((tmax,6,nRep))
         data_dHg = np.zeros((tmax,6,nRep))
-        data_Hgs  = np.zeros((tmax,6,nRep,25))
-        data_dHgs = np.zeros((tmax,6,nRep,25))
+        data_Hgs  = np.zeros((tmax,6,nRep,26))
+        data_dHgs = np.zeros((tmax,6,nRep,26))
         for t in xrange(tmax):
             for i in xrange (nRep):
                 q[t,:,i] = np.matrix(self.Q[i]['pinocchio_data'][t]).squeeze()
-                dq[t,:,i] = np.matrix(self.DQ[i]['kine_data'][t]).squeeze()
-                ddq[t,:,i] = np.matrix(self.DDQ[i]['kine_data'][t]).squeeze()
+                dq[t,:,i] = np.matrix(self.DQ[i]['pinocchio_kine'][t]).squeeze()
+                ddq[t,:,i] = np.matrix(self.DDQ[i]['pinocchio_kine'][t]).squeeze()
                 se3.forwardKinematics(self.robot.model, 
                                       self.robot.data, 
                                       q[t,:,i], 
@@ -278,20 +279,23 @@ class ucmMomentum(UCM):
                 H = self.robot.data.hg.np.A.copy()
                 HNormalized = H*self._K
                 b = self._getBiais(q[t,:,i], dq[t,:,i])
-                bNormalized = b*self.K
-                Hdot = (JH * ddq[t,:,i].T) + b
+                bNormalized = b*self._K
+                Hdot = (JH * np.matrix(ddq[t,:,i]).squeeze().T) + b
                 HdotNormalized = Hdot*self._K
-                data_Hg[t,:,i] = HNormalized
-                data_dHg[t,:,i] = HdotNormalized
+                data_Hg[t,:,i] = HNormalized.squeeze()
+                data_dHg[t,:,i] = HdotNormalized.squeeze()
 
                 # Segmental contributions to centroidal momenta (and its rate of change)
                 segH = []; segF=[]
                 p_com = self.robot.com(q[t,:,i])
                 for s in range(1,26):
-                    (data_Hgs[t,s,i,:], data_dHgs[t,s,i,:]) = self._getContribution(p_com,s) 
-                
-        return data_Hg, data_dHg, data_Hgs, data_dHgs
-
+                    (data_Hgs[t,:,i,s], data_dHgs[t,:,i,s]) = self._getContribution(p_com,s) 
+        data['hg'].append(data_Hg)
+        data['dhg'].append(data_dHg)
+        data['hg_segments'].append(data_dHgs)
+        data['dhg_segments'].append(data_Hgs)
+        return data
+    '''
     def computeStats(self):
         # computes mean,std of H, Hdot and segmetal contributions
         (data_Hg, data_dHg, data_Hgs, data_dHgs) = self.momentaExtraction()
@@ -337,11 +341,12 @@ class ucmMomentum(UCM):
         dataMean += [robot.dof2pinocchio(np.mean(data2,0).A1)]
         dataStd += [robot.dof2pinocchio(np.std(data2,0).A1)]
 
-
+    '''
     
     def getUCMVariances(self):
-        self.computeStats()
-        self.getReferenceConfigurations(self.Qs)
+        #self.computeStats()
+        self.getReferenceConfigurations(self.Q)
+        self.data = self.momentaExtraction()
         (self.task, self.JTask, self.drift) = self._getDynTask()
         #self.JTask = self._getJmeank()
         self.NTask = self.nullspace(self.JTask)
@@ -363,15 +368,15 @@ class ucmMomentum(UCM):
 Joints
 '''
 class ucmJoint(UCM):
-    def __init__(self, robot, Qs, dq, ddq, frame_id, mask, name="UCM of CoM"):
+    def __init__(self, robot, Q, dq, ddq, frame_id, mask, name="UCM of CoM"):
         assert len(mask) == 6, "The mask must have 6 elements"
         UCM.__init__(self, robot)
         self.name = name
         self.robot = robot
-        self.Qs = Qs
+        self.Q = Q
         self.DQ = dq
         self.DDQ = ddq
-        self.repNo = len(Qs)
+        self.repNo = len(Q)
         self._mask = mask
         self._frame_id = frame_id
 
@@ -412,7 +417,7 @@ class ucmJoint(UCM):
         return task, JTask , drift
     
     def getUCMVariances(self):
-        self.getReferenceConfigurations(self.Qs)
+        self.getReferenceConfigurations(self.Q)
         (self.task, self.JTask, self.drift) = self._getDynTask()
         self.NTask = self.nullspace(self.JTask)
         self.n_ucm = self.repNo * self.robot.nv
@@ -437,12 +442,12 @@ class ucmJoint(UCM):
 ''' Uncontrolled Manifold of the Center of Mass '''
 class ucmCoM(UCM):
 
-    def __init__(self, robot,Qs, dq, ddq, mask=(np.ones(3)).astype(bool), name="UCM of CoM"):
+    def __init__(self, robot,Q, dq, ddq, mask=(np.ones(3)).astype(bool), name="UCM of CoM"):
         UCM.__init__(self, robot)
         self.name = name
         self.robot = robot
-        self.Qs = Qs
-        self.repNo = len(Qs)
+        self.Q = Q
+        self.repNo = len(Q)
         self._mask = mask
 
     @property
@@ -453,13 +458,13 @@ class ucmCoM(UCM):
         assert len(mask) == 3, "The mask must have 3 elements"
         self._mask = mask.astype(bool)
 
-    def getReferenceTask(self, Qs):
+    def getReferenceTask(self, Q):
         '''
         Xi_hat = mean(x(t))
         '''
         x=[]
         for i in xrange (self.repNo):
-            x += [self._getTask(Qs[i]['pinocchio_data'])]
+            x += [self._getTask(Q[i]['pinocchio_data'])]
         meanCoM, stdCoM = meanVar(np.array(x).squeeze())
         self.repCoM = x
         return meanCoM, stdCoM
@@ -479,7 +484,7 @@ class ucmCoM(UCM):
         return taskJacobian
         
     def getUCMVariances(self):
-        self.meanConf, self.stdConf, self.data = self.getReferenceConfiguration(self.Qs)
+        self.meanConf, self.stdConf, self.data = self.getReferenceConfiguration(self.Q)
         self.JCoM = self._getJacobian(self.meanConf)
         self.NCoM = self.nullspace(self.JCoM)
         self.n_ucm = self.repNo * self.robot.nv
@@ -495,7 +500,7 @@ class ucmCoM(UCM):
     
     
     def plotTask(self, deg=True):
-        self.meanCoM, self.stdCoM = self.getReferenceTask(self.Qs)
+        self.meanCoM, self.stdCoM = self.getReferenceTask(self.Q)
         sangle = 'degrees'
         title = 'Center of mass task'
         ntrials = self.repNo

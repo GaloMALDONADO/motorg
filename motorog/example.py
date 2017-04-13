@@ -27,10 +27,6 @@ def getTrials(i):
     jump_ddq = np.load('./motions/'+participantName+'_jump_ddq.npy')
     fly_ddq = np.load('./motions/'+participantName+'_fly_ddq.npy')  
     land_ddq = np.load('./motions/'+participantName+'_land_ddq.npy')
-    #trial = References(mconf.traceurs_list[idxTraceur])
-    #trial.loadModel()
-    #trial.display()
-    #trial.getTrials()
     return jump,fly,land, jump_dq,fly_dq,land_dq,jump_ddq,fly_ddq,land_ddq
 
 def getRobot(i):
@@ -104,7 +100,7 @@ for i in xrange (participantsNo):
     ''' Vision task is defined with the joint flexion of the neck to track the target '''
     FlyV += [ucm.ucmJoint(robots[i], fly, fly_dq, fly_ddq, IDX_NECK,FVmask)]
     Vucm, Vcm, criteria = FlyV[i].getUCMVariances()
-    FlyLM += [ucm.ucmMomentum(robots[i], fly, fly_dq, fly_ddq, FLMmask)]
+    FlyLM += [ucm.ucmMomentum(robots[i], fly, fly_dq, fly_ddq, FLMmask, 1, 1)]
     Vucm, Vcm, criteria = FlyLM[i].getUCMVariances()
     ''' Pelvis task is defined with the joint flexion of the pelvis '''
     #Pelvis += [ucm.ucmJoint(robots[i], fly, 
@@ -116,11 +112,11 @@ for i in xrange (participantsNo):
 
     ''' *******************************  LAND  ******************************* '''
     ''' Damping and reducing GRFs task is defined with the linear momentum '''
-    LandLM_abs += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LLM_Abs_mask, 1, KF)]
+    LandLM_abs += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LLM_Abs_mask, KF, 1)]
     Vucm, Vcm, criteria = LandLM_abs[i].getUCMVariances()
-    LandLM_stab += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LLM_Stab_mask, 1, KF)]
+    LandLM_stab += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LLM_Stab_mask, KF,1)]
     Vucm, Vcm, criteria = LandLM_stab[i].getUCMVariances()
-    LandM_stab += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LM_Stab_mask, 1, KF)]
+    LandM_stab += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LM_Stab_mask, KF, 1)]
     Vucm, Vcm, criteria = LandM_stab[i].getUCMVariances()
     ''' Angular stability task is also defined with the ang momentum around Antero-Posterior axis'''
     LandAM += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LAMmask, 1, KT)]

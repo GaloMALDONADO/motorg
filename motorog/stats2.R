@@ -8,8 +8,8 @@ rm(list = ls())
 # Task 1: impulsion through antero-posterior and vertical force
 # Task 2: impulsion through antero posterior angular momentum (around M-L axis at the center of mass)
 # ------------------------------------------------------------------------
-#p='/galo/devel/gepetto/motorg/motorog/' #home
-p='/local/gmaldona/devel/motorg/motorog/' #lab
+p='/galo/devel/gepetto/motorg/motorog/' #home
+#p='/local/gmaldona/devel/motorg/motorog/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -112,9 +112,9 @@ jump.means <- structure(list('1'=c(meanImpLM1,meanImpAM1),
                               .Names = c("1%", "40%",  "70%", "100%"), 
                               class = "data.frame", row.names = c(NA, -2L))
 
-barx = barplot(as.matrix(jump.means), main="Jump",
+barx = barplot(as.matrix(jump.means), main="Takeoff",
                 xlab="Phase of the motion", ylab="Index of Motor Task Control",
-                xlim=c(0,13),ylim=c(-2.5,4),
+                xlim=c(0,13),ylim=c(-0.5,8),
                 col=c("blue","red"),
                 legend = c( "Force task","Torque task"), beside=TRUE)
 
@@ -161,28 +161,28 @@ y <- 2
 offset1 <- 0.2
 offset2 <- 0.2
 
-displayEffects(x[1:2], 2.1, offset1, 1.3, '*')
-displayEffects(x[3:4], 0.7, offset1, offset2, '*')
-displayEffects(x[5:6], 1.5, offset1, 0.95, '*')
-displayEffects(x[7:8], 2.5, offset1, 0.6, '*')
+displayEffects(x[1:2], 7.1, offset1, 3.5, '*')
+displayEffects(x[3:4], 4.8, offset1, 2.2, '*')
+displayEffects(x[5:6], 6.1, offset1, 4, '*')
+displayEffects(x[7:8], 4.7, offset1, 0.9, '*')
 
-vector <- c((x[1]+x[2])/2, (x[7]+x[8])/2)
-displayEffects(array(vector), -1.95, -1.7, -1.7, '**')
-vector <- c((x[3]+x[4])/2, (x[7]+x[8])/2)
-displayEffects(array(vector), -1.4, -1.15, -1.15, '**')
-vector <- c((x[5]+x[6])/2, (x[7]+x[8])/2)
-displayEffects(array(vector), -0.9, -0.65, -0.65, '**')
+#vector <- c((x[1]+x[2])/2, (x[7]+x[8])/2)
+#displayEffects(array(vector), -1.95, -1.7, -1.7, '**')
+#vector <- c((x[3]+x[4])/2, (x[7]+x[8])/2)
+#displayEffects(array(vector), -1.4, -1.15, -1.15, '**')
+#vector <- c((x[5]+x[6])/2, (x[7]+x[8])/2)
+#displayEffects(array(vector), -0.9, -0.65, -0.65, '**')
 
 # ----------------------------- Repeated Measures Anova ---------------------------
 # compute repetitive measures anova
 aovstats <-aov(SOT_IMPULSE$Ratio ~ 
-               (SOT_IMPULSE$Task*SOT_IMPULSE$Phase) + 
-               Error(SOT_IMPULSE$Participant  / (SOT_IMPULSE$Task*SOT_IMPULSE$Phase)), 
+               (SOT_IMPULSE$Task+SOT_IMPULSE$Phase) + 
+               Error(SOT_IMPULSE$Participant  / (SOT_IMPULSE$Task+SOT_IMPULSE$Phase)), 
                data = SOT_IMPULSE)
 summary(aovstats)
 # tasks are significantly differents p = 0.00425 ** <0.01
-# phases are significantly differents p = 6.15e-06 *** < 0.05
-# task:phases interactions are not significantly different
+# phases are not significantly differents p = 6.15e-06 *** < 0.05
+
 
 # Effect Size
 # of the tasks
@@ -222,8 +222,6 @@ pairwise.t.test(SOT_IMPULSE$Ratio, SOT_IMPULSE$Phase, p.adj = "bonf",paired=TRUE
 
 
 
-
-
 # ----------------------------------------------
 #                 Landing
 # Task 1: vertical force 
@@ -231,8 +229,8 @@ pairwise.t.test(SOT_IMPULSE$Ratio, SOT_IMPULSE$Phase, p.adj = "bonf",paired=TRUE
 # Task 3: Torque around M-L axis at the CoM
 # ----------------------------------------------
 rm(list = ls())
-#p='/galo/devel/gepetto/motorg/motorog/' #home
-p='/local/gmaldona/devel/motorg/motorog/' #lab
+p='/galo/devel/gepetto/motorg/motorog/' #home
+#p='/local/gmaldona/devel/motorg/motorog/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -377,7 +375,7 @@ land.means <- structure(list('5'=c(meanForce5,  meanStab5, meanTau5),
                        class = "data.frame", row.names = c(NA, -3L))
 barx = barplot(as.matrix(land.means), main="Landing",
                xlab="Phase of the motion", ylab="Index of Motor Task Control",
-               xlim=c(0,15),ylim=c(-2,5.5),
+               xlim=c(0,15),ylim=c(-2,15),
                col=c("red","green","blue"),
                legend = c( "Force task","Stability force task","Stability torque task"), beside=TRUE)
 
@@ -419,33 +417,32 @@ displayEffects <- function(x, y, offset1, offset2, s='*'){
 # capture x coordinates of bars
 x <- barx
 
-displayEffects(x[1:2], 2., 0.2, 1.3, '*')
+displayEffects(x[1:2], 8.2, 0.2, 0.8, '*')
 displayEffects(x[2:3], -0.5, -0.3, -0.3, '*')
-displayEffects( c(x[1],x[3] ),  2.4, .8, 1.3, '*')
+displayEffects( c(x[1],x[3] ),  9.1, .8, 4.3, '*')
 
-displayEffects(x[4:5], 2.4, 0.9, 0.2, '*')
+displayEffects(x[4:5], 8.4, 0.9, 4.2, '*')
 displayEffects(x[5:6], -0.5, -0.3, -0.3, '*')
-displayEffects( c(x[4],x[6] ),  2.8, .8, 1.6, '*')
+displayEffects( c(x[4],x[6] ),  9.2, .8, 6.2, '*')
 
-displayEffects(x[7:8], 1.7, 0.9, 0.2, '*')
+displayEffects(x[7:8], 6.2, 0.9, 0.3, '*')
 displayEffects(x[8:9], -0.6, -0.4, -0.4, '*')
-displayEffects( c(x[7],x[9] ),  2.1, .8, 1.6, '*')
+displayEffects( c(x[7],x[9] ),  7.1, .8, 3.6, '*')
 
-displayEffects(x[10:11], 3, 1.3, 0.2, '*')
+displayEffects(x[10:11], 9.1, 7, 0.2, '*')
 displayEffects(x[11:12], -2, -1.8, -1.8, '*')
-displayEffects( c(x[10],x[12] ),  3.4, 1.7, 3.4, '*')
+displayEffects( c(x[10],x[12] ),  10, 1.7, 3.4, '*')
 
 
 # ----------------------------- Repeated Measures Anova ---------------------------
 # compute repetitive measures anova
 statsaov2 <-aov(SOT_LAND$Ratio ~ (SOT_LAND$Task+SOT_LAND$Phase) + 
-                  Error(SOT_LAND$Participant / (SOT_LAND$Task*SOT_LAND$Phase)), 
+                  Error(SOT_LAND$Participant / (SOT_LAND$Task+SOT_LAND$Phase)), 
                 data = SOT_LAND)
 summary(statsaov2) 
 # tasks are significantly differents p = 1.96e-06 ***
 # phases are not significantly differents
 # tasks:phase interactions are significant p=7.9e-08 ***
-
 
 # Effect Size
 # of the tasks
@@ -467,11 +464,16 @@ ftailleEffet<-sqrt(etacarrePartiel/(1-etacarrePartiel))
 # POST-HOC
 # Compare tasks
 pairwise.t.test(SOT_LAND$Ratio, SOT_LAND$Task, p.adj = "bonf",paired=TRUE)
+
 # task 1 (V force) signifficantly different from task 3 (Torque CoM)
 # task 2 (Stability Forces) signifficantly different from task 3 (Torque CoM)
 # task 1 (V force) signifficantly different from task 2 (Stability Forces) 
 
 # compare phases
+pairwise.t.test(SOT_LAND$Ratio, SOT_LAND$Phase, p.adj = "bonf",paired=TRUE)
+# 5 diff than 20, 40, 99
+# 
+
 pairwise.t.test(SOT_LAND$Ratio, SOT_LAND$Task:SOT_LAND$Phase, p.adj = "bonf",paired=TRUE)
 # 1:99 with 3:99, p = 0.025
 # 2:20 with 1:20, p = 0.05

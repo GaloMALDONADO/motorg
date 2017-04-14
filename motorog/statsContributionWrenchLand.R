@@ -3,13 +3,13 @@ rm(list = ls())
 
 
 # ------------------------------------------------------------------------
-p='/galo/devel/gepetto/motorg/motorog/tables/momenta/' #home
-#p='/local/gmaldona/devel/motorg/motorog/tables/momenta/' #lab
+#p='/galo/devel/gepetto/motorg/motorog/tables/momenta/' #home
+p='/local/gmaldona/devel/motorg/motorog/tables/momenta/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
-names<- c('pelvis','thigh_r','leg_r','ankle_r','subtalar_r','mtp_r','thigh_l','leg_l','ankle_l','subtalar_l',
-          'mtp_l','back','head','arm_r','elbow_r','radioulnar_r','radius_lunate_r','lunate_hand_r','fingers_r',
+names<- c('pelvis','thigh_r','leg_r','ankle_r','foot_r','toes_r','thigh_l','leg_l','ankle_l','foot_l',
+          'toes_l','back','head','arm_r','elbow_r','radioulnar_r','radius_lunate_r','lunate_hand_r','fingers_r',
           'arm_l','elbow_l','radioulnar_l','radius_lunate_l','lunate_hand_l','fingers_l')
 
 # ---------------------- Read the data -----------------------------------
@@ -49,13 +49,13 @@ land.means.x <- structure(list('pelvis'=c(meanDataLMx[1,1], meanDataLMx[2,1], me
                                'thigh_r'=c(meanDataLMx[1,2], meanDataLMx[2,2], meanDataLMx[3,2], meanDataLMx[4,2]),
                                'leg_r'=c(meanDataLMx[1,3], meanDataLMx[2,3], meanDataLMx[3,3], meanDataLMx[4,3]),
                                'ankle_r'=c(meanDataLMx[1,4], meanDataLMx[2,4], meanDataLMx[3,4], meanDataLMx[4,4]),
-                               'subtalar_r'=c(meanDataLMx[1,5], meanDataLMx[2,5], meanDataLMx[3,5], meanDataLMx[4,5]),
-                               'mtp_r'=c(meanDataLMx[1,6], meanDataLMx[2,6], meanDataLMx[3,6], meanDataLMx[4,6]),
+                               'foot_r'=c(meanDataLMx[1,5], meanDataLMx[2,5], meanDataLMx[3,5], meanDataLMx[4,5]),
+                               'toes_r'=c(meanDataLMx[1,6], meanDataLMx[2,6], meanDataLMx[3,6], meanDataLMx[4,6]),
                                'thigh_l'=c(meanDataLMx[1,7], meanDataLMx[2,7], meanDataLMx[3,7], meanDataLMx[4,7]),
                                'leg_l'=c(meanDataLMx[1,8], meanDataLMx[2,8], meanDataLMx[3,8], meanDataLMx[4,8]),
                                'ankle_l'=c(meanDataLMx[1,9], meanDataLMx[2,9], meanDataLMx[3,9], meanDataLMx[4,9]),
-                               'subtalar_l'=c(meanDataLMx[1,10], meanDataLMx[2,10], meanDataLMx[3,10], meanDataLMx[4,10]),
-                               'mtp_l'=c(meanDataLMx[1,11], meanDataLMx[2,11], meanDataLMx[3,11], meanDataLMx[4,11]),
+                               'foot_l'=c(meanDataLMx[1,10], meanDataLMx[2,10], meanDataLMx[3,10], meanDataLMx[4,10]),
+                               'toes_l'=c(meanDataLMx[1,11], meanDataLMx[2,11], meanDataLMx[3,11], meanDataLMx[4,11]),
                                'back'=c(meanDataLMx[1,12], meanDataLMx[2,12], meanDataLMx[3,12], meanDataLMx[4,12]),
                                'head'=c(meanDataLMx[1,13], meanDataLMx[2,13], meanDataLMx[3,13], meanDataLMx[4,13]),
                                'arm_r'=c(meanDataLMx[1,14], meanDataLMx[2,14], meanDataLMx[3,14], meanDataLMx[4,14]),
@@ -81,13 +81,13 @@ land.means.y <- structure(list('pelvis'=c(meanDataLMy[1,1], meanDataLMy[2,1], me
                                'thigh_r'=c(meanDataLMy[1,2], meanDataLMy[2,2], meanDataLMy[3,2], meanDataLMy[4,2]),
                                'leg_r'=c(meanDataLMy[1,3], meanDataLMy[2,3], meanDataLMy[3,3], meanDataLMy[4,3]),
                                'ankle_r'=c(meanDataLMy[1,4], meanDataLMy[2,4], meanDataLMy[3,4], meanDataLMy[4,4]),
-                               'subtalar_r'=c(meanDataLMy[1,5], meanDataLMy[2,5], meanDataLMy[3,5], meanDataLMy[4,5]),
-                               'mtp_r'=c(meanDataLMy[1,6], meanDataLMy[2,6], meanDataLMy[3,6], meanDataLMy[4,6]),
+                               'foot_r'=c(meanDataLMy[1,5], meanDataLMy[2,5], meanDataLMy[3,5], meanDataLMy[4,5]),
+                               'toes_r'=c(meanDataLMy[1,6], meanDataLMy[2,6], meanDataLMy[3,6], meanDataLMy[4,6]),
                                'thigh_l'=c(meanDataLMy[1,7], meanDataLMy[2,7], meanDataLMy[3,7], meanDataLMy[4,7]),
                                'leg_l'=c(meanDataLMy[1,8], meanDataLMy[2,8], meanDataLMy[3,8], meanDataLMy[4,8]),
                                'ankle_l'=c(meanDataLMy[1,9], meanDataLMy[2,9], meanDataLMy[3,9], meanDataLMy[4,9]),
-                               'subtalar_l'=c(meanDataLMy[1,10], meanDataLMy[2,10], meanDataLMy[3,10], meanDataLMy[4,10]),
-                               'mtp_l'=c(meanDataLMy[1,11], meanDataLMy[2,11], meanDataLMy[3,11], meanDataLMy[4,11]),
+                               'foot_l'=c(meanDataLMy[1,10], meanDataLMy[2,10], meanDataLMy[3,10], meanDataLMy[4,10]),
+                               'toes_l'=c(meanDataLMy[1,11], meanDataLMy[2,11], meanDataLMy[3,11], meanDataLMy[4,11]),
                                'back'=c(meanDataLMy[1,12], meanDataLMy[2,12], meanDataLMy[3,12], meanDataLMy[4,12]),
                                'head'=c(meanDataLMy[1,13], meanDataLMy[2,13], meanDataLMy[3,13], meanDataLMy[4,13]),
                                'arm_r'=c(meanDataLMy[1,14], meanDataLMy[2,14], meanDataLMy[3,14], meanDataLMy[4,14]),
@@ -112,13 +112,13 @@ land.means.z <- structure(list('pelvis'=c(meanDataLMz[1,1], meanDataLMz[2,1], me
                                'thigh_r'=c(meanDataLMz[1,2], meanDataLMz[2,2], meanDataLMz[3,2], meanDataLMz[4,2]),
                                'leg_r'=c(meanDataLMz[1,3], meanDataLMz[2,3], meanDataLMz[3,3], meanDataLMz[4,3]),
                                'ankle_r'=c(meanDataLMz[1,4], meanDataLMz[2,4], meanDataLMz[3,4], meanDataLMz[4,4]),
-                               'subtalar_r'=c(meanDataLMz[1,5], meanDataLMz[2,5], meanDataLMz[3,5], meanDataLMz[4,5]),
-                               'mtp_r'=c(meanDataLMz[1,6], meanDataLMz[2,6], meanDataLMz[3,6], meanDataLMz[4,6]),
+                               'foot_r'=c(meanDataLMz[1,5], meanDataLMz[2,5], meanDataLMz[3,5], meanDataLMz[4,5]),
+                               'toes_r'=c(meanDataLMz[1,6], meanDataLMz[2,6], meanDataLMz[3,6], meanDataLMz[4,6]),
                                'thigh_l'=c(meanDataLMz[1,7], meanDataLMz[2,7], meanDataLMz[3,7], meanDataLMz[4,7]),
                                'leg_l'=c(meanDataLMz[1,8], meanDataLMz[2,8], meanDataLMz[3,8], meanDataLMz[4,8]),
                                'ankle_l'=c(meanDataLMz[1,9], meanDataLMz[2,9], meanDataLMz[3,9], meanDataLMz[4,9]),
-                               'subtalar_l'=c(meanDataLMz[1,10], meanDataLMz[2,10], meanDataLMz[3,10], meanDataLMz[4,10]),
-                               'mtp_l'=c(meanDataLMz[1,11], meanDataLMz[2,11], meanDataLMz[3,11], meanDataLMz[4,11]),
+                               'foot_l'=c(meanDataLMz[1,10], meanDataLMz[2,10], meanDataLMz[3,10], meanDataLMz[4,10]),
+                               'toes_l'=c(meanDataLMz[1,11], meanDataLMz[2,11], meanDataLMz[3,11], meanDataLMz[4,11]),
                                'back'=c(meanDataLMz[1,12], meanDataLMz[2,12], meanDataLMz[3,12], meanDataLMz[4,12]),
                                'head'=c(meanDataLMz[1,13], meanDataLMz[2,13], meanDataLMz[3,13], meanDataLMz[4,13]),
                                'arm_r'=c(meanDataLMz[1,14], meanDataLMz[2,14], meanDataLMz[3,14], meanDataLMz[4,14]),
@@ -144,13 +144,13 @@ land.means.xx <- structure(list('pelvis'=c(meanDataAMx[1,1], meanDataAMx[2,1], m
                                 'thigh_r'=c(meanDataAMx[1,2], meanDataAMx[2,2], meanDataAMx[3,2], meanDataAMx[4,2]),
                                 'leg_r'=c(meanDataAMx[1,3], meanDataAMx[2,3], meanDataAMx[3,3], meanDataAMx[4,3]),
                                 'ankle_r'=c(meanDataAMx[1,4], meanDataAMx[2,4], meanDataAMx[3,4], meanDataAMx[4,4]),
-                                'subtalar_r'=c(meanDataAMx[1,5], meanDataAMx[2,5], meanDataAMx[3,5], meanDataAMx[4,5]),
-                                'mtp_r'=c(meanDataAMx[1,6], meanDataAMx[2,6], meanDataAMx[3,6], meanDataAMx[4,6]),
+                                'foot_r'=c(meanDataAMx[1,5], meanDataAMx[2,5], meanDataAMx[3,5], meanDataAMx[4,5]),
+                                'toes_r'=c(meanDataAMx[1,6], meanDataAMx[2,6], meanDataAMx[3,6], meanDataAMx[4,6]),
                                 'thigh_l'=c(meanDataAMx[1,7], meanDataAMx[2,7], meanDataAMx[3,7], meanDataAMx[4,7]),
                                 'leg_l'=c(meanDataAMx[1,8], meanDataAMx[2,8], meanDataAMx[3,8], meanDataAMx[4,8]),
                                 'ankle_l'=c(meanDataAMx[1,9], meanDataAMx[2,9], meanDataAMx[3,9], meanDataAMx[4,9]),
-                                'subtalar_l'=c(meanDataAMx[1,10], meanDataAMx[2,10], meanDataAMx[3,10], meanDataAMx[4,10]),
-                                'mtp_l'=c(meanDataAMx[1,11], meanDataAMx[2,11], meanDataAMx[3,11], meanDataAMx[4,11]),
+                                'foot_l'=c(meanDataAMx[1,10], meanDataAMx[2,10], meanDataAMx[3,10], meanDataAMx[4,10]),
+                                'toes_l'=c(meanDataAMx[1,11], meanDataAMx[2,11], meanDataAMx[3,11], meanDataAMx[4,11]),
                                 'back'=c(meanDataAMx[1,12], meanDataAMx[2,12], meanDataAMx[3,12], meanDataAMx[4,12]),
                                 'head'=c(meanDataAMx[1,13], meanDataAMx[2,13], meanDataAMx[3,13], meanDataAMx[4,13]),
                                 'arm_r'=c(meanDataAMx[1,14], meanDataAMx[2,14], meanDataAMx[3,14], meanDataAMx[4,14]),
@@ -176,13 +176,13 @@ land.means.yy <- structure(list('pelvis'=c(meanDataAMy[1,1], meanDataAMy[2,1], m
                                 'thigh_r'=c(meanDataAMy[1,2], meanDataAMy[2,2], meanDataAMy[3,2], meanDataAMy[4,2]),
                                 'leg_r'=c(meanDataAMy[1,3], meanDataAMy[2,3], meanDataAMy[3,3], meanDataAMy[4,3]),
                                 'ankle_r'=c(meanDataAMy[1,4], meanDataAMy[2,4], meanDataAMy[3,4], meanDataAMy[4,4]),
-                                'subtalar_r'=c(meanDataAMy[1,5], meanDataAMy[2,5], meanDataAMy[3,5], meanDataAMy[4,5]),
-                                'mtp_r'=c(meanDataAMy[1,6], meanDataAMy[2,6], meanDataAMy[3,6], meanDataAMy[4,6]),
+                                'foot_r'=c(meanDataAMy[1,5], meanDataAMy[2,5], meanDataAMy[3,5], meanDataAMy[4,5]),
+                                'toes_r'=c(meanDataAMy[1,6], meanDataAMy[2,6], meanDataAMy[3,6], meanDataAMy[4,6]),
                                 'thigh_l'=c(meanDataAMy[1,7], meanDataAMy[2,7], meanDataAMy[3,7], meanDataAMy[4,7]),
                                 'leg_l'=c(meanDataAMy[1,8], meanDataAMy[2,8], meanDataAMy[3,8], meanDataAMy[4,8]),
                                 'ankle_l'=c(meanDataAMy[1,9], meanDataAMy[2,9], meanDataAMy[3,9], meanDataAMy[4,9]),
-                                'subtalar_l'=c(meanDataAMy[1,10], meanDataAMy[2,10], meanDataAMy[3,10], meanDataAMy[4,10]),
-                                'mtp_l'=c(meanDataAMy[1,11], meanDataAMy[2,11], meanDataAMy[3,11], meanDataAMy[4,11]),
+                                'foot_l'=c(meanDataAMy[1,10], meanDataAMy[2,10], meanDataAMy[3,10], meanDataAMy[4,10]),
+                                'toes_l'=c(meanDataAMy[1,11], meanDataAMy[2,11], meanDataAMy[3,11], meanDataAMy[4,11]),
                                 'back'=c(meanDataAMy[1,12], meanDataAMy[2,12], meanDataAMy[3,12], meanDataAMy[4,12]),
                                 'head'=c(meanDataAMy[1,13], meanDataAMy[2,13], meanDataAMy[3,13], meanDataAMy[4,13]),
                                 'arm_r'=c(meanDataAMy[1,14], meanDataAMy[2,14], meanDataAMy[3,14], meanDataAMy[4,14]),
@@ -207,13 +207,13 @@ land.means.zz <- structure(list('pelvis'=c(meanDataAMz[1,1], meanDataAMz[2,1], m
                                 'thigh_r'=c(meanDataAMz[1,2], meanDataAMz[2,2], meanDataAMz[3,2], meanDataAMz[4,2]),
                                 'leg_r'=c(meanDataAMz[1,3], meanDataAMz[2,3], meanDataAMz[3,3], meanDataAMz[4,3]),
                                 'ankle_r'=c(meanDataAMz[1,4], meanDataAMz[2,4], meanDataAMz[3,4], meanDataAMz[4,4]),
-                                'subtalar_r'=c(meanDataAMz[1,5], meanDataAMz[2,5], meanDataAMz[3,5], meanDataAMz[4,5]),
-                                'mtp_r'=c(meanDataAMz[1,6], meanDataAMz[2,6], meanDataAMz[3,6], meanDataAMz[4,6]),
+                                'foot_r'=c(meanDataAMz[1,5], meanDataAMz[2,5], meanDataAMz[3,5], meanDataAMz[4,5]),
+                                'toes_r'=c(meanDataAMz[1,6], meanDataAMz[2,6], meanDataAMz[3,6], meanDataAMz[4,6]),
                                 'thigh_l'=c(meanDataAMz[1,7], meanDataAMz[2,7], meanDataAMz[3,7], meanDataAMz[4,7]),
                                 'leg_l'=c(meanDataAMz[1,8], meanDataAMz[2,8], meanDataAMz[3,8], meanDataAMz[4,8]),
                                 'ankle_l'=c(meanDataAMz[1,9], meanDataAMz[2,9], meanDataAMz[3,9], meanDataAMz[4,9]),
-                                'subtalar_l'=c(meanDataAMz[1,10], meanDataAMz[2,10], meanDataAMz[3,10], meanDataAMz[4,10]),
-                                'mtp_l'=c(meanDataAMz[1,11], meanDataAMz[2,11], meanDataAMz[3,11], meanDataAMz[4,11]),
+                                'foot_l'=c(meanDataAMz[1,10], meanDataAMz[2,10], meanDataAMz[3,10], meanDataAMz[4,10]),
+                                'toes_l'=c(meanDataAMz[1,11], meanDataAMz[2,11], meanDataAMz[3,11], meanDataAMz[4,11]),
                                 'back'=c(meanDataAMz[1,12], meanDataAMz[2,12], meanDataAMz[3,12], meanDataAMz[4,12]),
                                 'head'=c(meanDataAMz[1,13], meanDataAMz[2,13], meanDataAMz[3,13], meanDataAMz[4,13]),
                                 'arm_r'=c(meanDataAMz[1,14], meanDataAMz[2,14], meanDataAMz[3,14], meanDataAMz[4,14]),
@@ -240,13 +240,13 @@ land.std.x <- structure(list('pelvis'=c(stdDataLMx[1,1], stdDataLMx[2,1], stdDat
                              'thigh_r'=c(stdDataLMx[1,2], stdDataLMx[2,2], stdDataLMx[3,2], stdDataLMx[4,2]),
                              'leg_r'=c(stdDataLMx[1,3], stdDataLMx[2,3], stdDataLMx[3,3], stdDataLMx[4,3]),
                              'ankle_r'=c(stdDataLMx[1,4], stdDataLMx[2,4], stdDataLMx[3,4], stdDataLMx[4,4]),
-                             'subtalar_r'=c(stdDataLMx[1,5], stdDataLMx[2,5], stdDataLMx[3,5], stdDataLMx[4,5]),
-                             'mtp_r'=c(stdDataLMx[1,6], stdDataLMx[2,6], stdDataLMx[3,6], stdDataLMx[4,6]),
+                             'foot_r'=c(stdDataLMx[1,5], stdDataLMx[2,5], stdDataLMx[3,5], stdDataLMx[4,5]),
+                             'toes_r'=c(stdDataLMx[1,6], stdDataLMx[2,6], stdDataLMx[3,6], stdDataLMx[4,6]),
                              'thigh_l'=c(stdDataLMx[1,7], stdDataLMx[2,7], stdDataLMx[3,7], stdDataLMx[4,7]),
                              'leg_l'=c(stdDataLMx[1,8], stdDataLMx[2,8], stdDataLMx[3,8], stdDataLMx[4,8]),
                              'ankle_l'=c(stdDataLMx[1,9], stdDataLMx[2,9], stdDataLMx[3,9], stdDataLMx[4,9]),
-                             'subtalar_l'=c(stdDataLMx[1,10], stdDataLMx[2,10], stdDataLMx[3,10], stdDataLMx[4,10]),
-                             'mtp_l'=c(stdDataLMx[1,11], stdDataLMx[2,11], stdDataLMx[3,11], stdDataLMx[4,11]),
+                             'foot_l'=c(stdDataLMx[1,10], stdDataLMx[2,10], stdDataLMx[3,10], stdDataLMx[4,10]),
+                             'toes_l'=c(stdDataLMx[1,11], stdDataLMx[2,11], stdDataLMx[3,11], stdDataLMx[4,11]),
                              'back'=c(stdDataLMx[1,12], stdDataLMx[2,12], stdDataLMx[3,12], stdDataLMx[4,12]),
                              'head'=c(stdDataLMx[1,13], stdDataLMx[2,13], stdDataLMx[3,13], stdDataLMx[4,13]),
                              'arm_r'=c(stdDataLMx[1,14], stdDataLMx[2,14], stdDataLMx[3,14], stdDataLMx[4,14]),
@@ -272,13 +272,13 @@ land.std.y <- structure(list('pelvis'=c(stdDataLMy[1,1], stdDataLMy[2,1], stdDat
                              'thigh_r'=c(stdDataLMy[1,2], stdDataLMy[2,2], stdDataLMy[3,2], stdDataLMy[4,2]),
                              'leg_r'=c(stdDataLMy[1,3], stdDataLMy[2,3], stdDataLMy[3,3], stdDataLMy[4,3]),
                              'ankle_r'=c(stdDataLMy[1,4], stdDataLMy[2,4], stdDataLMy[3,4], stdDataLMy[4,4]),
-                             'subtalar_r'=c(stdDataLMy[1,5], stdDataLMy[2,5], stdDataLMy[3,5], stdDataLMy[4,5]),
-                             'mtp_r'=c(stdDataLMy[1,6], stdDataLMy[2,6], stdDataLMy[3,6], stdDataLMy[4,6]),
+                             'foot_r'=c(stdDataLMy[1,5], stdDataLMy[2,5], stdDataLMy[3,5], stdDataLMy[4,5]),
+                             'toes_r'=c(stdDataLMy[1,6], stdDataLMy[2,6], stdDataLMy[3,6], stdDataLMy[4,6]),
                              'thigh_l'=c(stdDataLMy[1,7], stdDataLMy[2,7], stdDataLMy[3,7], stdDataLMy[4,7]),
                              'leg_l'=c(stdDataLMy[1,8], stdDataLMy[2,8], stdDataLMy[3,8], stdDataLMy[4,8]),
                              'ankle_l'=c(stdDataLMy[1,9], stdDataLMy[2,9], stdDataLMy[3,9], stdDataLMy[4,9]),
-                             'subtalar_l'=c(stdDataLMy[1,10], stdDataLMy[2,10], stdDataLMy[3,10], stdDataLMy[4,10]),
-                             'mtp_l'=c(stdDataLMy[1,11], stdDataLMy[2,11], stdDataLMy[3,11], stdDataLMy[4,11]),
+                             'foot_l'=c(stdDataLMy[1,10], stdDataLMy[2,10], stdDataLMy[3,10], stdDataLMy[4,10]),
+                             'toes_l'=c(stdDataLMy[1,11], stdDataLMy[2,11], stdDataLMy[3,11], stdDataLMy[4,11]),
                              'back'=c(stdDataLMy[1,12], stdDataLMy[2,12], stdDataLMy[3,12], stdDataLMy[4,12]),
                              'head'=c(stdDataLMy[1,13], stdDataLMy[2,13], stdDataLMy[3,13], stdDataLMy[4,13]),
                              'arm_r'=c(stdDataLMy[1,14], stdDataLMy[2,14], stdDataLMy[3,14], stdDataLMy[4,14]),
@@ -303,13 +303,13 @@ land.std.z <- structure(list('pelvis'=c(stdDataLMz[1,1], stdDataLMz[2,1], stdDat
                              'thigh_r'=c(stdDataLMz[1,2], stdDataLMz[2,2], stdDataLMz[3,2], stdDataLMz[4,2]),
                              'leg_r'=c(stdDataLMz[1,3], stdDataLMz[2,3], stdDataLMz[3,3], stdDataLMz[4,3]),
                              'ankle_r'=c(stdDataLMz[1,4], stdDataLMz[2,4], stdDataLMz[3,4], stdDataLMz[4,4]),
-                             'subtalar_r'=c(stdDataLMz[1,5], stdDataLMz[2,5], stdDataLMz[3,5], stdDataLMz[4,5]),
-                             'mtp_r'=c(stdDataLMz[1,6], stdDataLMz[2,6], stdDataLMz[3,6], stdDataLMz[4,6]),
+                             'foot_r'=c(stdDataLMz[1,5], stdDataLMz[2,5], stdDataLMz[3,5], stdDataLMz[4,5]),
+                             'toes_r'=c(stdDataLMz[1,6], stdDataLMz[2,6], stdDataLMz[3,6], stdDataLMz[4,6]),
                              'thigh_l'=c(stdDataLMz[1,7], stdDataLMz[2,7], stdDataLMz[3,7], stdDataLMz[4,7]),
                              'leg_l'=c(stdDataLMz[1,8], stdDataLMz[2,8], stdDataLMz[3,8], stdDataLMz[4,8]),
                              'ankle_l'=c(stdDataLMz[1,9], stdDataLMz[2,9], stdDataLMz[3,9], stdDataLMz[4,9]),
-                             'subtalar_l'=c(stdDataLMz[1,10], stdDataLMz[2,10], stdDataLMz[3,10], stdDataLMz[4,10]),
-                             'mtp_l'=c(stdDataLMz[1,11], stdDataLMz[2,11], stdDataLMz[3,11], stdDataLMz[4,11]),
+                             'foot_l'=c(stdDataLMz[1,10], stdDataLMz[2,10], stdDataLMz[3,10], stdDataLMz[4,10]),
+                             'toes_l'=c(stdDataLMz[1,11], stdDataLMz[2,11], stdDataLMz[3,11], stdDataLMz[4,11]),
                              'back'=c(stdDataLMz[1,12], stdDataLMz[2,12], stdDataLMz[3,12], stdDataLMz[4,12]),
                              'head'=c(stdDataLMz[1,13], stdDataLMz[2,13], stdDataLMz[3,13], stdDataLMz[4,13]),
                              'arm_r'=c(stdDataLMz[1,14], stdDataLMz[2,14], stdDataLMz[3,14], stdDataLMz[4,14]),
@@ -335,13 +335,13 @@ land.means.xx <- structure(list('pelvis'=c(meanDataAMx[1,1], meanDataAMx[2,1], m
                                 'thigh_r'=c(meanDataAMx[1,2], meanDataAMx[2,2], meanDataAMx[3,2], meanDataAMx[4,2]),
                                 'leg_r'=c(meanDataAMx[1,3], meanDataAMx[2,3], meanDataAMx[3,3], meanDataAMx[4,3]),
                                 'ankle_r'=c(meanDataAMx[1,4], meanDataAMx[2,4], meanDataAMx[3,4], meanDataAMx[4,4]),
-                                'subtalar_r'=c(meanDataAMx[1,5], meanDataAMx[2,5], meanDataAMx[3,5], meanDataAMx[4,5]),
-                                'mtp_r'=c(meanDataAMx[1,6], meanDataAMx[2,6], meanDataAMx[3,6], meanDataAMx[4,6]),
+                                'foot_r'=c(meanDataAMx[1,5], meanDataAMx[2,5], meanDataAMx[3,5], meanDataAMx[4,5]),
+                                'toes_r'=c(meanDataAMx[1,6], meanDataAMx[2,6], meanDataAMx[3,6], meanDataAMx[4,6]),
                                 'thigh_l'=c(meanDataAMx[1,7], meanDataAMx[2,7], meanDataAMx[3,7], meanDataAMx[4,7]),
                                 'leg_l'=c(meanDataAMx[1,8], meanDataAMx[2,8], meanDataAMx[3,8], meanDataAMx[4,8]),
                                 'ankle_l'=c(meanDataAMx[1,9], meanDataAMx[2,9], meanDataAMx[3,9], meanDataAMx[4,9]),
-                                'subtalar_l'=c(meanDataAMx[1,10], meanDataAMx[2,10], meanDataAMx[3,10], meanDataAMx[4,10]),
-                                'mtp_l'=c(meanDataAMx[1,11], meanDataAMx[2,11], meanDataAMx[3,11], meanDataAMx[4,11]),
+                                'foot_l'=c(meanDataAMx[1,10], meanDataAMx[2,10], meanDataAMx[3,10], meanDataAMx[4,10]),
+                                'toes_l'=c(meanDataAMx[1,11], meanDataAMx[2,11], meanDataAMx[3,11], meanDataAMx[4,11]),
                                 'back'=c(meanDataAMx[1,12], meanDataAMx[2,12], meanDataAMx[3,12], meanDataAMx[4,12]),
                                 'head'=c(meanDataAMx[1,13], meanDataAMx[2,13], meanDataAMx[3,13], meanDataAMx[4,13]),
                                 'arm_r'=c(meanDataAMx[1,14], meanDataAMx[2,14], meanDataAMx[3,14], meanDataAMx[4,14]),
@@ -367,13 +367,13 @@ land.means.yy <- structure(list('pelvis'=c(meanDataAMy[1,1], meanDataAMy[2,1], m
                                 'thigh_r'=c(meanDataAMy[1,2], meanDataAMy[2,2], meanDataAMy[3,2], meanDataAMy[4,2]),
                                 'leg_r'=c(meanDataAMy[1,3], meanDataAMy[2,3], meanDataAMy[3,3], meanDataAMy[4,3]),
                                 'ankle_r'=c(meanDataAMy[1,4], meanDataAMy[2,4], meanDataAMy[3,4], meanDataAMy[4,4]),
-                                'subtalar_r'=c(meanDataAMy[1,5], meanDataAMy[2,5], meanDataAMy[3,5], meanDataAMy[4,5]),
-                                'mtp_r'=c(meanDataAMy[1,6], meanDataAMy[2,6], meanDataAMy[3,6], meanDataAMy[4,6]),
+                                'foot_r'=c(meanDataAMy[1,5], meanDataAMy[2,5], meanDataAMy[3,5], meanDataAMy[4,5]),
+                                'toes_r'=c(meanDataAMy[1,6], meanDataAMy[2,6], meanDataAMy[3,6], meanDataAMy[4,6]),
                                 'thigh_l'=c(meanDataAMy[1,7], meanDataAMy[2,7], meanDataAMy[3,7], meanDataAMy[4,7]),
                                 'leg_l'=c(meanDataAMy[1,8], meanDataAMy[2,8], meanDataAMy[3,8], meanDataAMy[4,8]),
                                 'ankle_l'=c(meanDataAMy[1,9], meanDataAMy[2,9], meanDataAMy[3,9], meanDataAMy[4,9]),
-                                'subtalar_l'=c(meanDataAMy[1,10], meanDataAMy[2,10], meanDataAMy[3,10], meanDataAMy[4,10]),
-                                'mtp_l'=c(meanDataAMy[1,11], meanDataAMy[2,11], meanDataAMy[3,11], meanDataAMy[4,11]),
+                                'foot_l'=c(meanDataAMy[1,10], meanDataAMy[2,10], meanDataAMy[3,10], meanDataAMy[4,10]),
+                                'toes_l'=c(meanDataAMy[1,11], meanDataAMy[2,11], meanDataAMy[3,11], meanDataAMy[4,11]),
                                 'back'=c(meanDataAMy[1,12], meanDataAMy[2,12], meanDataAMy[3,12], meanDataAMy[4,12]),
                                 'head'=c(meanDataAMy[1,13], meanDataAMy[2,13], meanDataAMy[3,13], meanDataAMy[4,13]),
                                 'arm_r'=c(meanDataAMy[1,14], meanDataAMy[2,14], meanDataAMy[3,14], meanDataAMy[4,14]),
@@ -398,13 +398,13 @@ land.means.zz <- structure(list('pelvis'=c(meanDataAMz[1,1], meanDataAMz[2,1], m
                                 'thigh_r'=c(meanDataAMz[1,2], meanDataAMz[2,2], meanDataAMz[3,2], meanDataAMz[4,2]),
                                 'leg_r'=c(meanDataAMz[1,3], meanDataAMz[2,3], meanDataAMz[3,3], meanDataAMz[4,3]),
                                 'ankle_r'=c(meanDataAMz[1,4], meanDataAMz[2,4], meanDataAMz[3,4], meanDataAMz[4,4]),
-                                'subtalar_r'=c(meanDataAMz[1,5], meanDataAMz[2,5], meanDataAMz[3,5], meanDataAMz[4,5]),
-                                'mtp_r'=c(meanDataAMz[1,6], meanDataAMz[2,6], meanDataAMz[3,6], meanDataAMz[4,6]),
+                                'foot_r'=c(meanDataAMz[1,5], meanDataAMz[2,5], meanDataAMz[3,5], meanDataAMz[4,5]),
+                                'toes_r'=c(meanDataAMz[1,6], meanDataAMz[2,6], meanDataAMz[3,6], meanDataAMz[4,6]),
                                 'thigh_l'=c(meanDataAMz[1,7], meanDataAMz[2,7], meanDataAMz[3,7], meanDataAMz[4,7]),
                                 'leg_l'=c(meanDataAMz[1,8], meanDataAMz[2,8], meanDataAMz[3,8], meanDataAMz[4,8]),
                                 'ankle_l'=c(meanDataAMz[1,9], meanDataAMz[2,9], meanDataAMz[3,9], meanDataAMz[4,9]),
-                                'subtalar_l'=c(meanDataAMz[1,10], meanDataAMz[2,10], meanDataAMz[3,10], meanDataAMz[4,10]),
-                                'mtp_l'=c(meanDataAMz[1,11], meanDataAMz[2,11], meanDataAMz[3,11], meanDataAMz[4,11]),
+                                'foot_l'=c(meanDataAMz[1,10], meanDataAMz[2,10], meanDataAMz[3,10], meanDataAMz[4,10]),
+                                'toes_l'=c(meanDataAMz[1,11], meanDataAMz[2,11], meanDataAMz[3,11], meanDataAMz[4,11]),
                                 'back'=c(meanDataAMz[1,12], meanDataAMz[2,12], meanDataAMz[3,12], meanDataAMz[4,12]),
                                 'head'=c(meanDataAMz[1,13], meanDataAMz[2,13], meanDataAMz[3,13], meanDataAMz[4,13]),
                                 'arm_r'=c(meanDataAMz[1,14], meanDataAMz[2,14], meanDataAMz[3,14], meanDataAMz[4,14]),
@@ -428,25 +428,26 @@ class = "data.frame", row.names = c(NA, -4L))
 # ----------- BARPLOT
 
 op = par(mar=c(8,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
-barx = barplot(as.matrix(-land.means.x), main="Land Linear Momentum A-P",
+barx = barplot(as.matrix(-land.means.x), main="A-P Force",
                ylab=expression(kg %.% m %.% s^-1 %.% BW^-1),
-               xlim=c(0,30),ylim=c(-0.5,0.15),
+               xlim=c(0,30),ylim=c(-0.8,0.2),
                col=c("red","green","blue","yellow"),
                legend = c( "5%","20%", "40%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)
-# contribute: pelvis, thighs, legs, back, head, arms(-)
+# contribute: pelvis, thighs, legs, back, head
 
 op = par(mar=c(8,4,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
-barx = barplot(as.matrix(land.means.y), main="Land Linear Momentum M-L",
+barx = barplot(as.matrix(-land.means.y), main="M-L Force",
                ylab=expression(kg %.% m %.% s^-1 %.% BM^-1),
-               xlim=c(0,30),ylim=c(-0.12,0.12),
+               xlim=c(0,30),ylim=c(-0.2,0.2),
                col=c("red","green","blue","yellow"),
                legend = c( "5%","20%", "40%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)
 # contribute: arms, forearms, hands, back, head, arms(-) (right sign opposed to left)
+# thigh legh foot
 
 op = par(mar=c(8,4,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
-barx = barplot(as.matrix(land.means.z), main="Land Linear Momentum Vertical",
+barx = barplot(as.matrix(land.means.z), main="Land Vertical Force",
                ylab=expression(kg %.% m %.% s^-1 %.% BW^-1),
                xlim=c(0,30),ylim=c(-0.1,1.5),
                col=c("red","green","blue","yellow"),
@@ -473,7 +474,7 @@ rm(op)
 op = par(mar=c(8,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(-land.means.yy), main="Land Angular Momentum Y",
                ylab=expression(kg %.% m %.% s^-1 %.% BM^-1 %.% H),
-               xlim=c(0,30),ylim=c(-0.07,0.07),
+               xlim=c(0,30),ylim=c(-0.2,0.1),
                col=c("red","green","blue","yellow"),
                legend = c( "5%","20%", "40%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)
@@ -607,50 +608,51 @@ arrows(barx,xx-erci, barx,xx, angle=90, code=3, length=0.05)
 # PLOT PAPER
 ################ ordered by mass
 ## medial-lateral # contribute: arms, forearms, hands, back, head, arms(-) (right sign opposed to left)
+#'back','thigh_r','thigh_l','leg_r','leg_l','arm_r','arm_l','forearm_r','forearm_l','hand_r','hand_l'
 simp_names = list('5%','20%','40%','100%')
 
 landing.means.y <- structure(list(
-  '5%'= c(meanDataLMy[1,14], meanDataLMy[1,20], meanDataLMy[1,15] + meanDataLMy[1,16], meanDataLMy[1,21] + meanDataLMy[1,22], meanDataLMy[1,18], meanDataLMy[1,24]),
-  '20%' =c(meanDataLMy[2,14], meanDataLMy[2,20], meanDataLMy[2,15] + meanDataLMy[2,16], meanDataLMy[2,21] + meanDataLMy[2,22], meanDataLMy[2,18], meanDataLMy[2,24]),
-  '40%' = c(meanDataLMy[3,14], meanDataLMy[3,20], meanDataLMy[3,15] + meanDataLMy[3,16] , meanDataLMy[3,21] + meanDataLMy[3,22], meanDataLMy[3,18], meanDataLMy[3,24]),
-  '100%' = c(meanDataLMy[4,14], meanDataLMy[4,20], meanDataLMy[4,15] + meanDataLMy[4,16], meanDataLMy[4,21] +  meanDataLMy[4,22], meanDataLMy[4,18], meanDataLMy[4,24])
+  '5%'= c(meanDataLMy[1,12], meanDataLMy[1,2], meanDataLMy[1,7], meanDataLMy[1,3], meanDataLMy[1,8], meanDataLMy[1,14], meanDataLMy[1,20], meanDataLMy[1,15] + meanDataLMy[1,16], meanDataLMy[1,21] + meanDataLMy[1,22], meanDataLMy[1,18], meanDataLMy[1,24]),
+  '20%' =c(meanDataLMy[1,12], meanDataLMy[1,2], meanDataLMy[1,7], meanDataLMy[1,3], meanDataLMy[1,8], meanDataLMy[2,14], meanDataLMy[2,20], meanDataLMy[2,15] + meanDataLMy[2,16], meanDataLMy[2,21] + meanDataLMy[2,22], meanDataLMy[2,18], meanDataLMy[2,24]),
+  '40%' = c(meanDataLMy[1,12], meanDataLMy[1,2], meanDataLMy[1,7], meanDataLMy[1,3], meanDataLMy[1,8], meanDataLMy[3,14], meanDataLMy[3,20], meanDataLMy[3,15] + meanDataLMy[3,16] , meanDataLMy[3,21] + meanDataLMy[3,22], meanDataLMy[3,18], meanDataLMy[3,24]),
+  '100%' = c(meanDataLMy[1,12], meanDataLMy[1,2], meanDataLMy[1,7], meanDataLMy[1,3], meanDataLMy[1,8], meanDataLMy[4,14], meanDataLMy[4,20], meanDataLMy[4,15] + meanDataLMy[4,16], meanDataLMy[4,21] +  meanDataLMy[4,22], meanDataLMy[4,18], meanDataLMy[4,24])
 ), 
 .Names = simp_names, 
-class = "data.frame", row.names = c(NA, -6L))
+class = "data.frame", row.names = c(NA, -11L))
 
 #
 landing.stds.y <- structure(list(
-  '5%'= c(stdDataLMy[1,14], stdDataLMy[1,20], (stdDataLMy[1,15] +  stdDataLMy[1,16])/2, (stdDataLMy[1,21] + stdDataLMy[1,22])/2, stdDataLMy[1,18], stdDataLMy[1,24]),
-  '20%' =c(stdDataLMy[2,14], stdDataLMy[2,20], (stdDataLMy[2,15] + stdDataLMy[2,16])/2, (stdDataLMy[2,21] + stdDataLMy[2,22])/2, stdDataLMy[2,18], stdDataLMy[2,24]),
-  '40%' = c(stdDataLMy[3,14], stdDataLMy[3,20], (stdDataLMy[3,15] + stdDataLMy[3,16])/2, (stdDataLMy[3,21] + stdDataLMy[3,22])/2, stdDataLMy[3,18], stdDataLMy[3,24]),
-  '100%' = c(stdDataLMy[4,14], stdDataLMy[4,20], (stdDataLMy[4,15] +  stdDataLMy[4,16])/2, (stdDataLMy[4,21] + stdDataLMy[4,22])/2, stdDataLMy[4,18], stdDataLMy[4,24])
+  '5%'= c(stdDataLMy[1,12], stdDataLMy[1,2], stdDataLMy[1,7], stdDataLMy[1,3], stdDataLMy[1,8], stdDataLMy[1,14], stdDataLMy[1,20], (stdDataLMy[1,15] +  stdDataLMy[1,16])/2, (stdDataLMy[1,21] + stdDataLMy[1,22])/2, stdDataLMy[1,18], stdDataLMy[1,24]),
+  '20%' =c(stdDataLMy[2,12], stdDataLMy[2,2], stdDataLMy[2,7], stdDataLMy[2,3], stdDataLMy[2,8], stdDataLMy[2,14], stdDataLMy[2,20], (stdDataLMy[2,15] + stdDataLMy[2,16])/2, (stdDataLMy[2,21] + stdDataLMy[2,22])/2, stdDataLMy[2,18], stdDataLMy[2,24]),
+  '40%' = c(stdDataLMy[3,12], stdDataLMy[3,2], stdDataLMy[3,7], stdDataLMy[3,3], stdDataLMy[3,8], stdDataLMy[3,14], stdDataLMy[3,20], (stdDataLMy[3,15] + stdDataLMy[3,16])/2, (stdDataLMy[3,21] + stdDataLMy[3,22])/2, stdDataLMy[3,18], stdDataLMy[3,24]),
+  '100%' = c(stdDataLMy[4,12], stdDataLMy[4,2], stdDataLMy[4,7], stdDataLMy[4,3], stdDataLMy[4,8], stdDataLMy[4,14], stdDataLMy[4,20], (stdDataLMy[4,15] +  stdDataLMy[4,16])/2, (stdDataLMy[4,21] + stdDataLMy[4,22])/2, stdDataLMy[4,18], stdDataLMy[4,24])
 ), 
 .Names = simp_names, 
-class = "data.frame", row.names = c(NA, -6L))
+class = "data.frame", row.names = c(NA, -11L))
 
 k=t/sqrt(nparticipants)
 landing.ci.y <- structure(list(
-  '5%'= c( k*stdDataLMy[1,14], k*stdDataLMy[1,20], k*((stdDataLMy[1,15] + stdDataLMy[1,16])/2), k*((stdDataLMy[1,21]+stdDataLMy[1,22])/2), k*stdDataLMy[1,18], k*stdDataLMy[1,24]),
-  '20%' =c( k*stdDataLMy[2,14], k*stdDataLMy[2,20], k*((stdDataLMy[2,15] + stdDataLMy[2,16])/2), k*((stdDataLMy[2,21]+stdDataLMy[2,22])/2), k*stdDataLMy[2,18], k*stdDataLMy[2,24]),
-  '40%' = c( k*stdDataLMy[3,14], k*stdDataLMy[3,20], k*((stdDataLMy[3,15] + stdDataLMy[3,16])/2), k*((stdDataLMy[3,21]+stdDataLMy[3,22])/2), k*stdDataLMy[3,18], k*stdDataLMy[3,24]),
-  '100%' = c( k*stdDataLMy[4,14], k*stdDataLMy[4,20], k*((stdDataLMy[4,15] + stdDataLMy[4,16])/2), k*((stdDataLMy[4,21]+stdDataLMy[4,22])/2), k*stdDataLMy[4,18], k*stdDataLMy[4,24])
+  '5%'= c( k*stdDataLMy[1,12], k*stdDataLMy[1,2], k*stdDataLMy[1,7], k*stdDataLMy[1,3], k*stdDataLMy[1,8], k*stdDataLMy[1,14], k*stdDataLMy[1,20], k*((stdDataLMy[1,15] + stdDataLMy[1,16])/2), k*((stdDataLMy[1,21]+stdDataLMy[1,22])/2), k*stdDataLMy[1,18], k*stdDataLMy[1,24]),
+  '20%' =c( k*stdDataLMy[1,12], k*stdDataLMy[1,2], k*stdDataLMy[1,7], k*stdDataLMy[1,3], k*stdDataLMy[1,8], k*stdDataLMy[2,14], k*stdDataLMy[2,20], k*((stdDataLMy[2,15] + stdDataLMy[2,16])/2), k*((stdDataLMy[2,21]+stdDataLMy[2,22])/2), k*stdDataLMy[2,18], k*stdDataLMy[2,24]),
+  '40%' = c( k*stdDataLMy[1,12], k*stdDataLMy[1,2], k*stdDataLMy[1,7], k*stdDataLMy[1,3], k*stdDataLMy[1,8], k*stdDataLMy[3,14], k*stdDataLMy[3,20], k*((stdDataLMy[3,15] + stdDataLMy[3,16])/2), k*((stdDataLMy[3,21]+stdDataLMy[3,22])/2), k*stdDataLMy[3,18], k*stdDataLMy[3,24]),
+  '100%' = c( k*stdDataLMy[1,12], k*stdDataLMy[1,2], k*stdDataLMy[1,7], k*stdDataLMy[1,3], k*stdDataLMy[1,8], k*stdDataLMy[4,14], k*stdDataLMy[4,20], k*((stdDataLMy[4,15] + stdDataLMy[4,16])/2), k*((stdDataLMy[4,21]+stdDataLMy[4,22])/2), k*stdDataLMy[4,18], k*stdDataLMy[4,24])
 ), 
 .Names = simp_names, 
-class = "data.frame", row.names = c(NA, -6L))
+class = "data.frame", row.names = c(NA, -11L))
 
 op = par(mar=c(4,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
-barx = barplot(as.matrix(landing.means.y), main="Landing Linear Momentum (ML)",
-               ylab=expression(kg %.% m %.% s^-1 %.% BW^-1),
-               xlim=c(0,30),ylim=c(-0.15,0.15),
-               col=c("red","green","blue","yellow","purple","azure2"),
-               legend = c('arm_r','arm_l','forearm_r','forearm_l','hand_r','hand_l'), 
-               las=2, cex.names = 1, beside=TRUE, args.legend = list(x=30,horiz=TRUE)) #beside=TRUE,xlab="joint",
+barx = barplot(as.matrix(-landing.means.y), main="Force (ML)",
+               ylab=expression(N %.% BW^-1),
+               xlim=c(0,60),ylim=c(-0.15,0.15),
+               col=c("red","green","blue","yellow","purple","azure2","beige","cyan","cadetblue4","brown","deeppink"),
+               legend = c('back','thigh_r','thigh_l','leg_r','leg_l','arm_r','arm_l','forearm_r','forearm_l','hand_r','hand_l'), 
+               las=2, cex.names = 1, beside=TRUE, args.legend = list(x=60,y=0.1,horiz=FALSE)) #beside=TRUE,xlab="joint",
 rm(op)
 
 
-xx=as.matrix(landing.means.y)
-er=as.matrix(landing.stds.y)
-erci=as.matrix(landing.ci.y)
+xx=as.matrix(-landing.means.y)
+er=as.matrix(-landing.stds.y)
+erci=as.matrix(-landing.ci.y)
 arrows(barx,xx+erci, barx,xx, angle=90, code=3, length=0.05)
 arrows(barx,xx-erci, barx,xx, angle=90, code=3, length=0.05)
 
@@ -689,9 +691,9 @@ landing.ci.x <- structure(list(
 class = "data.frame", row.names = c(NA, -7L))
 
 op = par(mar=c(4,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
-barx = barplot(as.matrix(-landing.means.x), main="Landing Linear Momentum (AP)",
+barx = barplot(as.matrix(-landing.means.x), main="Landing Force (AP)",
                ylab=expression(kg %.% m %.% s^-1 %.% BW^-1),
-               xlim=c(0,35),ylim=c(-0.35,0.1),
+               xlim=c(0,35),ylim=c(-0.35,0.3),
                col=c("red","green","blue","yellow","purple","azure2","cadetblue"),
                legend = c( 'back','pelvis','thigh_r','thigh_l','head','leg_r','leg_l'), 
                las=2, cex.names = 1, beside=TRUE, args.legend = list(x=35,horiz=TRUE)) #beside=TRUE,xlab="joint",
@@ -699,8 +701,8 @@ rm(op)
 
 
 xx=as.matrix(-landing.means.x)
-er=as.matrix(landing.stds.x)
-erci=as.matrix(landing.ci.x)
+er=as.matrix(-landing.stds.x)
+erci=as.matrix(-landing.ci.x)
 arrows(barx,xx+erci, barx,xx, angle=90, code=3, length=0.05)
 arrows(barx,xx-erci, barx,xx, angle=90, code=3, length=0.05)
 
@@ -708,41 +710,41 @@ arrows(barx,xx-erci, barx,xx, angle=90, code=3, length=0.05)
 ## vertical
 simp_names = list('5%','20%','40%','100%')
 landing.means.z <- structure(list(
-  '5%'= c(meanDataLMz[1,12], meanDataLMz[1,1], meanDataLMz[1,13], meanDataLMz[1,14], meanDataLMz[1,20]),
-  '20%' =c(meanDataLMz[2,12], meanDataLMz[2,1], meanDataLMz[2,13], meanDataLMz[2,14], meanDataLMz[2,20]),
-  '40%' = c(meanDataLMz[3,12], meanDataLMz[3,1], meanDataLMz[3,13], meanDataLMz[3,14], meanDataLMz[3,20]),
-  '100%' = c(meanDataLMz[4,12], meanDataLMz[4,1], meanDataLMz[4,13], meanDataLMz[4,14], meanDataLMz[4,20])
+  '5%'= c(meanDataLMz[1,12], meanDataLMz[1,1], meanDataLMz[1,13], meanDataLMz[1,5], meanDataLMz[1,10], meanDataLMz[1,6], meanDataLMz[1,11]),
+  '20%' =c(meanDataLMz[2,12], meanDataLMz[2,1], meanDataLMz[2,13], meanDataLMz[1,5], meanDataLMz[1,10], meanDataLMz[1,6], meanDataLMz[1,11]),
+  '40%' = c(meanDataLMz[3,12], meanDataLMz[3,1], meanDataLMz[3,13], meanDataLMz[1,5], meanDataLMz[1,10], meanDataLMz[1,6], meanDataLMz[1,11]),
+  '100%' = c(meanDataLMz[4,12], meanDataLMz[4,1], meanDataLMz[4,13], meanDataLMz[1,5], meanDataLMz[1,10], meanDataLMz[1,6], meanDataLMz[1,11])
 ), 
 .Names = simp_names, 
-class = "data.frame", row.names = c(NA, -5L))
+class = "data.frame", row.names = c(NA, -7L))
 
 #
 landing.stds.z <- structure(list(
-  '5%'= c(stdDataLMz[1,12], stdDataLMz[1,1], stdDataLMz[1,13], stdDataLMz[1,14], stdDataLMz[1,20]),
-  '20%' =c(stdDataLMz[2,12], stdDataLMz[2,1], stdDataLMz[2,13], stdDataLMz[2,14], stdDataLMz[2,20]),
-  '40%' = c(stdDataLMz[3,12], stdDataLMz[3,1], stdDataLMz[3,13], stdDataLMz[3,14], stdDataLMz[3,20]),
-  '100%' = c(stdDataLMz[4,12], stdDataLMz[4,1], stdDataLMz[4,13], stdDataLMz[4,14], stdDataLMz[4,20])
+  '5%'= c(stdDataLMz[1,12], stdDataLMz[1,1], stdDataLMz[1,13], stdDataLMz[1,5], stdDataLMz[1,10], stdDataLMz[1,6], stdDataLMz[1,11]),
+  '20%' =c(stdDataLMz[2,12], stdDataLMz[2,1], stdDataLMz[2,13], stdDataLMz[2,5], stdDataLMz[2,10], stdDataLMz[1,6], stdDataLMz[1,11]),
+  '40%' = c(stdDataLMz[3,12], stdDataLMz[3,1], stdDataLMz[3,13], stdDataLMz[3,5], stdDataLMz[3,10], stdDataLMz[1,6], stdDataLMz[1,11]),
+  '100%' = c(stdDataLMz[4,12], stdDataLMz[4,1], stdDataLMz[4,13], stdDataLMz[4,5], stdDataLMz[4,10], stdDataLMz[1,6], stdDataLMz[1,11])
 ), 
 .Names = simp_names, 
-class = "data.frame", row.names = c(NA, -5L))
+class = "data.frame", row.names = c(NA, -7L))
 
 k=t/sqrt(nparticipants)
 landing.ci.z <- structure(list(
-  '5%'= c(k*stdDataLMz[1,12], k*stdDataLMz[1,1], k*stdDataLMz[1,13], k*stdDataLMz[1,14], k*stdDataLMz[1,20]),
-  '20%' =c(k*stdDataLMz[2,12], k*stdDataLMz[2,1], k*stdDataLMz[2,13], k*stdDataLMz[2,14], k*stdDataLMz[2,20]),
-  '40%' = c(k*stdDataLMz[3,12], k*stdDataLMz[3,1], k*stdDataLMz[3,13], k*stdDataLMz[3,14], k*stdDataLMz[3,20]),
-  '100%' = c(k*stdDataLMz[4,12], k*stdDataLMz[4,1], k*stdDataLMz[4,13], k*stdDataLMz[4,14], k*stdDataLMz[4,20])
+  '5%'= c(k*stdDataLMz[1,12], k*stdDataLMz[1,1], k*stdDataLMz[1,13], k*stdDataLMz[1,5], k*stdDataLMz[1,10], k*stdDataLMz[1,6], k*stdDataLMz[1,11]),
+  '20%' =c(k*stdDataLMz[2,12], k*stdDataLMz[2,1], k*stdDataLMz[2,13], k*stdDataLMz[1,5], k*stdDataLMz[2,10], k*stdDataLMz[2,6], k*stdDataLMz[2,11]),
+  '40%' = c(k*stdDataLMz[3,12], k*stdDataLMz[3,1], k*stdDataLMz[3,13], k*stdDataLMz[1,5], k*stdDataLMz[3,10], k*stdDataLMz[3,6], k*stdDataLMz[3,11]),
+  '100%' = c(k*stdDataLMz[4,12], k*stdDataLMz[4,1], k*stdDataLMz[4,13], k*stdDataLMz[1,5], k*stdDataLMz[4,10], k*stdDataLMz[4,6], k*stdDataLMz[4,11])
 ), 
 .Names = simp_names, 
-class = "data.frame", row.names = c(NA, -5L))
+class = "data.frame", row.names = c(NA, -7L))
 
 op = par(mar=c(4,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
-barx = barplot(as.matrix(landing.means.z), main="Landing Linear Momentum (V)",
-               ylab=expression(kg %.% m %.% s^-1 %.% BW^-1),
-               xlim=c(0,25),ylim=c(-0.5,0.75),
-               col=c("red","green","blue","yellow","purple"),
-               legend = c( "back","pelvis", "head", "arm_r","arm_l"),  
-               las=2, cex.names = 1, beside=TRUE,args.legend = list(x=25, y=-0.1,horiz=TRUE)) #beside=TRUE,xlab="joint",
+barx = barplot(as.matrix(landing.means.z), main="Landing Force (V)",
+               ylab=expression(N %.% BW^-1),
+               xlim=c(0,35),ylim=c(-0.5,0.75),
+               col=c("red","green","blue","yellow","purple","coral","cadetblue"),
+               legend = c( "back","pelvis", "head", "foot_r","foot_l",'toes_r',"toes_l"),  
+               las=2, cex.names = 1, beside=TRUE,args.legend = list(x=35, y=0.8,horiz=TRUE)) #beside=TRUE,xlab="joint",
 rm(op)
 
 

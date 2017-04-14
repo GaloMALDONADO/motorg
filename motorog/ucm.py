@@ -228,8 +228,8 @@ class ucmMomentum(UCM):
                 hc, hcd = self._getContribution(p_com,s) 
                 segH.append(hc*self._K)
                 segF.append(hcd*self._K)
-            contributionH.append(np.array(segH).squeeze()*self._K)
-            contributionF.append(np.array(segF).squeeze()*self._K)
+            contributionH.append(np.array(segH).squeeze())
+            contributionF.append(np.array(segF).squeeze())
             self.contribution = contributionH
             self.contributionF = contributionF
             

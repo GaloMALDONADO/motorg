@@ -8,8 +8,8 @@ rm(list = ls())
 # Task 1: impulsion through antero-posterior and vertical force
 # Task 2: impulsion through antero posterior angular momentum (around M-L axis at the center of mass)
 # ------------------------------------------------------------------------
-p='/galo/devel/gepetto/motorg/motorog/' #home
-#p='/local/gmaldona/devel/motorg/motorog/' #lab
+#p='/galo/devel/gepetto/motorg/motorog/' #home
+p='/local/gmaldona/devel/motorg/motorog/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -229,8 +229,8 @@ pairwise.t.test(SOT_IMPULSE$Ratio, SOT_IMPULSE$Phase, p.adj = "bonf",paired=TRUE
 # Task 3: Torque around M-L axis at the CoM
 # ----------------------------------------------
 rm(list = ls())
-p='/galo/devel/gepetto/motorg/motorog/' #home
-#p='/local/gmaldona/devel/motorg/motorog/' #lab
+#p='/galo/devel/gepetto/motorg/motorog/' #home
+p='/local/gmaldona/devel/motorg/motorog/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)

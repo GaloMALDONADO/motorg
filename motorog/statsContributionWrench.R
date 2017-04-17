@@ -432,7 +432,7 @@ class = "data.frame", row.names = c(NA, -4L))
 
 
 # ----------- BARPLOT
-
+#arms crossing each otherproduce ml force x
 op = par(mar=c(8,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(-jump.means.x), main="Jump Linear Momentum A-P",
                ylab=expression(kg %.% m %.% s^-1 %.% BW^-1),
@@ -752,7 +752,115 @@ arrows(barx,xx+erci, barx,xx, angle=90, code=3, length=0.05)
 arrows(barx,xx-erci, barx,xx, angle=90, code=3, length=0.05)
 
 
+
+
+
+
+
+
 #pairwise.t.test(IMPULSE$Momenta, IMPULSE$Phase, p.adj = "bonf",paired=TRUE)
 #pairwise.t.test(IMPULSE$Momenta, IMPULSE$Coordinate, p.adj = "bonf",paired=TRUE)
 #pairwise.t.test(IMPULSE$Momenta, IMPULSE$Segment, p.adj = "bonf",paired=TRUE)
+simp_names = list('1%','40%','70%','100%')
+takeoff.means.xx <- structure(list(
+  '1%'= c(meanDataAMx[1,12], meanDataAMx[1,1], meanDataAMx[1,2], meanDataAMx[1,7], meanDataAMx[1,13], meanDataAMx[1,3], meanDataAMx[1,8]),
+  '40%' =c(meanDataAMx[2,12], meanDataAMx[2,1], meanDataAMx[2,2], meanDataAMx[2,7], meanDataAMx[2,13], meanDataAMx[2,3], meanDataAMx[2,8]),
+  '70%' = c(meanDataAMx[3,12], meanDataAMx[3,1], meanDataAMx[3,2], meanDataAMx[3,7], meanDataAMx[3,13], meanDataAMx[3,3], meanDataAMx[3,8]),
+  '100%' = c(meanDataAMx[4,12], meanDataAMx[4,1], meanDataAMx[4,2], meanDataAMx[4,7], meanDataAMx[4,13], meanDataAMx[4,3], meanDataAMx[4,8])
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -7L))
 
+#
+takeoff.stds.xx <- structure(list(
+  '1%'= c(stdDataAMx[1,12], stdDataAMx[1,1], stdDataAMx[1,2], stdDataAMx[1,7], stdDataAMx[1,13], stdDataAMx[1,3], stdDataAMx[1,8]),
+  '40%' =c(stdDataAMx[2,12], stdDataAMx[2,1], stdDataAMx[2,2], stdDataAMx[2,7], stdDataAMx[2,13], stdDataAMx[2,3], stdDataAMx[2,8]),
+  '70%' = c(stdDataAMx[3,12], stdDataAMx[3,1], stdDataAMx[3,2], stdDataAMx[3,7], stdDataAMx[3,13], stdDataAMx[3,3], stdDataAMx[3,8]),
+  '100%' = c(stdDataAMx[4,12], stdDataAMx[4,1], stdDataAMx[4,2], stdDataAMx[4,7], stdDataAMx[4,13], stdDataAMx[4,3], stdDataAMx[4,8])
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -7L))
+
+k=t/sqrt(nparticipants)
+takeoff.ci.xx <- structure(list(
+  '1%'= c(k*stdDataAMx[1,12], k*stdDataAMx[1,1], k*stdDataAMx[1,2], k*stdDataAMx[1,7], k*stdDataAMx[1,13], k*stdDataAMx[1,3], k*stdDataAMx[1,8]),
+  '40%' =c(k*stdDataAMx[2,12], k*stdDataAMx[2,1], k*stdDataAMx[2,2], k*stdDataAMx[2,7], k*stdDataAMx[2,13], k*stdDataAMx[2,3], k*stdDataAMx[2,8]),
+  '70%' = c(k*stdDataAMx[3,12], k*stdDataAMx[3,1], k*stdDataAMx[3,2], k*stdDataAMx[3,7], k*stdDataAMx[3,13], k*stdDataAMx[3,3], k*stdDataAMx[3,8]),
+  '100%' = c(k*stdDataAMx[4,12], k*stdDataAMx[4,1], k*stdDataAMx[4,2], k*stdDataAMx[4,7], k*stdDataAMx[4,13], k*stdDataAMx[4,3], k*stdDataAMx[4,8])
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -7L))
+
+op = par(mar=c(5,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
+barx = barplot(as.matrix(-takeoff.means.xx), 
+               ylab=expression(kg %.% m^2 %.% s^-1 %.% BW^-1 %.% H^-1),
+               xlim=c(0,35),ylim=c(-0.004,0.008),
+               col=c("red","green","blue","yellow","purple","azure2","cadetblue"),
+               legend = c( 'back','pelvis','thigh_r','thigh_l','head','leg_r','leg_l'),  
+               las=2, cex.names = 1, beside=TRUE,args.legend = list(x=35,horiz=TRUE)) #beside=TRUE,xlab="joint",main="Take-off Angular Momentum in Sagittal Plane",
+rm(op)
+
+
+xx=as.matrix(-takeoff.means.xx)
+er=as.matrix(takeoff.stds.xx)
+erci=as.matrix(takeoff.ci.xx)
+arrows(barx,xx+erci, barx,xx, angle=90, code=3, length=0.05)
+arrows(barx,xx-erci, barx,xx, angle=90, code=3, length=0.05)
+
+
+
+
+
+
+
+
+
+
+
+
+#
+simp_names = list('1%','40%','70%','100%')
+takeoff.means.zz <- structure(list(
+  '1%'= c(meanDataAMz[1,12], meanDataAMz[1,1], meanDataAMz[1,2], meanDataAMz[1,7], meanDataAMz[1,13], meanDataAMz[1,3], meanDataAMz[1,8]),
+  '40%' =c(meanDataAMz[2,12], meanDataAMz[2,1], meanDataAMz[2,2], meanDataAMz[2,7], meanDataAMz[2,13], meanDataAMz[2,3], meanDataAMz[2,8]),
+  '70%' = c(meanDataAMz[3,12], meanDataAMz[3,1], meanDataAMz[3,2], meanDataAMz[3,7], meanDataAMz[3,13], meanDataAMz[3,3], meanDataAMz[3,8]),
+  '100%' = c(meanDataAMz[4,12], meanDataAMz[4,1], meanDataAMz[4,2], meanDataAMz[4,7], meanDataAMz[4,13], meanDataAMz[4,3], meanDataAMz[4,8])
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -7L))
+
+#
+takeoff.stds.zz <- structure(list(
+  '1%'= c(stdDataAMz[1,12], stdDataAMz[1,1], stdDataAMz[1,2], stdDataAMz[1,7], stdDataAMz[1,13], stdDataAMz[1,3], stdDataAMz[1,8]),
+  '40%' =c(stdDataAMz[2,12], stdDataAMz[2,1], stdDataAMz[2,2], stdDataAMz[2,7], stdDataAMz[2,13], stdDataAMz[2,3], stdDataAMz[2,8]),
+  '70%' = c(stdDataAMz[3,12], stdDataAMz[3,1], stdDataAMz[3,2], stdDataAMz[3,7], stdDataAMz[3,13], stdDataAMz[3,3], stdDataAMz[3,8]),
+  '100%' = c(stdDataAMz[4,12], stdDataAMz[4,1], stdDataAMz[4,2], stdDataAMz[4,7], stdDataAMz[4,13], stdDataAMz[4,3], stdDataAMz[4,8])
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -7L))
+
+k=t/sqrt(nparticipants)
+takeoff.ci.zz <- structure(list(
+  '1%'= c(k*stdDataAMz[1,12], k*stdDataAMz[1,1], k*stdDataAMz[1,2], k*stdDataAMz[1,7], k*stdDataAMz[1,13], k*stdDataAMz[1,3], k*stdDataAMz[1,8]),
+  '40%' =c(k*stdDataAMz[2,12], k*stdDataAMz[2,1], k*stdDataAMz[2,2], k*stdDataAMz[2,7], k*stdDataAMz[2,13], k*stdDataAMz[2,3], k*stdDataAMz[2,8]),
+  '70%' = c(k*stdDataAMz[3,12], k*stdDataAMz[3,1], k*stdDataAMz[3,2], k*stdDataAMz[3,7], k*stdDataAMz[3,13], k*stdDataAMz[3,3], k*stdDataAMz[3,8]),
+  '100%' = c(k*stdDataAMz[4,12], k*stdDataAMz[4,1], k*stdDataAMz[4,2], k*stdDataAMz[4,7], k*stdDataAMz[4,13], k*stdDataAMz[4,3], k*stdDataAMz[4,8])
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -7L))
+
+op = par(mar=c(5,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
+barz = barplot(as.matrix(-takeoff.means.zz), 
+               ylab=expression(kg %.% m^2 %.% s^-1 %.% BW^-1 %.% H^-1),
+               xlim=c(0,35),ylim=c(-0.004,0.008),
+               col=c("red","green","blue","yellow","purple","azure2","cadetblue"),
+               legend = c( 'back','pelvis','thigh_r','thigh_l','head','leg_r','leg_l'),  
+               las=2, cex.names = 1, beside=TRUE,args.legend = list(x=35,horiz=TRUE)) #beside=TRUE,xlab="joint",main="Take-off Angular Momentum in Sagittal Plane",
+rm(op)
+
+
+zz=as.matrix(-takeoff.means.zz)
+er=as.matrix(takeoff.stds.zz)
+erci=as.matrix(takeoff.ci.zz)
+arrows(barz,zz+erci, barx,zz, angle=90, code=3, length=0.05)
+arrows(barz,zz-erci, barz,zz, angle=90, code=3, length=0.05)

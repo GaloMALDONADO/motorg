@@ -7,6 +7,7 @@ import scipy.io
 from hqp.wrapper import Wrapper
 from hqp.viewer_utils import Viewer
 from models.osim_parser import readOsim
+from bmtools import processing as bt
 
 import pinocchio as se3
 import mocap_config as protocol
@@ -72,14 +73,24 @@ class References:
             self.fly.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+self.fly_names[trls]))
             self.land.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+self.land_names[trls]))
             name = os.path.splitext(self.jump_names[trls])[0]
-            self.jumpdq.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+name+'dq.mot'))
-            self.jumpddq.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+name+'ddq.mot'))
+            dq, ddq = bt.computeFirstSecondDerivatives(
+                self.human.model, self.jump[trls]['pinocchio_data'], self.jump[trls]['time']
+                )
+            self.jumpdq.append(dq)
+            self.jumpddq.append(ddq)
             name = os.path.splitext(self.fly_names[trls])[0]
-            self.flydq.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+name+'dq.mot'))
-            self.flyddq.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+name+'ddq.mot'))
+            dq, ddq = bt.computeFirstSecondDerivatives(
+                self.human.model, self.fly[trls]['pinocchio_data'], self.fly[trls]['time']
+                )
+            self.flydq.append(dq)
+            self.flyddq.append(ddq)
             name = os.path.splitext(self.land_names[trls])[0]
-            self.landdq.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+name+'dq.mot'))
-            self.landddq.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+name+'ddq.mot'))
+            dq, ddq = bt.computeFirstSecondDerivatives(
+                self.human.model, self.land[trls]['pinocchio_data'], self.land[trls]['time']
+                )
+            self.landdq.append(dq)
+            self.landddq.append(ddq)
+                        
 
     def playAllTrials(self, dt=0.0025):
         for trls in xrange(len(self.trial_names)):

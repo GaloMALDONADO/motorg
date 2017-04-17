@@ -144,8 +144,8 @@ class ucmMomentum(UCM):
         data = self.robot.data
         p_com = self.robot.com(q)#data.com[0]
         cXi = se3.SE3.Identity()
-        oXi = data.oMi[1]
-        cXi.rotation = oXi.rotation
+        #oXi = data.oMi[1]
+        #cXi.rotation = oXi.rotation
         #cXi.translation = oXi.translation - p_com
         cXi.translation = p_com
         m_gravity = model.gravity.copy()
@@ -178,7 +178,7 @@ class ucmMomentum(UCM):
         oMc = se3.SE3.Identity()
         oMc.translation = com
         # uncomment in case need to change the rotation of the reference frame
-        oMc.rotation = self.robot.data.oMi[1].rotation 
+        #oMc.rotation = self.robot.data.oMi[1].rotation 
         cMi = oMc.actInv( self.robot.data.oMi[s] )
         
         cHi = cMi.act(iHi).np.A1
@@ -211,7 +211,7 @@ class ucmMomentum(UCM):
             JH = se3.ccrba(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
             H = self.robot.data.hg.np.A.copy()
             b = self._getBiais(self.q_mean[i], self.dq_mean[i])
-            Hdot = (JH * self.ddq_mean[i].T)+ b.copy() - (self.robot.data.mass[0] * self.robot.model.gravity.vector)
+            Hdot = (JH * self.ddq_mean[i].T) - b.copy() - (self.robot.data.mass[0] * self.robot.model.gravity.vector)
             h.append(H.copy()*self._K)
             self.h = h
             task.append(Hdot[self._mask])
@@ -269,8 +269,8 @@ class ucmMomentum(UCM):
         for t in xrange(tmax):
             for i in xrange (nRep):
                 q[t,:,i] = np.matrix(self.Q[i]['pinocchio_data'][t]).squeeze()
-                dq[t,:,i] = np.matrix(self.DQ[i]['pinocchio_kine'][t]).squeeze()
-                ddq[t,:,i] = np.matrix(self.DDQ[i]['pinocchio_kine'][t]).squeeze()
+                dq[t,:,i] = np.matrix(self.DQ[i][t]).squeeze()
+                ddq[t,:,i] = np.matrix(self.DDQ[i][t]).squeeze()
                 self.updateAll(q[t,:,i],
                                dq[t,:,i],
                                ddq[t,:,i])
@@ -286,7 +286,7 @@ class ucmMomentum(UCM):
                                dq[t,:,i])
                 H = self.robot.data.hg.np.A.copy()
                 b = self._getBiais(q[t,:,i], dq[t,:,i])
-                Hdot = (JH * np.matrix(ddq[t,:,i]).squeeze().T) + b.copy() - (self.robot.data.mass[0] * self.robot.model.gravity.vector) 
+                Hdot = (JH * np.matrix(ddq[t,:,i]).squeeze().T) - b.copy() - (self.robot.data.mass[0] * self.robot.model.gravity.vector) 
                 HNormalized = H.copy()*self._K
                 bNormalized = b.copy()*self._K
                 HdotNormalized = Hdot.copy()*self._K

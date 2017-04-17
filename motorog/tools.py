@@ -41,7 +41,7 @@ def meanConfiguration2(robot,motion):
     dataStd = std(q(t))
     '''
     nRep = len(motion)
-    tmax = len(motion[0]['pinocchio_kine'])
+    tmax = 100
     #DoF = motion[0]['pinocchio_data'][0].A1.shape[0] 
     DoF = 42
     data = []
@@ -53,7 +53,7 @@ def meanConfiguration2(robot,motion):
         for i in xrange (nRep):
             #data += [np.array(motion[i]['pinocchio_data'][t]).squeeze()]
             #dataStr[t,:,i] = motion[i]['pinocchio_data'][t]
-            coordinates= motion[i]['pinocchio_kine'][t]
+            coordinates= motion[i][t]
             data += [np.array(coordinates).squeeze()]
             dataStr[t,:,i] = coordinates
         data2 = np.matrix(data)
@@ -172,3 +172,7 @@ def filterMatrix(M, cutoff, fs, filter_order):
 
 def meanTask(task):
     pass
+
+
+
+

@@ -3,8 +3,8 @@ rm(list = ls())
 
 
 # ------------------------------------------------------------------------
-#p='/galo/devel/gepetto/motorg/motorog/tables/momenta/' #home
-p='/local/gmaldona/devel/motorg/motorog/tables/momenta/' #lab
+p='/galo/devel/gepetto/motorg/motorog/tables/momenta/' #home
+#p='/local/gmaldona/devel/motorg/motorog/tables/momenta/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -521,7 +521,7 @@ rm(op)
 op = par(mar=c(8,4,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(land.means.y), main="Land Linear Momentum M-L",
                ylab=expression(kg %.% m %.% s^-1 %.% BM^-1),
-               xlim=c(0,30),ylim=c(-0.02,0.02),
+               xlim=c(0,30),ylim=c(0.0,0.15),
                col=c("red","green","blue","yellow"),
                legend = c( "5%","20%", "40%", "100%"),  las=2, cex.names = 1) #beside=TRUE,xlab="joint",
 rm(op)

@@ -11,6 +11,7 @@ from trajectory_extractor import References
 
 for i in xrange (len(mconf.traceurs_list)):
     participantName = mconf.traceurs_list[i]
+    print 'getting trial of '+ participantName
     idxTraceur = mconf.traceurs_list.index(participantName)
     trial = References(mconf.traceurs_list[idxTraceur])
     trial.loadModel()

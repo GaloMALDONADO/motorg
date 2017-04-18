@@ -167,12 +167,14 @@ class ucmMomentum(UCM):
         # get spatial inertia and velocity
         Y = self.robot.model.inertias[s]
         V = self.robot.data.v[s] 
+        
         # centroidal momenta in body frame
         # ihi = I Vi
         iHi = se3.Force(Y.matrix()*V.vector)
         # rate of change of centroidal momenta in body frame
         # ih_doti = Iai + Vi x* hi
-        iHDi = self.robot.model.inertias[s]*self.robot.data.a[s] + se3.Inertia.vxiv(Y,V)
+        # TO VERIFY
+        iHDi = self.robot.model.inertias[s]*self.robot.data.a_gf[s] + se3.Inertia.vxiv(Y,V)
         
         # express at the center of mass
         oMc = se3.SE3.Identity()
@@ -203,7 +205,7 @@ class ucmMomentum(UCM):
 
     def _getDynTask(self):
         task=[]; Jtask=[]; drift=[] ;taskNormalized=[];  momenta=[];
-        contributionH=[]; contributionF=[];
+        contributionH=[]; contributionF=[]; ng=[];
         h=[];# H2=[]
         for i in range(0, 100):
             self.updateAll(self.q_mean[i],self.dq_mean[i],self.ddq_mean[i])
@@ -212,6 +214,9 @@ class ucmMomentum(UCM):
             H = self.robot.data.hg.np.A.copy()
             b = self._getBiais(self.q_mean[i], self.dq_mean[i])
             Hdot = (JH * self.ddq_mean[i].T) - b.copy() - (self.robot.data.mass[0] * self.robot.model.gravity.vector)
+            ng.append(((JH * self.ddq_mean[i].T) + b.copy())*self._K)
+            self.Hdot_no_gravity =  ng
+            # -b -g
             h.append(H.copy()*self._K)
             self.h = h
             task.append(Hdot[self._mask])
@@ -286,13 +291,21 @@ class ucmMomentum(UCM):
                                dq[t,:,i])
                 H = self.robot.data.hg.np.A.copy()
                 b = self._getBiais(q[t,:,i], dq[t,:,i])
-                Hdot = (JH * np.matrix(ddq[t,:,i]).squeeze().T) - b.copy() - (self.robot.data.mass[0] * self.robot.model.gravity.vector) 
+                # TO VERIFY
+                Hdot = (JH * np.matrix(ddq[t,:,i]).squeeze().T) + b.copy() - (self.robot.data.mass[0] * self.robot.model.gravity.vector) 
+                # -b
+                # +b -g
+                # -b -g
+                # + b
+                # +b +g
+                #
+                # -b +g
                 HNormalized = H.copy()*self._K
                 bNormalized = b.copy()*self._K
                 HdotNormalized = Hdot.copy()*self._K
                 data_Hg[t,:,i] = HNormalized.squeeze()
-                data_dHg[t,:,i] = HdotNormalized.squeeze()
-                data_drift[t,:,i] = bNormalized.squeeze()
+                data_dHg[t,:,i] = Hdot.squeeze()
+                data_drift[t,:,i] = b.squeeze()
                 # Segmental contributions to centroidal momenta (and its rate of change)
                 segH = []; segF=[]
                 p_com = self.robot.com(q[t,:,i])

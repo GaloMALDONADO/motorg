@@ -140,8 +140,18 @@ for i in xrange (participantsNo):
 
 #animate robot with mean configurations !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 
+print 'Test Linear Momentum'
+t2=LandLM_abs[0]
+dhg=np.array(t2.data['dhg']).squeeze()
+dhg_s=np.array(t2.data['dhg_segments']).squeeze()
+print 'H dot'
+print dhg[10,0:3,0]
+print 'H dot segments'
+print np.sum(dhg_s[10,0:3,0],1)
+print 'Drift'
+print np.array(t2.data['drift']).squeeze()[10,0:3,0]
 
-
+np.testing.assert_almost_equal(dhg[10,0:3,0], np.sum(dhg_s[10,0:3,0],1))
 
 #plotNCJ = plotTasks.Joint(JumpNC,'rmtp')
 plotVisionJ = plotTasks.Joint(JumpV,'neck_flexion')

@@ -174,8 +174,8 @@ class ucmMomentum(UCM):
         # rate of change of centroidal momenta in body frame
         # ih_doti = Iai + Vi x* hi
         # TO VERIFY
-        iHDi = self.robot.model.inertias[s]*self.robot.data.a_gf[s] + se3.Inertia.vxiv(Y,V)
-        
+        iHDi = (self.robot.model.inertias[s]*self.robot.data.a[s]) + se3.Inertia.vxiv(Y,V)
+        #iHDi.linear 
         # express at the center of mass
         oMc = se3.SE3.Identity()
         oMc.translation = com
@@ -204,28 +204,26 @@ class ucmMomentum(UCM):
     
 
     def _getDynTask(self):
-        task=[]; Jtask=[]; drift=[] ;taskNormalized=[];  momenta=[];
-        contributionH=[]; contributionF=[]; ng=[];
-        h=[];# H2=[]
+        task=[]; Jtask=[]; drift=[] ;taskNormalized=[];
+        contributionH=[]; contributionF=[];
+        hg=[];# H2=[]
         for i in range(0, 100):
-            self.updateAll(self.q_mean[i],self.dq_mean[i],self.ddq_mean[i])
-            se3.forwardKinematics(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i], self.ddq_mean[i])
-            JH = se3.ccrba(self.robot.model, self.robot.data, self.q_mean[i], self.dq_mean[i])
-            H = self.robot.data.hg.np.A.copy()
-            b = self._getBiais(self.q_mean[i], self.dq_mean[i])
-            Hdot = (JH * self.ddq_mean[i].T) - b.copy() - (self.robot.data.mass[0] * self.robot.model.gravity.vector)
-            ng.append(((JH * self.ddq_mean[i].T) + b.copy())*self._K)
-            self.Hdot_no_gravity =  ng
-            # -b -g
-            h.append(H.copy()*self._K)
-            self.h = h
-            task.append(Hdot[self._mask])
-            taskNormalized.append(Hdot[self._mask] * self._K) 
-            self.taskNormalized = taskNormalized
-            drift.append(b[self._mask])
-            Jtask.append(JH[self._mask,:])
-            momenta.append(JH[self._mask,:]*self.dq_mean[i].T)
+            #self.updateAll(self.q_mean[i],self.dq_mean[i],self.ddq_mean[i])
+            se3.forwardKinematics(self.robot.model, 
+                                  self.robot.data, 
+                                  self.q_mean[i], 
+                                  self.dq_mean[i], 
+                                  self.ddq_mean[i])
 
+            # --- Momenta
+            A = se3.ccrba(self.robot.model, 
+                          self.robot.data, 
+                          self.q_mean[i], 
+                          self.dq_mean[i])
+            Hg = self.robot.data.hg.np.A.copy()
+            
+            # ---- Its rate of change
+            b = self._getBiais(self.q_mean[i], self.dq_mean[i])
             # Individual contributions to centroidal momenta (and its rate of change)
             segH = []; segF=[]
             p_com = self.robot.com(self.q_mean[i])
@@ -233,15 +231,27 @@ class ucmMomentum(UCM):
                 hc, hcd = self._getContribution(p_com,s) 
                 segH.append(hc*self._K)
                 segF.append(hcd*self._K)
+            Hdot = np.matrix(np.sum(np.array(segF).squeeze(),0)).T #- (self.robot.data.mass[0] * self.robot.model.gravity.vector)
+            #Hdot = (JH * self.ddq_mean[i].T) - b.copy() - (self.robot.data.mass[0] * self.robot.model.gravity.vector)
+
+            # ---- Store data
+            # Momenta
+            hg.append(Hg.copy()*self._K)
+            self.h = hg
+            #momenta.append(A[self._mask,:]*self.dq_mean[i].T)
+            # Rate of Change
+            #task.append(Hdot[self._mask])
+            taskNormalized.append(Hdot[self._mask])# * self._K) 
+            self.taskNormalized = taskNormalized
+            drift.append(b[self._mask] * self._K)
+            Jtask.append(A[self._mask,:])
+            # Invidual joint contribution
             contributionH.append(np.array(segH).squeeze())
             contributionF.append(np.array(segF).squeeze())
             self.contribution = contributionH
             self.contributionF = contributionF
             
-            # Get Torques
-            
-            
-        return task, Jtask, drift
+        return taskNormalized, Jtask, drift
         
     def _getReferenceTask(self, Q):
         '''
@@ -276,23 +286,23 @@ class ucmMomentum(UCM):
                 q[t,:,i] = np.matrix(self.Q[i]['pinocchio_data'][t]).squeeze()
                 dq[t,:,i] = np.matrix(self.DQ[i][t]).squeeze()
                 ddq[t,:,i] = np.matrix(self.DDQ[i][t]).squeeze()
-                self.updateAll(q[t,:,i],
-                               dq[t,:,i],
-                               ddq[t,:,i])
+                #self.updateAll(q[t,:,i],
+                #               dq[t,:,i],
+                #               ddq[t,:,i])
                 se3.forwardKinematics(self.robot.model, 
                                       self.robot.data, 
                                       q[t,:,i], 
                                       dq[t,:,i], 
                                       ddq[t,:,i])
                 # centroidal momenta
-                JH = se3.ccrba(self.robot.model, 
-                               self.robot.data, 
-                               q[t,:,i], 
-                               dq[t,:,i])
+                A = se3.ccrba(self.robot.model, 
+                              self.robot.data, 
+                              q[t,:,i], 
+                              dq[t,:,i])
                 H = self.robot.data.hg.np.A.copy()
                 b = self._getBiais(q[t,:,i], dq[t,:,i])
                 # TO VERIFY
-                Hdot = (JH * np.matrix(ddq[t,:,i]).squeeze().T) + b.copy() - (self.robot.data.mass[0] * self.robot.model.gravity.vector) 
+                #Hdot = (A * np.matrix(ddq[t,:,i]).squeeze().T) - b.copy() - (self.robot.data.mass[0] * self.robot.model.gravity.vector) 
                 # -b
                 # +b -g
                 # -b -g
@@ -300,25 +310,30 @@ class ucmMomentum(UCM):
                 # +b +g
                 #
                 # -b +g
+                # Segmental contributions to centroidal momenta (and its rate of change)
+                segH = []; segF=[]
+                p_com = self.robot.com(q[t,:,i])
+                for s in range(1,26):
+                    (segH, segF) =  self._getContribution(p_com,s)
+                    data_Hgs[t,:,i,s] = segH * self._K
+                    data_dHgs[t,:,i,s] = segF * self._K
+                Hdot =  np.matrix(np.sum(data_dHgs[t,:,i],1)).T #- (self.robot.data.mass[0] * self.robot.model.gravity.vector)
                 HNormalized = H.copy()*self._K
                 bNormalized = b.copy()*self._K
                 HdotNormalized = Hdot.copy()*self._K
                 data_Hg[t,:,i] = HNormalized.squeeze()
                 data_dHg[t,:,i] = Hdot.squeeze()
                 data_drift[t,:,i] = b.squeeze()
-                # Segmental contributions to centroidal momenta (and its rate of change)
-                segH = []; segF=[]
-                p_com = self.robot.com(q[t,:,i])
-                for s in range(1,26):
-                    (data_Hgs[t,:,i,s], data_dHgs[t,:,i,s]) = self._getContribution(p_com,s) 
+                                
+ 
         data['q'].append(q)
         data['dq'].append(dq)
         data['ddq'].append(ddq)
         data['hg'].append(data_Hg)
         data['dhg'].append(data_dHg)
         data['drift'].append(data_drift)
-        data['hg_segments'].append(data_dHgs)
-        data['dhg_segments'].append(data_Hgs)
+        data['hg_segments'].append(data_Hgs)
+        data['dhg_segments'].append(data_dHgs)
         return data
     '''
     def computeStats(self):

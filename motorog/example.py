@@ -273,17 +273,17 @@ np.savetxt("TableCriteriaLand.csv",
 
 
 #launch with gepetto viewer
- x=land[4]['pinocchio_data']
-viewer = Viewer('avatar viewer',avatar4)
-viewer.display(x[7],avatar4.name)
-viewer.display(x[14],avatar4.name)
-viewer.display(x[21],avatar4.name)
-viewer.display(x[40],avatar4.name)
-viewer.display(x[99],avatar4.name)
-#viewer.addRobot(avatar1)
-#viewer.addRobot(avatar2)
-#viewer.addRobot(avatar3)
-#viewer.addRobot(avatar4)
+x=land[4]['pinocchio_data']
+viewer = Viewer('avatar viewer',avatar0)
+#viewer.display(x[7],avatar4.name)
+#viewer.display(x[14],avatar4.name)
+#viewer.display(x[21],avatar4.name)
+#viewer.display(x[40],avatar4.name)
+#viewer.display(x[99],avatar4.name)
+viewer.addRobot(avatar1)
+viewer.addRobot(avatar2)
+viewer.addRobot(avatar3)
+viewer.addRobot(avatar4)
 #viewer.viewer.gui.setBackgroundColor1(viewer.windowID,(255,255,255,0))
 
 #viewer.viewer.gui.setVisibility('world/Melvin/floor','OFF')
@@ -435,108 +435,108 @@ np.savetxt("tables/momenta/std/JumpTAMz.csv", table_JumpM_stdzz, delimiter=",")
 
 
 #means and std
-data7x = []; data14x = []; data21x = []; data40x = []; data99x = []; 
-data7y = []; data14y = []; data21y = []; data40y = []; data99y = [];
-data7z = []; data14z = []; data21z = []; data40z = []; data99z = [];
-data7xx = []; data14xx = []; data21xx = []; data40xx = []; data99xx = [];
-data7yy = []; data14yy = []; data21yy = []; data40yy = []; data99yy = [];
-data7zz = []; data14zz = []; data21zz = []; data40zz = []; data99zz = [];
+data7x = []; data16x = []; data30x = []; data40x = []; data99x = []; 
+data7y = []; data16y = []; data30y = []; data40y = []; data99y = [];
+data7z = []; data16z = []; data30z = []; data40z = []; data99z = [];
+data7xx = []; data16xx = []; data30xx = []; data40xx = []; data99xx = [];
+data7yy = []; data16yy = []; data30yy = []; data40yy = []; data99yy = [];
+data7zz = []; data16zz = []; data30zz = []; data40zz = []; data99zz = [];
 for i in xrange (len(mconf.traceurs_list)):   
     data7x += [LandLM_abs[i].contributionF[7][:,0]]
-    data14x += [LandLM_abs[i].contributionF[14][:,0]]
-    data21x += [LandLM_abs[i].contributionF[21][:,0]]
+    data16x += [LandLM_abs[i].contributionF[16][:,0]]
+    data30x += [LandLM_abs[i].contributionF[30][:,0]]
     data40x += [LandLM_abs[i].contributionF[40][:,0]]
     data99x += [LandLM_abs[i].contributionF[98][:,0]]
     #
     data7y += [LandLM_abs[i].contributionF[7][:,1]]
-    data14y += [LandLM_abs[i].contributionF[14][:,1]]
-    data21y += [LandLM_abs[i].contributionF[21][:,1]]
+    data16y += [LandLM_abs[i].contributionF[16][:,1]]
+    data30y += [LandLM_abs[i].contributionF[30][:,1]]
     data40y += [LandLM_abs[i].contributionF[40][:,1]]
     data99y += [LandLM_abs[i].contributionF[98][:,1]]
     #
     data7z += [LandLM_abs[i].contributionF[7][:,2]]
-    data14z += [LandLM_abs[i].contributionF[14][:,2]]
-    data21z += [LandLM_abs[i].contributionF[21][:,2]]
+    data16z += [LandLM_abs[i].contributionF[16][:,2]]
+    data30z += [LandLM_abs[i].contributionF[30][:,2]]
     data40z += [LandLM_abs[i].contributionF[40][:,2]]
     data99z += [LandLM_abs[i].contributionF[98][:,2]]
     #
     data7xx += [LandAM[i].contributionF[7][:,3]]
-    data14xx += [LandAM[i].contributionF[14][:,3]]
-    data21xx += [LandAM[i].contributionF[21][:,3]]
+    data16xx += [LandAM[i].contributionF[16][:,3]]
+    data30xx += [LandAM[i].contributionF[30][:,3]]
     data40xx += [LandAM[i].contributionF[40][:,3]]
     data99xx += [LandAM[i].contributionF[98][:,3]]
     #
     data7yy += [LandAM[i].contributionF[7][:,4]]
-    data14yy += [LandAM[i].contributionF[14][:,4]]
-    data21yy += [LandAM[i].contributionF[21][:,4]]
+    data16yy += [LandAM[i].contributionF[16][:,4]]
+    data30yy += [LandAM[i].contributionF[30][:,4]]
     data40yy += [LandAM[i].contributionF[40][:,4]]
     data99yy += [LandAM[i].contributionF[98][:,4]]
     #
     data7zz += [LandAM[i].contributionF[7][:,5]]
-    data14zz += [LandAM[i].contributionF[14][:,5]]
-    data21zz += [LandAM[i].contributionF[21][:,5]]
+    data16zz += [LandAM[i].contributionF[16][:,5]]
+    data30zz += [LandAM[i].contributionF[30][:,5]]
     data40zz += [LandAM[i].contributionF[40][:,5]]
     data99zz += [LandAM[i].contributionF[98][:,5]]
 
 table_LandMx = np.matrix([np.mean(np.matrix(data7x), 0).A1, 
-                          np.mean(np.matrix(data14x), 0).A1, 
-                          np.mean(np.matrix(data21x), 0).A1,
+                          np.mean(np.matrix(data16x), 0).A1, 
+                          np.mean(np.matrix(data30x), 0).A1,
                           np.mean(np.matrix(data40x), 0).A1,
                           np.mean(np.matrix(data99x), 0).A1])
 table_LandM_stdx = np.matrix([np.std(np.matrix(data7x), 0).A1, 
-                              np.std(np.matrix(data14x), 0).A1, 
-                              np.std(np.matrix(data21x), 0).A1, 
+                              np.std(np.matrix(data16x), 0).A1, 
+                              np.std(np.matrix(data30x), 0).A1, 
                               np.std(np.matrix(data40x), 0).A1,
                               np.std(np.matrix(data99x), 0).A1])
 table_LandMy = np.matrix([np.mean(np.matrix(data7y), 0).A1, 
-                          np.mean(np.matrix(data14y), 0).A1, 
-                          np.mean(np.matrix(data21y), 0).A1,
+                          np.mean(np.matrix(data16y), 0).A1, 
+                          np.mean(np.matrix(data30y), 0).A1,
                           np.mean(np.matrix(data40y), 0).A1,
                           np.mean(np.matrix(data99y), 0).A1])
 table_LandM_stdy = np.matrix([np.std(np.matrix(data7y), 0).A1, 
-                              np.std(np.matrix(data14y), 0).A1, 
-                              np.std(np.matrix(data21y), 0).A1,
+                              np.std(np.matrix(data16y), 0).A1, 
+                              np.std(np.matrix(data30y), 0).A1,
                               np.std(np.matrix(data40y), 0).A1,
                               np.std(np.matrix(data99y), 0).A1])
 table_LandMz = np.matrix([np.mean(np.matrix(data7z), 0).A1, 
-                          np.mean(np.matrix(data14z), 0).A1, 
-                          np.mean(np.matrix(data21z), 0).A1,
+                          np.mean(np.matrix(data16z), 0).A1, 
+                          np.mean(np.matrix(data30z), 0).A1,
                           np.mean(np.matrix(data40z), 0).A1,
                           np.mean(np.matrix(data99z), 0).A1])
 table_LandM_stdz = np.matrix([np.std(np.matrix(data7z), 0).A1, 
-                              np.std(np.matrix(data14z), 0).A1, 
-                              np.std(np.matrix(data21z), 0).A1,
+                              np.std(np.matrix(data16z), 0).A1, 
+                              np.std(np.matrix(data30z), 0).A1,
                               np.std(np.matrix(data40z), 0).A1,
                               np.std(np.matrix(data99z), 0).A1])
 
 table_LandMxx = np.matrix([np.mean(np.matrix(data7xx), 0).A1, 
-                           np.mean(np.matrix(data14xx), 0).A1, 
-                           np.mean(np.matrix(data21xx), 0).A1,
+                           np.mean(np.matrix(data16xx), 0).A1, 
+                           np.mean(np.matrix(data30xx), 0).A1,
                            np.mean(np.matrix(data40xx), 0).A1,
                            np.mean(np.matrix(data99xx), 0).A1])
 table_LandM_stdxx = np.matrix([np.std(np.matrix(data7xx), 0).A1, 
-                               np.std(np.matrix(data14xx), 0).A1, 
-                               np.std(np.matrix(data21xx), 0).A1,
+                               np.std(np.matrix(data16xx), 0).A1, 
+                               np.std(np.matrix(data30xx), 0).A1,
                                np.std(np.matrix(data40xx), 0).A1,
                                np.std(np.matrix(data99xx), 0).A1])
 table_LandMyy = np.matrix([np.mean(np.matrix(data7yy), 0).A1, 
-                           np.mean(np.matrix(data14yy), 0).A1, 
-                           np.mean(np.matrix(data21yy), 0).A1,
+                           np.mean(np.matrix(data16yy), 0).A1, 
+                           np.mean(np.matrix(data30yy), 0).A1,
                            np.mean(np.matrix(data40yy), 0).A1,
                            np.mean(np.matrix(data99yy), 0).A1])
 table_LandM_stdyy = np.matrix([np.std(np.matrix(data7yy), 0).A1, 
-                               np.std(np.matrix(data14yy), 0).A1, 
-                               np.std(np.matrix(data21yy), 0).A1,
+                               np.std(np.matrix(data16yy), 0).A1, 
+                               np.std(np.matrix(data30yy), 0).A1,
                                np.std(np.matrix(data40yy), 0).A1,
                                np.std(np.matrix(data99yy), 0).A1])
 table_LandMzz = np.matrix([np.mean(np.matrix(data7zz), 0).A1, 
-                           np.mean(np.matrix(data14zz), 0).A1, 
-                           np.mean(np.matrix(data21zz), 0).A1,
+                           np.mean(np.matrix(data16zz), 0).A1, 
+                           np.mean(np.matrix(data30zz), 0).A1,
                            np.mean(np.matrix(data40zz), 0).A1,
                            np.mean(np.matrix(data99zz), 0).A1])
 table_LandM_stdzz = np.matrix([np.std(np.matrix(data7zz), 0).A1, 
-                               np.std(np.matrix(data14zz), 0).A1, 
-                               np.std(np.matrix(data21zz), 0).A1,
+                               np.std(np.matrix(data16zz), 0).A1, 
+                               np.std(np.matrix(data30zz), 0).A1,
                                np.std(np.matrix(data40zz), 0).A1,
                                np.std(np.matrix(data99zz), 0).A1])
 

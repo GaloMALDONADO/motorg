@@ -321,3 +321,41 @@ class CentroidalMomentum(Plot):
         ax.plot(taskMin,'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
         plt.ylabel('$[Nm \cdot BW^{-1} \cdot H^{-1}]$')
         plt.legend(['mean','mean $\pm$ std'],loc=1)
+
+    def plotMomentumRateLanding(self):
+        fig = plt.figure()
+        #fig.canvas.set_window_title(self.windowTitle)
+        
+        task = [np.array(self.task[i].taskNormalized).squeeze() for i in xrange(self.participantsNo)]
+        task_hat = np.mean(task,0)
+        taskStd_hat = np.std(task,0)
+        
+        taskPlus = task_hat + taskStd_hat
+        taskMin = task_hat - taskStd_hat
+        
+        ax = fig.add_subplot('111')
+        #plt.title('Landing: torque in sagittal plane')
+        ax.plot(-task_hat[:,0],'-r', linewidth=3.0)
+        ax.plot(-task_hat[:,1],'-g', linewidth=3.0)
+        ax.plot(task_hat[:,2],'-b', linewidth=3.0)
+        ax.plot(-taskPlus[:,0],'-k',color = '0.75', linewidth=1.5, linestyle='--')
+        ax.plot(-taskMin[:,0],'-k' ,color = '0.75',linewidth=1.5, linestyle='--')
+        ax.plot(-taskPlus[:,1],'-k',color = '0.75', linewidth=1.5, linestyle='--')
+        ax.plot(-taskMin[:,1],'-k' ,color = '0.75',linewidth=1.5, linestyle='--')
+        ax.plot(taskPlus[:,2],'-k',color = '0.75', linewidth=1.5, linestyle='--')
+        ax.plot(taskMin[:,2],'-k' ,color = '0.75',linewidth=1.5, linestyle='--')
+        plt.ylabel('$[Nm \cdot BW^{-1} \cdot H^{-1}]$',fontsize=14)
+        plt.xlabel('Landing Phase %',fontsize=14)
+        plt.legend(['mean STC','mean FTC','mean TTC','mean $\pm$ std'],fontsize=12,loc=1)
+        plt.axvline(7,color = '0', linewidth=1.5, linestyle='--')
+        plt.axvline(14,color = '0', linewidth=1.5, linestyle='--')
+        plt.axvline(21,color = '0', linewidth=1.5, linestyle='--')
+        plt.axvline(40,color = '0', linewidth=1.5, linestyle='--')
+
+        #plt.legend(['mean','mean $\pm$ std'],loc=1)
+        
+        #ax = fig.add_subplot('111')
+        #plt.title('Landing: torque in sagittal plane')
+        
+        #plt.ylabel('$[Nm \cdot BW^{-1} \cdot H^{-1}]$')
+        #plt.legend(['mean','mean $\pm$ std'],loc=1)

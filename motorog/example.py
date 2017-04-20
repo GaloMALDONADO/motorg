@@ -152,7 +152,7 @@ plotMomL_stab = plotTasks.CentroidalMomentum(LandM_stab, 'Stability with Momentu
 #plotBackL = plotTasks.Joint(LandBack,'back_flexion')
 plotVisionL = plotTasks.Joint(LandV,'neck_flexion')
 #plotNC = plotTasks.CentroidalMomentum(LandNC)
-
+plotAML = plotTasks.CentroidalMomentum(LandAM,"")
 
 avatar0 = robots[0]
 avatar1 = robots[1]
@@ -273,18 +273,24 @@ np.savetxt("TableCriteriaLand.csv",
 
 
 #launch with gepetto viewer
-viewer = Viewer('avatar viewer0',avatar0)
-viewer.addRobot(avatar1)
-viewer.addRobot(avatar2)
-viewer.addRobot(avatar3)
-viewer.addRobot(avatar4)
-viewer.viewer.gui.setBackgroundColor1(viewer.windowID,(255,255,255,0))
+ x=land[4]['pinocchio_data']
+viewer = Viewer('avatar viewer',avatar4)
+viewer.display(x[7],avatar4.name)
+viewer.display(x[14],avatar4.name)
+viewer.display(x[21],avatar4.name)
+viewer.display(x[40],avatar4.name)
+viewer.display(x[99],avatar4.name)
+#viewer.addRobot(avatar1)
+#viewer.addRobot(avatar2)
+#viewer.addRobot(avatar3)
+#viewer.addRobot(avatar4)
+#viewer.viewer.gui.setBackgroundColor1(viewer.windowID,(255,255,255,0))
 
-viewer.viewer.gui.setVisibility('world/Melvin/floor','OFF')
-viewer.viewer.gui.setVisibility('world/Cyril/floor','OFF')
-viewer.viewer.gui.setVisibility('world/Michael/floor','OFF')
-viewer.viewer.gui.setVisibility('world/Lucas/floor','OFF')
-#viewer.viewer.gui.setVisibility('world/Yoan/floor','OFF')
+#viewer.viewer.gui.setVisibility('world/Melvin/floor','OFF')
+#viewer.viewer.gui.setVisibility('world/Cyril/floor','OFF')
+#viewer.viewer.gui.setVisibility('world/Michael/floor','OFF')
+#viewer.viewer.gui.setVisibility('world/Lucas/floor','OFF')
+viewer.viewer.gui.setVisibility('world/Yoan/floor','OFF')
 
 task = JumpV
 jq=[]
@@ -461,13 +467,13 @@ for i in xrange (len(mconf.traceurs_list)):
     data99xx += [LandAM[i].contributionF[98][:,3]]
     #
     data7yy += [LandAM[i].contributionF[7][:,4]]
-    data14yy += [LandAM[i].contributionF[1e][:,4]]
+    data14yy += [LandAM[i].contributionF[14][:,4]]
     data21yy += [LandAM[i].contributionF[21][:,4]]
     data40yy += [LandAM[i].contributionF[40][:,4]]
     data99yy += [LandAM[i].contributionF[98][:,4]]
     #
     data7zz += [LandAM[i].contributionF[7][:,5]]
-    data14zz += [LandAM[i].contributionF[1e][:,5]]
+    data14zz += [LandAM[i].contributionF[14][:,5]]
     data21zz += [LandAM[i].contributionF[21][:,5]]
     data40zz += [LandAM[i].contributionF[40][:,5]]
     data99zz += [LandAM[i].contributionF[98][:,5]]

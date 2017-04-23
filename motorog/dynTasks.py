@@ -42,33 +42,22 @@ def getRobot(i):
 # ------------------ Configuration ---------------
 # LM : linear momentum
 # AM : angular momentum
-# V : gaze
 #Jump
-JumpLM = []; JumpAM = []; JumpV = []; JumpNC = [];
+JumpLM = []; JumpAM = []; 
 JLMmask = np.array([True,False,True,False,False,False])
 JAMmask = np.array([False,False,False,False,True,False])
-JVmask  = np.array([False,False,False,True,True,True])
-JNCmask = np.array([False,False,False,True,False,False])
-#Fly
-FlyV = []; FlyLM = [];#FlyP = []; 
-FVmask=np.array([False,False,False,True,True,True])
-FLMmask = np.array([True,True,True,True,True,True])
 #Land
-LandV = []; LandLM_abs = []; LandLM_stab = []; LandAM = []; LandM_stab = []; LandNC = []; LandBack = [];
-LVmask  =   np.array([False, False, False, True, True, True])
+LandLM_abs = []; LandLM_stab = []; LandAM = []; 
 LAMmask =   np.array([False, False, False, True, True, True])
 LLM_Abs_mask =   np.array([False, False, True, False, False, False])
 LLM_Stab_mask =   np.array([True, True, False, False, False, False])
-LM_Stab_mask =   np.array([True, True, False, False, True, False])
-nc_mask = np.array([False, False, False, True, False, False])
-back_mask = np.array([False, False, False, True, True, True])
+
 
 robots=[]
 
 
 participantsNo = len(mconf.traceurs_list)
-for i in xrange (participantsNo-3):
-
+for i in xrange (participantsNo):
     (jump,fly,land,jump_dq,fly_dq,land_dq,jump_ddq,fly_ddq,land_ddq) = getTrials(i)
     robots += [getRobot(i)]
     # coefficient of force normalization for inter-subject comparison 
@@ -90,76 +79,33 @@ for i in xrange (participantsNo-3):
     ''' Impulsion task is also defined with the angular momentum around the Antero-Posterior axis'''
     JumpAM += [ucm.ucmMomentum(robots[i], jump, jump_dq, jump_ddq, JAMmask, 1, KT)]
     Vucm, Vcm, criteria = JumpAM[i].getUCMVariances()
-    ''' Vision task to calculate the distance to the target '''
-    JumpV += [ucm.ucmJoint(robots[i], jump, jump_dq, jump_ddq, IDX_NECK, JVmask)]
-    Vucm, Vcm, criteria = JumpV[i].getUCMVariances()
-    ##JumpNC += [ucm.ucmJoint(robots[i], jump, IDX_RHAND, JNCmask)]
-    ##Vucm, Vcm, criteria = JumpNC[i].getUCMVariances()
-
-    ''' *******************************  FLY *******************************  '''
-    ''' Vision task is defined with the joint flexion of the neck to track the target '''
-    #FlyV += [ucm.ucmJoint(robots[i], fly, fly_dq, fly_ddq, IDX_NECK,FVmask)]
-    #Vucm, Vcm, criteria = FlyV[i].getUCMVariances()
-    FlyLM += [ucm.ucmMomentum(robots[i], fly, fly_dq, fly_ddq, FLMmask, 1, 1)]
-    Vucm, Vcm, criteria = FlyLM[i].getUCMVariances()
-    ''' Pelvis task is defined with the joint flexion of the pelvis '''
-    #Pelvis += [ucm.ucmJoint(robots[i], fly, 
-    #                        IDX_PELVIS, 
-    #                        mask=np.array([False,False,False,True,False,False]))]
-    #Vucm, Vcm, criteria = Pelvis[i].getUCMVariances()
-    ''' Preparation to land is defined with the variance of joints before IC with the ground'''
-    #TODO
-
+    
     ''' *******************************  LAND  ******************************* '''
     ''' Damping and reducing GRFs task is defined with the linear momentum '''
-    #LandLM_abs += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LLM_Abs_mask, KF, 1)]
-    #Vucm, Vcm, criteria = LandLM_abs[i].getUCMVariances()
-    #LandLM_stab += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LLM_Stab_mask, KF,1)]
-    #Vucm, Vcm, criteria = LandLM_stab[i].getUCMVariances()
-    #LandM_stab += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LM_Stab_mask, KF, 1)]
-    #Vucm, Vcm, criteria = LandM_stab[i].getUCMVariances()
+    LandLM_abs += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LLM_Abs_mask, KF, 1)]
+    Vucm, Vcm, criteria = LandLM_abs[i].getUCMVariances()
+    LandLM_stab += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LLM_Stab_mask, KF,1)]
+    Vucm, Vcm, criteria = LandLM_stab[i].getUCMVariances()
     ''' Angular stability task is also defined with the ang momentum around Antero-Posterior axis'''
-    #LandAM += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LAMmask, 1, KT)]
-    #Vucm, Vcm, criteria = LandAM[i].getUCMVariances()
-    ''' The head is stabilized during landing throught neck flexion'''
-    #LandV += [ucm.ucmJoint(robots[i], land, land_dq, land_ddq, IDX_NECK, LVmask)]
-    #Vucm, Vcm, criteria = LandV[i].getUCMVariances()
-    # not controlled task
-    ##LandNC += [ucm.ucmMomentum(robots[i], land, nc_mask)]
-    ##Vucm, Vcm, criteria = LandNC[i].getUCMVariances()
-    # back
-    ##LandBack += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, back_mask)]
-    ##Vucm, Vcm, criteria = LandBack[i].getUCMVariances()
-    ''' Landing stiffness through the Z displacement of the center of mass '''
-    #Stiffness += [ucm.ucmCoM(robots[i], land, mask=np.array([False,False,True]))]
-    ##Vucm, Vcm, criteria = Stiffness[i].getUCMVariances()
-    ''' Stability task is defined with the center of mass in X and Y'''
-    #StabilityCM += [ucm.ucmCoM(robots[i], land, mask=np.array([True,True,False]))]
-    ##Vucm, Vcm, criteria = StabilityCM[i].getUCMVariances()
+    LandAM += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LAMmask, 1, KT)]
+    Vucm, Vcm, criteria = LandAM[i].getUCMVariances()
 
-##plotNCJ = plotTasks.Joint(JumpNC,'rmtp')
-#plotVisionJ = plotTasks.Joint(JumpV,'neck_flexion')
-#plotLinMomJ = plotTasks.CentroidalMomentum(JumpLM,'Impulsion through Linear Momentum (A-P and V) during Jump')
-#plotAngMomJ = plotTasks.CentroidalMomentum(JumpAM, 'Angular Momentum (around M-L) contribution during Jump')
+#    
+plotLinMomJ = plotTasks.CentroidalMomentum(JumpLM,'Impulsion through Linear Momentum (A-P and V) during Jump')
+plotAngMomJ = plotTasks.CentroidalMomentum(JumpAM, 'Angular Momentum (around M-L) contribution during Jump')
+plotLinMomL_stab = plotTasks.CentroidalMomentum(LandLM_stab,'Linear Momentum stability (A-P and M-L) task during Landing')
+plotLinMomL_abs = plotTasks.CentroidalMomentum(LandLM_abs, 'Linear Momentum absorption (V) task during Landing')
+plotAngMomL = plotTasks.CentroidalMomentum(LandAM, 'Angular Momentum (around M-L) contribution to stability during Landing')
+plotAML = plotTasks.CentroidalMomentum(LandAM,"")
 
-#plotVisionF = plotTasks.Joint(FlyV,'neck_flexion')
-plotLinMomF = plotTasks.CentroidalMomentum(FlyLM,'Fly Linear Momentum')
-
-#plotLinMomL_stab = plotTasks.CentroidalMomentum(LandLM_stab,'Linear Momentum stability (A-P and M-L) task during Landing')
-#plotLinMomL_abs = plotTasks.CentroidalMomentum(LandLM_abs, 'Linear Momentum absorption (V) task during Landing')
-#plotAngMomL = plotTasks.CentroidalMomentum(LandAM, 'Angular Momentum (around M-L) contribution to stability during Landing')
-#plotMomL_stab = plotTasks.CentroidalMomentum(LandM_stab, 'Stability with Momentum (Linear M-L and A-P plus Angular around M-L)')
-#plotBackL = plotTasks.Joint(LandBack,'back_flexion')
-#plotVisionL = plotTasks.Joint(LandV,'neck_flexion')
-#plotNC = plotTasks.CentroidalMomentum(LandNC)
-#plotAML = plotTasks.CentroidalMomentum(LandAM,"")
-
+#
 avatar0 = robots[0]
 avatar1 = robots[1]
 avatar2 = robots[2]
 avatar3 = robots[3]
 avatar4 = robots[4]
 
+# Testing
 t2=LandLM_abs[0]
 hg=np.array(t2.data['hg']).squeeze()
 hg_s=np.array(t2.data['hg_segments']).squeeze()
@@ -214,47 +160,28 @@ np.savetxt("TableCriteriaImpulse.csv",
            np.hstack([subjects,phaseFactor,taskFactor,np.matrix(C).T]), 
            delimiter=",")
 
-''' Fly Phase  '''
-nphases =3
-ntasks = 1
-subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases)).T 
-phaseFactor = np.matrix([  10, 50, 90]*nsubjects).T
-taskFactor =  np.matrix([1]*nsubjects*nphases).T
-
-C=[];
-for i in xrange (len(mconf.traceurs_list)):
-    C += [
-        FlyV[i].criteria[10],
-        FlyV[i].criteria[50],
-        FlyV[i].criteria[90],
-    ]
-
-np.savetxt("TableCriteriaFly.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,np.matrix(C).T]), 
-           delimiter=",")
-
-
 
 ''' Landing Phase '''
-nphases = 4
+# 7 - 16 - 25 - 40 -100
+nphases = 5
 ntasks = 3
 subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases)).T 
 #l: 5(start) 20(maxForce) 40(lowerForce/stab) 100(end) 
-phaseFactor = np.matrix([  5, 5, 5, 20, 20, 20, 40, 40, 40, 99, 99, 99]*nsubjects).T
+phaseFactor = np.matrix([  4, 4, 4, 13, 13, 13, 20, 20, 20, 40, 40, 40, 97, 97, 97]*nsubjects).T
 taskFactor =  np.matrix([1,2,3]*nsubjects*nphases).T
 
 C=[];
 for i in xrange (len(mconf.traceurs_list)):
     C += [
-        #LandV[i].criteria[10],
-        LandLM_abs[i].criteria[5],
-        LandLM_stab[i].criteria[5],
-        LandAM[i].criteria[5],
-        #LandV[i].criteria[50],
+        LandLM_abs[i].criteria[4],
+        LandLM_stab[i].criteria[4],
+        LandAM[i].criteria[4],
+        LandLM_abs[i].criteria[13],
+        LandLM_stab[i].criteria[13],
+        LandAM[i].criteria[13],
         LandLM_abs[i].criteria[20],
         LandLM_stab[i].criteria[20],
         LandAM[i].criteria[20],
-        #LandV[i].criteria[90],
         LandLM_abs[i].criteria[40],
         LandLM_stab[i].criteria[40],
         LandAM[i].criteria[40],
@@ -292,28 +219,7 @@ viewer.addRobot(avatar4)
 #viewer.viewer.gui.setVisibility('world/Lucas/floor','OFF')
 viewer.viewer.gui.setVisibility('world/Yoan/floor','OFF')
 
-task = JumpV
-jq=[]
-for i in xrange (participantsNo):
-    jq+=[task[i].q_mean.squeeze()]
-jq_mean =  np.mean(np.array(jq),0)
 
-task = FlyV
-fq=[]
-for i in xrange (participantsNo):
-    fq+=[task[i].q_mean.squeeze()]
-fq_mean =  np.mean(np.array(fq),0)
-
-task = LandV
-lq=[]
-for i in xrange (participantsNo):
-    lq+=[task[i].q_mean.squeeze()]
-lq_mean =  np.mean(np.array(lq),0)
-
-
-
-
-#viewer.display(lq_mean[99],avatar.name) 
 
 jump0 = jump[0]['pinocchio_data']
 land0 = land[0]['pinocchio_data']

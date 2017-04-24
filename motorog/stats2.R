@@ -244,33 +244,34 @@ SOT_LAND$Task<-as.factor(SOT_LAND$Task)
 
 
 # -----------------  Assess Normality of the Data -------------------------
-shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="5"])
+shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="4"])
+# data normally distributed
+shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="13"])
 # data normally distributed
 shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="20"])
 # data normally distributed
 shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="40"])
 # data normally distributed
-shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="99"])
-# data normally distributed
+shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="97"])
 
-shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="2" & SOT_LAND$Phase=="5"])
+shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="2" & SOT_LAND$Phase=="4"])
+# data normally distributed
+shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="2" & SOT_LAND$Phase=="13"])
 # data normally distributed
 shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="2" & SOT_LAND$Phase=="20"])
 # data normally distributed
 shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="2" & SOT_LAND$Phase=="40"])
-# data normally distributed
-shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="2" & SOT_LAND$Phase=="99"])
-# data not ormally distributed ***************
+shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="2" & SOT_LAND$Phase=="97"])
 
-shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="3" & SOT_LAND$Phase=="5"])
+shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="3" & SOT_LAND$Phase=="4"])
+# data normally distributed
+shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="3" & SOT_LAND$Phase=="13"])
 # data normally distributed
 shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="3" & SOT_LAND$Phase=="20"])
 # data normally distributed
 shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="3" & SOT_LAND$Phase=="40"])
 # data normally distributed
-shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="3" & SOT_LAND$Phase=="99"])
-# data normally distributed
-
+shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="3" & SOT_LAND$Phase=="97"])
 
 #variance equality
 

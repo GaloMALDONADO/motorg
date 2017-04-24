@@ -3,8 +3,8 @@ rm(list = ls())
 
 
 # ------------------------------------------------------------------------
-p='/galo/devel/gepetto/motorg/motorog/tables/momenta/' #home
-#p='/local/gmaldona/devel/motorg/motorog/tables/momenta/' #lab
+#p='/galo/devel/gepetto/motorg/motorog/tables/momenta/' #home
+p='/local/gmaldona/devel/motorg/motorog/tables/momenta/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -236,7 +236,7 @@ class = "data.frame", row.names = c(NA, -5L))
 
 # ----------- BARPLOT
 colors = c("red","green","blue","yellow","pink")
-slegend = c( "7%","14%","21%", "40%", "100%")
+slegend = c( "7%","16%","30%", "40%", "100%")
 
 op = par(mar=c(8,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
 barx = barplot(as.matrix(-land.means.x), main="A-P Force",
@@ -312,17 +312,17 @@ rm(op)
 # foot + toes
 # forearm and hand
 # contribute: pelvis, thighs, legs, back, head
-simp_names = list('7%','14%','21%','40%','100%')
+simp_names = list('7%','16%','30%','40%','100%')
 landing.means.xx <- structure(list(
   '7%'= c(meanDataAMx[1,2]+meanDataAMx[1,3], meanDataAMx[1,7]+meanDataAMx[1,8],
           meanDataAMx[1,4]+meanDataAMx[1,5]+meanDataAMx[1,6], meanDataAMx[1,9]+meanDataAMx[1,10]+meanDataAMx[1,11], 
           meanDataAMx[1,14]+meanDataAMx[1,17]+meanDataAMx[1,18]+meanDataAMx[1,19], meanDataAMx[1,20]+meanDataAMx[1,23]+meanDataAMx[1,24]+meanDataAMx[1,25], 
           meanDataAMx[1,15]+meanDataAMx[1,16], meanDataAMx[1,21]+meanDataAMx[1,22]),
-  '14%' =c(meanDataAMx[2,2]+meanDataAMx[2,3], meanDataAMx[2,7]+meanDataAMx[2,8], 
+  '16%' =c(meanDataAMx[2,2]+meanDataAMx[2,3], meanDataAMx[2,7]+meanDataAMx[2,8], 
            meanDataAMx[2,4]+meanDataAMx[2,5]+meanDataAMx[2,6], meanDataAMx[2,9]+meanDataAMx[2,10]+meanDataAMx[2,11], 
            meanDataAMx[2,14]+meanDataAMx[2,17]+meanDataAMx[2,18]+meanDataAMx[2,19], meanDataAMx[2,20]+meanDataAMx[2,23]+meanDataAMx[2,24]+meanDataAMx[2,25], 
            meanDataAMx[2,15]+meanDataAMx[2,16], meanDataAMx[2,21]+meanDataAMx[2,22]),
-  '21%' = c(meanDataAMx[3,2]+meanDataAMx[3,3], meanDataAMx[3,7]+meanDataAMx[3,8],
+  '30%' = c(meanDataAMx[3,2]+meanDataAMx[3,3], meanDataAMx[3,7]+meanDataAMx[3,8],
             meanDataAMx[3,4]+meanDataAMx[3,5]+meanDataAMx[3,6], meanDataAMx[3,9]+meanDataAMx[3,10]+meanDataAMx[3,11], 
             meanDataAMx[3,14]+meanDataAMx[3,17]+meanDataAMx[3,18]+meanDataAMx[3,19], meanDataAMx[3,20]+meanDataAMx[3,23]+meanDataAMx[3,24]+meanDataAMx[3,25], 
             meanDataAMx[3,15]+meanDataAMx[3,16], meanDataAMx[3,21]+meanDataAMx[3,22]),
@@ -340,15 +340,15 @@ class = "data.frame", row.names = c(NA, -8L))
 
 #
 landing.stds.xx <- structure(list(
-  '7%'= c(stdDataAMx[1,2]+stdDataAMx[1,3], stdDataAMx[1,7]+stdDataAMx[1,8],
-          stdDataAMx[1,4]+stdDataAMx[1,5]+stdDataAMx[1,6], stdDataAMx[1,9]+stdDataAMx[1,10]+stdDataAMx[1,11], 
-          stdDataAMx[1,14]+stdDataAMx[1,17]+stdDataAMx[1,18]+stdDataAMx[1,19], stdDataAMx[1,20]+stdDataAMx[1,23]+stdDataAMx[1,24]+stdDataAMx[1,25], 
-          stdDataAMx[1,15]+stdDataAMx[1,16], stdDataAMx[1,21]+stdDataAMx[1,22]),
-  '14%' =c(stdDataAMx[2,2]+stdDataAMx[2,3], stdDataAMx[2,7]+stdDataAMx[2,8], 
-           stdDataAMx[2,4]+stdDataAMx[2,5]+stdDataAMx[2,6], stdDataAMx[2,9]+stdDataAMx[2,10]+stdDataAMx[2,11], 
-           stdDataAMx[2,14]+stdDataAMx[2,17]+stdDataAMx[2,18]+stdDataAMx[2,19], stdDataAMx[2,20]+stdDataAMx[2,23]+stdDataAMx[2,24]+stdDataAMx[2,25], 
-           stdDataAMx[2,15]+stdDataAMx[2,16], stdDataAMx[2,21]+stdDataAMx[2,22]),
-  '21%' = c(stdDataAMx[3,2]+stdDataAMx[3,3], stdDataAMx[3,7]+stdDataAMx[3,8],
+  '7%'= c((stdDataAMx[1,2]+stdDataAMx[1,3])/2, (stdDataAMx[1,7]+stdDataAMx[1,8])/2,
+          (stdDataAMx[1,4]+stdDataAMx[1,5]+stdDataAMx[1,6])/3, (stdDataAMx[1,9]+stdDataAMx[1,10]+stdDataAMx[1,11])/3, 
+          (stdDataAMx[1,14]+stdDataAMx[1,17]+stdDataAMx[1,18]+stdDataAMx[1,19])/4, (stdDataAMx[1,20]+stdDataAMx[1,23]+stdDataAMx[1,24]+stdDataAMx[1,25])/4, 
+          (stdDataAMx[1,15]+stdDataAMx[1,16])/2, (stdDataAMx[1,21]+stdDataAMx[1,22])/2),
+  '16%' =c((stdDataAMx[2,2]+stdDataAMx[2,3])/2, (stdDataAMx[2,7]+stdDataAMx[2,8])/2, 
+           (stdDataAMx[2,4]+stdDataAMx[2,5]+stdDataAMx[2,6])/3, (stdDataAMx[2,9]+stdDataAMx[2,10]+stdDataAMx[2,11])/, 
+           (stdDataAMx[2,14]+stdDataAMx[2,17]+stdDataAMx[2,18]+stdDataAMx[2,19])/4, (stdDataAMx[2,20]+stdDataAMx[2,23]+stdDataAMx[2,24]+stdDataAMx[2,25])/4, 
+           (stdDataAMx[2,15]+stdDataAMx[2,16])/2, (stdDataAMx[2,21]+stdDataAMx[2,22])/2),
+  '30%' = c(stdDataAMx[3,2]+stdDataAMx[3,3], stdDataAMx[3,7]+stdDataAMx[3,8],
             stdDataAMx[3,4]+stdDataAMx[3,5]+stdDataAMx[3,6], stdDataAMx[3,9]+stdDataAMx[3,10]+stdDataAMx[3,11], 
             stdDataAMx[3,14]+stdDataAMx[3,17]+stdDataAMx[3,18]+stdDataAMx[3,19], stdDataAMx[3,20]+stdDataAMx[3,23]+stdDataAMx[3,24]+stdDataAMx[3,25], 
             stdDataAMx[3,15]+stdDataAMx[3,16], stdDataAMx[3,21]+stdDataAMx[3,22]),
@@ -371,11 +371,11 @@ landing.ci.xx <- structure(list(
           k*stdDataAMx[1,4]+k*stdDataAMx[1,5]+k*stdDataAMx[1,6], k*stdDataAMx[1,9]+k*stdDataAMx[1,10]+k*stdDataAMx[1,11], 
           k*stdDataAMx[1,14]+k*stdDataAMx[1,17]+k*stdDataAMx[1,18]+k*stdDataAMx[1,19], k*stdDataAMx[1,20]+k*stdDataAMx[1,23]+k*stdDataAMx[1,24]+k*stdDataAMx[1,25], 
           k*stdDataAMx[1,15]+k*stdDataAMx[1,16], k*stdDataAMx[1,21]+k*stdDataAMx[1,22]),
-  '14%' =c(k*stdDataAMx[2,2]+k*stdDataAMx[2,3], k*stdDataAMx[2,7]+k*stdDataAMx[2,8], 
+  '16%' =c(k*stdDataAMx[2,2]+k*stdDataAMx[2,3], k*stdDataAMx[2,7]+k*stdDataAMx[2,8], 
            k*stdDataAMx[2,4]+k*stdDataAMx[2,5]+k*stdDataAMx[2,6], k*stdDataAMx[2,9]+k*stdDataAMx[2,10]+k*stdDataAMx[2,11], 
            k*stdDataAMx[2,14]+k*stdDataAMx[2,17]+k*stdDataAMx[2,18]+k*stdDataAMx[2,19], k*stdDataAMx[2,20]+k*stdDataAMx[2,23]+k*stdDataAMx[2,24]+k*stdDataAMx[2,25], 
            k*stdDataAMx[2,15]+k*stdDataAMx[2,16], k*stdDataAMx[2,21]+k*stdDataAMx[2,22]),
-  '21%' = c(k*stdDataAMx[3,2]+k*stdDataAMx[3,3], k*stdDataAMx[3,7]+k*stdDataAMx[3,8],
+  '30%' = c(k*stdDataAMx[3,2]+k*stdDataAMx[3,3], k*stdDataAMx[3,7]+k*stdDataAMx[3,8],
             k*stdDataAMx[3,4]+k*stdDataAMx[3,5]+k*stdDataAMx[3,6], k*stdDataAMx[3,9]+k*stdDataAMx[3,10]+k*stdDataAMx[3,11], 
             k*stdDataAMx[3,14]+k*stdDataAMx[3,17]+k*stdDataAMx[3,18]+k*stdDataAMx[3,19], k*stdDataAMx[3,20]+k*stdDataAMx[3,23]+k*stdDataAMx[3,24]+k*stdDataAMx[3,25], 
             k*stdDataAMx[3,15]+k*stdDataAMx[3,16], k*stdDataAMx[3,21]+k*stdDataAMx[3,22]),
@@ -423,7 +423,7 @@ arrows(barx,xx-er, barx,xx, angle=90, code=3, length=0.05)
 #'20 arm_l','21 forearm_flex_l','22 forearm_rot_l','23 hand_deviation_l','24 hand_flex_l','25 fingers_l')
 
 # contribute: pelvis, thighs, legs, back, head
-simp_names = list('7%','14%','21%','40%','100%')
+simp_names = list('7%','16%','30%','40%','100%')
 upper_limbs1 = meanDataAMy[1,14] + meanDataAMy[1,15] + meanDataAMy[1,16] + meanDataAMy[1,17] + meanDataAMy[1,18] + meanDataAMy[1,19] + meanDataAMy[1,20] + meanDataAMy[1,21] + meanDataAMy[1,22] + meanDataAMy[1,23] + meanDataAMy[1,24] + meanDataAMy[1,25]
 upper_limbs2 = meanDataAMy[2,14] + meanDataAMy[2,15] + meanDataAMy[2,16] + meanDataAMy[2,17] + meanDataAMy[2,18] + meanDataAMy[2,19] + meanDataAMy[2,20] + meanDataAMy[2,21] + meanDataAMy[2,22] + meanDataAMy[2,23] + meanDataAMy[2,24] + meanDataAMy[2,25]
 upper_limbs3 = meanDataAMy[3,14] + meanDataAMy[3,15] + meanDataAMy[3,16] + meanDataAMy[3,17] + meanDataAMy[3,18] + meanDataAMy[3,19] + meanDataAMy[3,20] + meanDataAMy[3,21] + meanDataAMy[3,22] + meanDataAMy[3,23] + meanDataAMy[3,24] + meanDataAMy[3,25]
@@ -448,8 +448,8 @@ lower_limbs5_std = (stdDataAMy[5,2] + stdDataAMy[5,3] + stdDataAMy[5,4] + stdDat
 
 landing.means.yy <- structure(list(
   '7%'= c(lower_limbs1, meanDataAMy[1,1], meanDataAMy[1,12], meanDataAMy[1,13], upper_limbs1),
-  '14%' =c(lower_limbs2, meanDataAMy[2,1], meanDataAMy[2,12], meanDataAMy[2,13], upper_limbs2),
-  '21%' = c(lower_limbs3, meanDataAMy[3,1], meanDataAMy[3,12], meanDataAMy[3,13], upper_limbs3),
+  '16%' =c(lower_limbs2, meanDataAMy[2,1], meanDataAMy[2,12], meanDataAMy[2,13], upper_limbs2),
+  '30%' = c(lower_limbs3, meanDataAMy[3,1], meanDataAMy[3,12], meanDataAMy[3,13], upper_limbs3),
   '40%' = c(lower_limbs4, meanDataAMy[4,1], meanDataAMy[4,12], meanDataAMy[4,13], upper_limbs4),
   '100%' = c(lower_limbs5, meanDataAMy[5,1], meanDataAMy[5,12], meanDataAMy[5,13], upper_limbs5)
 ), 
@@ -458,8 +458,8 @@ class = "data.frame", row.names = c(NA, -5L))
 
 landing.stds.yy <- structure(list(
   '7%'= c(lower_limbs1_std, stdDataAMy[1,1], stdDataAMy[1,12], stdDataAMy[1,13], upper_limbs1_std),
-  '14%' =c(lower_limbs2_std, stdDataAMy[2,1], stdDataAMy[2,12], stdDataAMy[2,13], upper_limbs2_std),
-  '21%' = c(lower_limbs3_std, stdDataAMy[3,1], stdDataAMy[3,12], stdDataAMy[3,13], upper_limbs3_std),
+  '16%' =c(lower_limbs2_std, stdDataAMy[2,1], stdDataAMy[2,12], stdDataAMy[2,13], upper_limbs2_std),
+  '30%' = c(lower_limbs3_std, stdDataAMy[3,1], stdDataAMy[3,12], stdDataAMy[3,13], upper_limbs3_std),
   '40%' = c(lower_limbs4_std, stdDataAMy[4,1], stdDataAMy[4,12], stdDataAMy[4,13], upper_limbs4_std),
   '100%' = c(lower_limbs5_std, stdDataAMy[5,1], stdDataAMy[5,12], stdDataAMy[5,13], upper_limbs5_std)
 ), 
@@ -468,8 +468,8 @@ class = "data.frame", row.names = c(NA, -5L))
 
 landing.ci.yy <- structure(list(
   '7%'= c(k*lower_limbs1_std, k*stdDataAMy[1,1], k*stdDataAMy[1,12], k*stdDataAMy[1,13], k*upper_limbs1_std),
-  '14%' =c(k*lower_limbs2_std, k*stdDataAMy[2,1], k*stdDataAMy[2,12], k*stdDataAMy[2,13], k*upper_limbs2_std),
-  '21%' = c(k*lower_limbs3_std, k*stdDataAMy[3,1], k*stdDataAMy[3,12], k*stdDataAMy[3,13], k*upper_limbs3_std),
+  '16%' =c(k*lower_limbs2_std, k*stdDataAMy[2,1], k*stdDataAMy[2,12], k*stdDataAMy[2,13], k*upper_limbs2_std),
+  '30%' = c(k*lower_limbs3_std, k*stdDataAMy[3,1], k*stdDataAMy[3,12], k*stdDataAMy[3,13], k*upper_limbs3_std),
   '40%' = c(k*lower_limbs4_std, k*stdDataAMy[4,1], k*stdDataAMy[4,12], k*stdDataAMy[4,13], k*upper_limbs4_std),
   '100%' = c(k*lower_limbs5_std, k*stdDataAMy[5,1], k*stdDataAMy[5,12], k*stdDataAMy[5,13], k*upper_limbs5_std)
 ), 
@@ -505,11 +505,11 @@ landing.means.zz <- structure(list(
           meanDataAMx[1,7]+meanDataAMx[1,8]+meanDataAMx[1,9]+meanDataAMx[1,10]+meanDataAMx[1,11], 
           meanDataAMx[1,14]+meanDataAMx[1,15]+meanDataAMx[1,16]+meanDataAMx[1,17]+meanDataAMx[1,18]+meanDataAMx[1,19], 
           meanDataAMx[1,20]+meanDataAMx[1,21]+meanDataAMx[1,22]+meanDataAMx[1,23]+meanDataAMx[1,24]+meanDataAMx[1,25]),
-  '14%' =c(meanDataAMx[2,2]+meanDataAMx[2,3]+meanDataAMx[2,4]+meanDataAMx[2,5]+meanDataAMx[2,6], 
+  '16%' =c(meanDataAMx[2,2]+meanDataAMx[2,3]+meanDataAMx[2,4]+meanDataAMx[2,5]+meanDataAMx[2,6], 
            meanDataAMx[2,7]+meanDataAMx[2,8]+meanDataAMx[2,9]+meanDataAMx[2,10]+meanDataAMx[2,11], 
            meanDataAMx[2,14]+meanDataAMx[2,15]+meanDataAMx[2,16]+meanDataAMx[2,17]+meanDataAMx[2,18]+meanDataAMx[2,19], 
            meanDataAMx[2,20]+meanDataAMx[2,21]+meanDataAMx[2,22]+meanDataAMx[2,23]+meanDataAMx[2,24]+meanDataAMx[2,25]),
-  '21%' = c(meanDataAMx[3,2]+meanDataAMx[3,3]+meanDataAMx[3,4]+meanDataAMx[3,5]+meanDataAMx[3,6],
+  '30%' = c(meanDataAMx[3,2]+meanDataAMx[3,3]+meanDataAMx[3,4]+meanDataAMx[3,5]+meanDataAMx[3,6],
             meanDataAMx[3,7]+meanDataAMx[3,8]+meanDataAMx[3,9]+meanDataAMx[3,10]+meanDataAMx[3,11], 
             meanDataAMx[3,14]+meanDataAMx[3,15]+meanDataAMx[3,16]+meanDataAMx[3,17]+meanDataAMx[3,18]+meanDataAMx[3,19], 
             meanDataAMx[3,20]+meanDataAMx[3,21]+meanDataAMx[3,22]+meanDataAMx[3,23]+meanDataAMx[3,24]+meanDataAMx[3,25]),
@@ -531,11 +531,11 @@ landing.stds.zz <- structure(list(
           (stdDataAMx[1,7]+stdDataAMx[1,8]+stdDataAMx[1,9]+stdDataAMx[1,10]+stdDataAMx[1,11])/5, 
           (stdDataAMx[1,14]+stdDataAMx[1,15]+stdDataAMx[1,16]+stdDataAMx[1,17]+stdDataAMx[1,18]+stdDataAMx[1,19])/6, 
           (stdDataAMx[1,20]+stdDataAMx[1,21]+stdDataAMx[1,22]+stdDataAMx[1,23]+stdDataAMx[1,24]+stdDataAMx[1,25])/6),
-  '14%' =c((stdDataAMx[2,2]+stdDataAMx[2,3]+stdDataAMx[2,4]+stdDataAMx[2,5]+stdDataAMx[2,6])/5, 
+  '16%' =c((stdDataAMx[2,2]+stdDataAMx[2,3]+stdDataAMx[2,4]+stdDataAMx[2,5]+stdDataAMx[2,6])/5, 
            (stdDataAMx[2,7]+stdDataAMx[2,8]+stdDataAMx[2,9]+stdDataAMx[2,10]+stdDataAMx[2,11])/5, 
            (stdDataAMx[2,14]+stdDataAMx[2,15]+stdDataAMx[2,16]+stdDataAMx[2,17]+stdDataAMx[2,18]+stdDataAMx[2,19])/6, 
            (stdDataAMx[2,20]+stdDataAMx[2,21]+stdDataAMx[2,22]+stdDataAMx[2,23]+stdDataAMx[2,24]+stdDataAMx[2,25])/6),
-  '21%' = c((stdDataAMx[3,2]+stdDataAMx[3,3]+stdDataAMx[3,4]+stdDataAMx[3,5]+stdDataAMx[3,6])/5,
+  '30%' = c((stdDataAMx[3,2]+stdDataAMx[3,3]+stdDataAMx[3,4]+stdDataAMx[3,5]+stdDataAMx[3,6])/5,
             (stdDataAMx[3,7]+stdDataAMx[3,8]+stdDataAMx[3,9]+stdDataAMx[3,10]+stdDataAMx[3,11])/5, 
             (stdDataAMx[3,14]+stdDataAMx[3,15]+stdDataAMx[3,16]+stdDataAMx[3,17]+stdDataAMx[3,18]+stdDataAMx[3,19])/6, 
             (stdDataAMx[3,20]+stdDataAMx[3,21]+stdDataAMx[3,22]+stdDataAMx[3,23]+stdDataAMx[3,24]+stdDataAMx[3,25])/6),
@@ -558,11 +558,11 @@ landing.ci.zz <- structure(list(
           k*stdDataAMx[1,7]+k*stdDataAMx[1,8]+k*stdDataAMx[1,9]+k*stdDataAMx[1,10]+k*stdDataAMx[1,11], 
           k*stdDataAMx[1,14]+k*stdDataAMx[1,15]+k*stdDataAMx[1,16]+k*stdDataAMx[1,17]+k*stdDataAMx[1,18]+k*stdDataAMx[1,19], 
           k*stdDataAMx[1,20]+k*stdDataAMx[1,21]+k*stdDataAMx[1,22]+k*stdDataAMx[1,23]+k*stdDataAMx[1,24]+k*stdDataAMx[1,25]),
-  '14%' =c(k*stdDataAMx[2,2]+k*stdDataAMx[2,3]+k*stdDataAMx[2,4]+k*stdDataAMx[2,5]+k*stdDataAMx[2,6], 
+  '16%' =c(k*stdDataAMx[2,2]+k*stdDataAMx[2,3]+k*stdDataAMx[2,4]+k*stdDataAMx[2,5]+k*stdDataAMx[2,6], 
            k*stdDataAMx[2,7]+k*stdDataAMx[2,8]+k*stdDataAMx[2,9]+k*stdDataAMx[2,10]+k*stdDataAMx[2,11], 
            k*stdDataAMx[2,14]+k*stdDataAMx[2,15]+k*stdDataAMx[2,16]+k*stdDataAMx[2,17]+k*stdDataAMx[2,18]+k*stdDataAMx[2,19], 
            k*stdDataAMx[2,20]+k*stdDataAMx[2,21]+k*stdDataAMx[2,22]+k*stdDataAMx[2,23]+k*stdDataAMx[2,24]+k*stdDataAMx[2,25]),
-  '21%' = c(k*stdDataAMx[3,2]+k*stdDataAMx[3,3]+k*stdDataAMx[3,4]+k*stdDataAMx[3,5]+k*stdDataAMx[3,6],
+  '30%' = c(k*stdDataAMx[3,2]+k*stdDataAMx[3,3]+k*stdDataAMx[3,4]+k*stdDataAMx[3,5]+k*stdDataAMx[3,6],
             k*stdDataAMx[3,7]+k*stdDataAMx[3,8]+k*stdDataAMx[3,9]+k*stdDataAMx[3,10]+k*stdDataAMx[3,11], 
             k*stdDataAMx[3,14]+k*stdDataAMx[3,15]+k*stdDataAMx[3,16]+k*stdDataAMx[3,17]+k*stdDataAMx[3,18]+k*stdDataAMx[3,19], 
             k*stdDataAMx[3,20]+k*stdDataAMx[3,21]+k*stdDataAMx[3,22]+k*stdDataAMx[3,23]+k*stdDataAMx[3,24]+k*stdDataAMx[3,25]),
@@ -594,6 +594,279 @@ er=as.matrix(landing.stds.zz)
 erci=as.matrix(landing.ci.zz)
 arrows(barz,zz+er, barz,zz, angle=90, code=3, length=0.05)
 arrows(barz,zz-er, barz,zz, angle=90, code=3, length=0.05)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# -----------------------------------------------------------------------------------------------------------------
+# *****************************************************************************************************************
+# -------------------------------------------------------------------------
+#  Angular Momentum A-P axis 
+#  Type of analysis: Right vs Left
+#  Justification : segmental cancelletaion of R and L might be an stability strategy
+#  Segmens: thigh R, thihg L, legR, legL, foot R, foot L, arm R, arm L
+# -------------------------------------------------------------------------
+# names<- c('1 pelvis','2 thigh_r','3 leg_r','4foot_flex_r','5 foot_r','6 toes_r','7 thigh_l','8 leg_l','9 foot_flex_l','10 foot_l',
+#'11 toes_l','12 back','13 head','14 arm_r','15 forearm_flex_r','16 forearm_rot_r','17 hand_deviation_r','18 hand_flex_r','19 fingers_r',
+#'20 arm_l','21 forearm_flex_l','22 forearm_rot_l','23 hand_deviation_l','24 hand_flex_l','25 fingers_l')
+
+
+# thigh + leg
+# foot + toes
+# forearm and hand
+# contribute: pelvis, thighs, legs, back, head
+simp_names = list('7%','16%','30%','40%','100%')
+landing.means.xx <- structure(list(
+  '7%'= c((meanDataAMx[1,2]+meanDataAMx[1,3] + meanDataAMx[1,7]+meanDataAMx[1,8]),
+          (meanDataAMx[1,4]+meanDataAMx[1,5]+meanDataAMx[1,6] + meanDataAMx[1,9]+meanDataAMx[1,10]+meanDataAMx[1,11]), 
+          (meanDataAMx[1,14]+meanDataAMx[1,17]+meanDataAMx[1,18]+meanDataAMx[1,19] + meanDataAMx[1,20]+meanDataAMx[1,23]+meanDataAMx[1,24]+meanDataAMx[1,25]), 
+          (meanDataAMx[1,15]+meanDataAMx[1,16] + meanDataAMx[1,21]+meanDataAMx[1,22])),
+  '16%' =c((meanDataAMx[2,2]+meanDataAMx[2,3] + meanDataAMx[2,7]+meanDataAMx[2,8]), 
+           (meanDataAMx[2,4]+meanDataAMx[2,5]+meanDataAMx[2,6] + meanDataAMx[2,9]+meanDataAMx[2,10]+meanDataAMx[2,11]), 
+           (meanDataAMx[2,14]+meanDataAMx[2,17]+meanDataAMx[2,18]+meanDataAMx[2,19] + meanDataAMx[2,20]+meanDataAMx[2,23]+meanDataAMx[2,24]+meanDataAMx[2,25]), 
+           (meanDataAMx[2,15]+meanDataAMx[2,16] + meanDataAMx[2,21]+meanDataAMx[2,22])),
+  '30%' = c((meanDataAMx[3,2]+meanDataAMx[3,3] + meanDataAMx[3,7]+meanDataAMx[3,8]),
+            (meanDataAMx[3,4]+meanDataAMx[3,5]+meanDataAMx[3,6] + meanDataAMx[3,9]+meanDataAMx[3,10]+meanDataAMx[3,11]), 
+            (meanDataAMx[3,14]+meanDataAMx[3,17]+meanDataAMx[3,18]+meanDataAMx[3,19] + meanDataAMx[3,20]+meanDataAMx[3,23]+meanDataAMx[3,24]+meanDataAMx[3,25]), 
+            (meanDataAMx[3,15]+meanDataAMx[3,16] + meanDataAMx[3,21]+meanDataAMx[3,22])),
+  '40%' = c((meanDataAMx[4,2]+meanDataAMx[4,3] + meanDataAMx[4,7]+meanDataAMx[4,8]), 
+            (meanDataAMx[4,4]+meanDataAMx[4,5]+meanDataAMx[4,6]) + (meanDataAMx[4,9]+meanDataAMx[4,10]+meanDataAMx[4,11]), 
+            (meanDataAMx[4,14]+meanDataAMx[4,17]+meanDataAMx[4,18]+meanDataAMx[4,19]) + (meanDataAMx[4,20]+meanDataAMx[4,23]+meanDataAMx[4,24]+meanDataAMx[4,25]), 
+            (meanDataAMx[4,15]+meanDataAMx[4,16]) + (meanDataAMx[4,21]+meanDataAMx[4,22])),
+  '100%' = c((meanDataAMx[5,2]+meanDataAMx[5,3]) + (meanDataAMx[5,7]+meanDataAMx[5,8]), 
+             (meanDataAMx[5,4]+meanDataAMx[5,5]+meanDataAMx[5,6] + meanDataAMx[5,9]+meanDataAMx[5,10]+meanDataAMx[5,11]), 
+             (meanDataAMx[5,14]+meanDataAMx[5,17]+meanDataAMx[5,18]+meanDataAMx[5,19] + meanDataAMx[5,20]+meanDataAMx[5,23]+meanDataAMx[5,24]+meanDataAMx[5,25]), 
+             (meanDataAMx[5,15]+meanDataAMx[5,16] + meanDataAMx[5,21]+meanDataAMx[5,22]))
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -4L))
+
+#
+landing.stds.xx <- structure(list(
+  '7%'= c(((stdDataAMx[1,2]+stdDataAMx[1,3])+(stdDataAMx[1,7]+stdDataAMx[1,8]))/4,
+          ((stdDataAMx[1,4]+stdDataAMx[1,5]+stdDataAMx[1,6])+(stdDataAMx[1,9]+stdDataAMx[1,10]+stdDataAMx[1,11]))/6, 
+          ((stdDataAMx[1,14]+stdDataAMx[1,17]+stdDataAMx[1,18]+stdDataAMx[1,19])+(stdDataAMx[1,20]+stdDataAMx[1,23]+stdDataAMx[1,24]+stdDataAMx[1,25]))/8, 
+          (stdDataAMx[1,15]+stdDataAMx[1,16]+stdDataAMx[1,21]+stdDataAMx[1,22])/4),
+  '16%' =c((stdDataAMx[2,2]+stdDataAMx[2,3]+stdDataAMx[2,7]+stdDataAMx[2,8])/4, 
+           (stdDataAMx[2,4]+stdDataAMx[2,5]+stdDataAMx[2,6]+stdDataAMx[2,9]+stdDataAMx[2,10]+stdDataAMx[2,11])/6, 
+           (stdDataAMx[2,14]+stdDataAMx[2,17]+stdDataAMx[2,18]+stdDataAMx[2,19]+stdDataAMx[2,20]+stdDataAMx[2,23]+stdDataAMx[2,24]+stdDataAMx[2,25])/8, 
+           (stdDataAMx[2,15]+stdDataAMx[2,16]+stdDataAMx[2,21]+stdDataAMx[2,22])/4),
+  '30%' = c((stdDataAMx[3,2]+stdDataAMx[3,3]+stdDataAMx[3,7]+stdDataAMx[3,8])/4,
+            (stdDataAMx[3,4]+stdDataAMx[3,5]+stdDataAMx[3,6]+stdDataAMx[3,9]+stdDataAMx[3,10]+stdDataAMx[3,11])/6, 
+            (stdDataAMx[3,14]+stdDataAMx[3,17]+stdDataAMx[3,18]+stdDataAMx[3,19]+stdDataAMx[3,20]+stdDataAMx[3,23]+stdDataAMx[3,24]+stdDataAMx[3,25])/8, 
+            (stdDataAMx[3,15]+stdDataAMx[3,16]+stdDataAMx[3,21]+stdDataAMx[3,22])/4),
+  '40%' = c((stdDataAMx[4,2]+stdDataAMx[4,3]+stdDataAMx[4,7]+stdDataAMx[4,8])/4, 
+            (stdDataAMx[4,4]+stdDataAMx[4,5]+stdDataAMx[4,6]+stdDataAMx[4,9]+stdDataAMx[4,10]+stdDataAMx[4,11])/6, 
+            (stdDataAMx[4,14]+stdDataAMx[4,17]+stdDataAMx[4,18]+stdDataAMx[4,19]+stdDataAMx[4,20]+stdDataAMx[4,23]+stdDataAMx[4,24]+stdDataAMx[4,25])/8, 
+            (stdDataAMx[4,15]+stdDataAMx[4,16]+stdDataAMx[4,21]+stdDataAMx[4,22])/4),
+  '100%' = c((stdDataAMx[5,2]+stdDataAMx[5,3]+stdDataAMx[5,7]+stdDataAMx[5,8])/4, 
+             (stdDataAMx[5,4]+stdDataAMx[5,5]+stdDataAMx[5,6]+stdDataAMx[5,9]+stdDataAMx[5,10]+stdDataAMx[5,11])/6, 
+             (stdDataAMx[5,14]+stdDataAMx[5,17]+stdDataAMx[5,18]+stdDataAMx[5,19]+stdDataAMx[5,20]+stdDataAMx[5,23]+stdDataAMx[5,24]+stdDataAMx[5,25])/8, 
+             (stdDataAMx[5,15]+stdDataAMx[5,16]+stdDataAMx[5,21]+stdDataAMx[5,22])/4)
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -4L))
+
+
+
+headers = c('thighs legs','feet', 'upper arms','forearms hands')
+colors = c("red","green","blue","yellow") #,"forestgreen","deeppink","cyan","rosybrown1","beige","aquamarine")
+op = par(mar=c(5,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
+barx = barplot(as.matrix(-landing.means.xx), 
+               ylab=expression(Nm %.% BW^-1 %.% H^-1),
+               xlim=c(0,25),ylim=c(-0.012, 0.01),
+               col=colors,
+               legend = headers,  
+               las=2, cex.names = 1, beside=TRUE,args.legend = list(x=25,y=0.009,horiz=TRUE, ncol=1)) #beside=TRUE,xlab="joint",main="Landing Angular Momentum in Sagittal Plane",
+rm(op)
+
+xx=as.matrix(-landing.means.xx)
+er=as.matrix(-landing.stds.xx)
+#erci=as.matrix(-landing.ci.xx)
+arrows(barx,xx+er, barx,xx, angle=90, code=3, length=0.05)
+arrows(barx,xx-er, barx,xx, angle=90, code=3, length=0.05)
+
+
+# -------------------------------------------------------------------------
+#  Angular Momentum M-L axis 
+#  Type of analysis: Right vs Left
+#  Justification : segmental cancelletaion of R and L might be an stability strategy
+#  Segmens: 
+# -------------------------------------------------------------------------
+# names<- c('1 pelvis','2 thigh_r','3 leg_r','4foot_flex_r','5 foot_r','6 toes_r','7 thigh_l','8 leg_l','9 foot_flex_l','10 foot_l',
+#'11 toes_l','12 back','13 head','14 arm_r','15 forearm_flex_r','16 forearm_rot_r','17 hand_deviation_r','18 hand_flex_r','19 fingers_r',
+#'20 arm_l','21 forearm_flex_l','22 forearm_rot_l','23 hand_deviation_l','24 hand_flex_l','25 fingers_l')
+
+# contribute: pelvis, thighs, legs, back, head
+simp_names = list('7%','16%','30%','40%','100%')
+upper_limbs1 = meanDataAMy[1,14] + meanDataAMy[1,15] + meanDataAMy[1,16] + meanDataAMy[1,17] + meanDataAMy[1,18] + meanDataAMy[1,19] + meanDataAMy[1,20] + meanDataAMy[1,21] + meanDataAMy[1,22] + meanDataAMy[1,23] + meanDataAMy[1,24] + meanDataAMy[1,25]
+upper_limbs2 = meanDataAMy[2,14] + meanDataAMy[2,15] + meanDataAMy[2,16] + meanDataAMy[2,17] + meanDataAMy[2,18] + meanDataAMy[2,19] + meanDataAMy[2,20] + meanDataAMy[2,21] + meanDataAMy[2,22] + meanDataAMy[2,23] + meanDataAMy[2,24] + meanDataAMy[2,25]
+upper_limbs3 = meanDataAMy[3,14] + meanDataAMy[3,15] + meanDataAMy[3,16] + meanDataAMy[3,17] + meanDataAMy[3,18] + meanDataAMy[3,19] + meanDataAMy[3,20] + meanDataAMy[3,21] + meanDataAMy[3,22] + meanDataAMy[3,23] + meanDataAMy[3,24] + meanDataAMy[3,25]
+upper_limbs4 = meanDataAMy[4,14] + meanDataAMy[4,15] + meanDataAMy[4,16] + meanDataAMy[4,17] + meanDataAMy[4,18] + meanDataAMy[4,19] + meanDataAMy[4,20] + meanDataAMy[4,21] + meanDataAMy[4,22] + meanDataAMy[4,23] + meanDataAMy[4,24] + meanDataAMy[4,25]
+upper_limbs5 = meanDataAMy[5,14] + meanDataAMy[5,15] + meanDataAMy[5,16] + meanDataAMy[5,17] + meanDataAMy[5,18] + meanDataAMy[5,19] + meanDataAMy[5,20] + meanDataAMy[5,21] + meanDataAMy[5,22] + meanDataAMy[5,23] + meanDataAMy[5,24] + meanDataAMy[5,25]
+lower_limbs1 = meanDataAMy[1,2] + meanDataAMy[1,3] + meanDataAMy[1,4] + meanDataAMy[1,5] + meanDataAMy[1,6] + meanDataAMy[1,7] + meanDataAMy[1,8] + meanDataAMy[1,9] + meanDataAMy[1,10] 
+lower_limbs2 = meanDataAMy[2,2] + meanDataAMy[2,3] + meanDataAMy[2,4] + meanDataAMy[2,5] + meanDataAMy[2,6] + meanDataAMy[2,7] + meanDataAMy[2,8] + meanDataAMy[2,9] + meanDataAMy[2,10] 
+lower_limbs3 = meanDataAMy[3,2] + meanDataAMy[3,3] + meanDataAMy[3,4] + meanDataAMy[3,5] + meanDataAMy[3,6] + meanDataAMy[3,7] + meanDataAMy[3,8] + meanDataAMy[3,9] + meanDataAMy[3,10] 
+lower_limbs4 = meanDataAMy[4,2] + meanDataAMy[4,3] + meanDataAMy[4,4] + meanDataAMy[4,5] + meanDataAMy[4,6] + meanDataAMy[4,7] + meanDataAMy[4,8] + meanDataAMy[4,9] + meanDataAMy[4,10] 
+lower_limbs5 = meanDataAMy[5,2] + meanDataAMy[5,3] + meanDataAMy[5,4] + meanDataAMy[5,5] + meanDataAMy[5,6] + meanDataAMy[5,7] + meanDataAMy[5,8] + meanDataAMy[5,9] + meanDataAMy[5,10] 
+#
+upper_limbs1_std = (stdDataAMy[1,14] + stdDataAMy[1,15] + stdDataAMy[1,16] + stdDataAMy[1,17] + stdDataAMy[1,18] + stdDataAMy[1,19] + stdDataAMy[1,20] + stdDataAMy[1,21] + stdDataAMy[1,22] + stdDataAMy[1,23] + stdDataAMy[1,24] + stdDataAMy[1,25])/12
+upper_limbs2_std = (stdDataAMy[2,14] + stdDataAMy[2,15] + stdDataAMy[2,16] + stdDataAMy[2,17] + stdDataAMy[2,18] + stdDataAMy[2,19] + stdDataAMy[2,20] + stdDataAMy[2,21] + stdDataAMy[2,22] + stdDataAMy[2,23] + stdDataAMy[2,24] + stdDataAMy[2,25])/12
+upper_limbs3_std = (stdDataAMy[3,14] + stdDataAMy[3,15] + stdDataAMy[3,16] + stdDataAMy[3,17] + stdDataAMy[3,18] + stdDataAMy[3,19] + stdDataAMy[3,20] + stdDataAMy[3,21] + stdDataAMy[3,22] + stdDataAMy[3,23] + stdDataAMy[3,24] + stdDataAMy[3,25])/12
+upper_limbs4_std = (stdDataAMy[4,14] + stdDataAMy[4,15] + stdDataAMy[4,16] + stdDataAMy[4,17] + stdDataAMy[4,18] + stdDataAMy[4,19] + stdDataAMy[4,20] + stdDataAMy[4,21] + stdDataAMy[4,22] + stdDataAMy[4,23] + stdDataAMy[4,24] + stdDataAMy[4,25])/12
+upper_limbs5_std = (stdDataAMy[5,14] + stdDataAMy[5,15] + stdDataAMy[5,16] + stdDataAMy[5,17] + stdDataAMy[5,18] + stdDataAMy[5,19] + stdDataAMy[5,20] + stdDataAMy[5,21] + stdDataAMy[5,22] + stdDataAMy[5,23] + stdDataAMy[5,24] + stdDataAMy[5,25])/12
+lower_limbs1_std = (stdDataAMy[1,2] + stdDataAMy[1,3] + stdDataAMy[1,4] + stdDataAMy[1,5] + stdDataAMy[1,6] + stdDataAMy[1,7] + stdDataAMy[1,8] + stdDataAMy[1,9] + stdDataAMy[1,10])/9
+lower_limbs2_std = (stdDataAMy[2,2] + stdDataAMy[2,3] + stdDataAMy[2,4] + stdDataAMy[2,5] + stdDataAMy[2,6] + stdDataAMy[2,7] + stdDataAMy[2,8] + stdDataAMy[2,9] + stdDataAMy[2,10])/9 
+lower_limbs3_std = (stdDataAMy[3,2] + stdDataAMy[3,3] + stdDataAMy[3,4] + stdDataAMy[3,5] + stdDataAMy[3,6] + stdDataAMy[3,7] + stdDataAMy[3,8] + stdDataAMy[3,9] + stdDataAMy[3,10])/9
+lower_limbs4_std = (stdDataAMy[4,2] + stdDataAMy[4,3] + stdDataAMy[4,4] + stdDataAMy[4,5] + stdDataAMy[4,6] + stdDataAMy[4,7] + stdDataAMy[4,8] + stdDataAMy[4,9] + stdDataAMy[4,10])/9
+lower_limbs5_std = (stdDataAMy[5,2] + stdDataAMy[5,3] + stdDataAMy[5,4] + stdDataAMy[5,5] + stdDataAMy[5,6] + stdDataAMy[5,7] + stdDataAMy[5,8] + stdDataAMy[5,9] + stdDataAMy[5,10])/9
+
+landing.means.yy <- structure(list(
+  '7%'= c(lower_limbs1, meanDataAMy[1,1], meanDataAMy[1,12], meanDataAMy[1,13], upper_limbs1),
+  '16%' =c(lower_limbs2, meanDataAMy[2,1], meanDataAMy[2,12], meanDataAMy[2,13], upper_limbs2),
+  '30%' = c(lower_limbs3, meanDataAMy[3,1], meanDataAMy[3,12], meanDataAMy[3,13], upper_limbs3),
+  '40%' = c(lower_limbs4, meanDataAMy[4,1], meanDataAMy[4,12], meanDataAMy[4,13], upper_limbs4),
+  '100%' = c(lower_limbs5, meanDataAMy[5,1], meanDataAMy[5,12], meanDataAMy[5,13], upper_limbs5)
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -5L))
+
+landing.stds.yy <- structure(list(
+  '7%'= c(lower_limbs1_std, stdDataAMy[1,1], stdDataAMy[1,12], stdDataAMy[1,13], upper_limbs1_std),
+  '16%' =c(lower_limbs2_std, stdDataAMy[2,1], stdDataAMy[2,12], stdDataAMy[2,13], upper_limbs2_std),
+  '30%' = c(lower_limbs3_std, stdDataAMy[3,1], stdDataAMy[3,12], stdDataAMy[3,13], upper_limbs3_std),
+  '40%' = c(lower_limbs4_std, stdDataAMy[4,1], stdDataAMy[4,12], stdDataAMy[4,13], upper_limbs4_std),
+  '100%' = c(lower_limbs5_std, stdDataAMy[5,1], stdDataAMy[5,12], stdDataAMy[5,13], upper_limbs5_std)
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -5L))
+
+landing.ci.yy <- structure(list(
+  '7%'= c(k*lower_limbs1_std, k*stdDataAMy[1,1], k*stdDataAMy[1,12], k*stdDataAMy[1,13], k*upper_limbs1_std),
+  '16%' =c(k*lower_limbs2_std, k*stdDataAMy[2,1], k*stdDataAMy[2,12], k*stdDataAMy[2,13], k*upper_limbs2_std),
+  '30%' = c(k*lower_limbs3_std, k*stdDataAMy[3,1], k*stdDataAMy[3,12], k*stdDataAMy[3,13], k*upper_limbs3_std),
+  '40%' = c(k*lower_limbs4_std, k*stdDataAMy[4,1], k*stdDataAMy[4,12], k*stdDataAMy[4,13], k*upper_limbs4_std),
+  '100%' = c(k*lower_limbs5_std, k*stdDataAMy[5,1], k*stdDataAMy[5,12], k*stdDataAMy[5,13], k*upper_limbs5_std)
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -5L))
+
+headers = c('lower limbs','pelvis','torso','head','upper limbs')
+colors = c("red","green","blue","yellow","purple")
+op = par(mar=c(5,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
+bary = barplot(as.matrix(-landing.means.yy), 
+               ylab=expression(Nm %.% BW^-1 %.% H^-1),
+               xlim=c(0,30),ylim=c(-0.02, 0.16),
+               col=colors,
+               legend = headers,  
+               las=2, cex.names = 1, beside=TRUE,args.legend = list(x=30,y=0.17,horiz=TRUE, ncol=1)) #beside=TRUE,xlab="joint",main="Landing Angular Momentum in Sagittal Plane",
+rm(op)
+
+yy=as.matrix(-landing.means.yy)
+er=as.matrix(-landing.stds.yy)
+erci=as.matrix(-landing.ci.yy)
+arrows(bary,yy+er, bary,yy, angle=90, code=3, length=0.05)
+arrows(bary,yy-er, bary,yy, angle=90, code=3, length=0.05)
+
+
+# -------------------------------------------------------------------------
+#  Angular Momentum Z axis 
+#  Type of analysis: Right vs Left
+#  Justification : segmental cancelletaion of R and L might be an stability strategy
+#  Segmens: 
+# -------------------------------------------------------------------------
+landing.means.zz <- structure(list(
+  '7%'= c(meanDataAMx[1,2]+meanDataAMx[1,3]+meanDataAMx[1,4]+meanDataAMx[1,5]+meanDataAMx[1,6] + 
+          meanDataAMx[1,7]+meanDataAMx[1,8]+meanDataAMx[1,9]+meanDataAMx[1,10]+meanDataAMx[1,11], 
+          meanDataAMx[1,14]+meanDataAMx[1,15]+meanDataAMx[1,16]+meanDataAMx[1,17]+meanDataAMx[1,18]+meanDataAMx[1,19]+ 
+          meanDataAMx[1,20]+meanDataAMx[1,21]+meanDataAMx[1,22]+meanDataAMx[1,23]+meanDataAMx[1,24]+meanDataAMx[1,25]),
+  '16%' =c(meanDataAMx[2,2]+meanDataAMx[2,3]+meanDataAMx[2,4]+meanDataAMx[2,5]+meanDataAMx[2,6]+ 
+           meanDataAMx[2,7]+meanDataAMx[2,8]+meanDataAMx[2,9]+meanDataAMx[2,10]+meanDataAMx[2,11], 
+           meanDataAMx[2,14]+meanDataAMx[2,15]+meanDataAMx[2,16]+meanDataAMx[2,17]+meanDataAMx[2,18]+meanDataAMx[2,19]+ 
+           meanDataAMx[2,20]+meanDataAMx[2,21]+meanDataAMx[2,22]+meanDataAMx[2,23]+meanDataAMx[2,24]+meanDataAMx[2,25]),
+  '30%' = c(meanDataAMx[3,2]+meanDataAMx[3,3]+meanDataAMx[3,4]+meanDataAMx[3,5]+meanDataAMx[3,6]+
+            meanDataAMx[3,7]+meanDataAMx[3,8]+meanDataAMx[3,9]+meanDataAMx[3,10]+meanDataAMx[3,11], 
+            meanDataAMx[3,14]+meanDataAMx[3,15]+meanDataAMx[3,16]+meanDataAMx[3,17]+meanDataAMx[3,18]+meanDataAMx[3,19]+ 
+            meanDataAMx[3,20]+meanDataAMx[3,21]+meanDataAMx[3,22]+meanDataAMx[3,23]+meanDataAMx[3,24]+meanDataAMx[3,25]),
+  '40%' = c(meanDataAMx[4,2]+meanDataAMx[4,3]+meanDataAMx[4,4]+meanDataAMx[4,5]+meanDataAMx[4,6]+
+            meanDataAMx[4,7]+meanDataAMx[4,8]+meanDataAMx[4,9]+meanDataAMx[4,10]+meanDataAMx[4,11], 
+            meanDataAMx[4,14]+meanDataAMx[4,15]+meanDataAMx[4,16]+meanDataAMx[4,17]+meanDataAMx[4,18]+meanDataAMx[4,19]+ 
+            meanDataAMx[4,20]+meanDataAMx[4,21]+meanDataAMx[4,22]+meanDataAMx[4,23]+meanDataAMx[4,24]+meanDataAMx[4,25]),
+  '100%' = c(meanDataAMx[5,2]+meanDataAMx[5,3]+meanDataAMx[5,4]+meanDataAMx[5,5]+meanDataAMx[5,6]+ 
+             meanDataAMx[5,7]+meanDataAMx[5,8]+meanDataAMx[5,9]+meanDataAMx[5,10]+meanDataAMx[5,11], 
+             meanDataAMx[5,14]+meanDataAMx[5,15]+meanDataAMx[5,16]+meanDataAMx[5,17]+meanDataAMx[5,18]+meanDataAMx[5,19]+
+             meanDataAMx[5,20]+meanDataAMx[5,23]+meanDataAMx[5,24]+meanDataAMx[5,25]+meanDataAMx[5,21]+meanDataAMx[5,22])
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -2L))
+
+#
+landing.stds.zz <- structure(list(
+  '7%'= c((stdDataAMx[1,2]+stdDataAMx[1,3]+stdDataAMx[1,4]+stdDataAMx[1,5]+stdDataAMx[1,6]+ 
+          stdDataAMx[1,7]+stdDataAMx[1,8]+stdDataAMx[1,9]+stdDataAMx[1,10]+stdDataAMx[1,11])/10, 
+          (stdDataAMx[1,14]+stdDataAMx[1,15]+stdDataAMx[1,16]+stdDataAMx[1,17]+stdDataAMx[1,18]+stdDataAMx[1,19]+ 
+          stdDataAMx[1,20]+stdDataAMx[1,21]+stdDataAMx[1,22]+stdDataAMx[1,23]+stdDataAMx[1,24]+stdDataAMx[1,25])/12),
+  '16%' =c((stdDataAMx[2,2]+stdDataAMx[2,3]+stdDataAMx[2,4]+stdDataAMx[2,5]+stdDataAMx[2,6]+ 
+           stdDataAMx[2,7]+stdDataAMx[2,8]+stdDataAMx[2,9]+stdDataAMx[2,10]+stdDataAMx[2,11])/10, 
+           (stdDataAMx[2,14]+stdDataAMx[2,15]+stdDataAMx[2,16]+stdDataAMx[2,17]+stdDataAMx[2,18]+stdDataAMx[2,19]+ 
+           stdDataAMx[2,20]+stdDataAMx[2,21]+stdDataAMx[2,22]+stdDataAMx[2,23]+stdDataAMx[2,24]+stdDataAMx[2,25])/6),
+  '30%' = c((stdDataAMx[3,2]+stdDataAMx[3,3]+stdDataAMx[3,4]+stdDataAMx[3,5]+stdDataAMx[3,6]+
+            stdDataAMx[3,7]+stdDataAMx[3,8]+stdDataAMx[3,9]+stdDataAMx[3,10]+stdDataAMx[3,11])/10, 
+            (stdDataAMx[3,14]+stdDataAMx[3,15]+stdDataAMx[3,16]+stdDataAMx[3,17]+stdDataAMx[3,18]+stdDataAMx[3,19]+ 
+            stdDataAMx[3,20]+stdDataAMx[3,21]+stdDataAMx[3,22]+stdDataAMx[3,23]+stdDataAMx[3,24]+stdDataAMx[3,25])/12),
+  '40%' = c((stdDataAMx[4,2]+stdDataAMx[4,3]+stdDataAMx[4,4]+stdDataAMx[4,5]+stdDataAMx[4,6]+
+            stdDataAMx[4,7]+stdDataAMx[4,8]+stdDataAMx[4,9]+stdDataAMx[4,10]+stdDataAMx[4,11])/5, 
+            (stdDataAMx[4,14]+stdDataAMx[4,15]+stdDataAMx[4,16]+stdDataAMx[4,17]+stdDataAMx[4,18]+stdDataAMx[4,19]+ 
+            stdDataAMx[4,20]+stdDataAMx[4,21]+stdDataAMx[4,22]+stdDataAMx[4,23]+stdDataAMx[4,24]+stdDataAMx[4,25])/6),
+  '100%' = c((stdDataAMx[5,2]+stdDataAMx[5,3]+stdDataAMx[5,4]+stdDataAMx[5,5]+stdDataAMx[5,6]+ 
+             stdDataAMx[5,7]+stdDataAMx[5,8]+stdDataAMx[5,9]+stdDataAMx[5,10]+stdDataAMx[5,11])/10, 
+             (stdDataAMx[5,14]+stdDataAMx[5,15]+stdDataAMx[5,16]+stdDataAMx[5,17]+stdDataAMx[5,18]+stdDataAMx[5,19]+ 
+             stdDataAMx[5,20]+stdDataAMx[5,23]+stdDataAMx[5,24]+stdDataAMx[5,25]+stdDataAMx[5,21]+stdDataAMx[5,22])/12)
+), 
+.Names = simp_names, 
+class = "data.frame", row.names = c(NA, -2L))
+
+
+headers = c('lower limbs','upper limbs')
+colors = c("red","green") #,"forestgreen","deeppink","cyan","rosybrown1","beige","aquamarine")
+op = par(mar=c(5,5,4,2)) # c(bottom, left, top, right) which gives the number of lines of margin
+barz = barplot(as.matrix(landing.means.zz), 
+               ylab=expression(Nm %.% BW^-1 %.% H^-1),
+               xlim=c(0,15),ylim=c(-0.01, 0.01),
+               col=colors,
+               legend = headers, 
+               las=2, cex.names = 1, beside=TRUE,args.legend = list(x=15,y=0.01,horiz=TRUE)) #beside=TRUE,xlab="joint",main="Landing Angular Momentum in Sagittal Plane",
+rm(op)
+
+zz=as.matrix(landing.means.zz)
+er=as.matrix(landing.stds.zz)
+#erci=as.matrix(landing.ci.zz)
+arrows(barz,zz+er, barz,zz, angle=90, code=3, length=0.05)
+arrows(barz,zz-er, barz,zz, angle=90, code=3, length=0.05)
+
+
+
+
+
 
 
 

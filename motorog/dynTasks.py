@@ -12,6 +12,8 @@ import indexes
 import plotTasks
 from hqp.viewer_utils import Viewer
 
+import matplotlib.pyplot as plt
+
 coordinateNames = np.matrix(indexes.coordinates).squeeze()[:,1]
 jointNames = np.matrix(indexes.joints).squeeze()[:,1]
 
@@ -28,6 +30,13 @@ def getTrials(i):
     fly_ddq = np.load('./motions/'+participantName+'_fly_ddq.npy')  
     land_ddq = np.load('./motions/'+participantName+'_land_ddq.npy')
     return jump,fly,land, jump_dq,fly_dq,land_dq,jump_ddq,fly_ddq,land_ddq
+
+def getForces(i):
+    participantName = mconf.traceurs_list[i]
+    idxTraceur = mconf.traceurs_list.index(participantName)
+    jump = np.load('./motions/'+participantName+'_jump_grfs.npy')
+    land = np.load('./motions/'+participantName+'_land_grfs.npy')
+    return jump, land
 
 def getRobot(i):
     participantName = mconf.traceurs_list[i]
@@ -127,6 +136,111 @@ print np.array(t2.data['drift']).squeeze()[10,0:3,0]
 np.testing.assert_almost_equal(dhg[10,0:3,0], np.sum(dhg_s[10,0:3,0],1))
 
 
+
+# Compare F_net with Hdot -- Newton Euler
+s=1
+(jumpGRFs, landGRFs) = getForces(1)
+index1 = landGRFs[0]['col_headers'].index('1_ground_force_vy')
+index2 = landGRFs[0]['col_headers'].index('2_ground_force_vy')
+grfs = (np.matrix(landGRFs[0]['data'])[:,index1] + np.matrix(landGRFs[0]['data'])[:,index2])/(avatar1.data.mass[0]*9.81)
+plot_tools.plot(grfs)
+plot_tools.plot(np.array(LandLM_abs[1].data['dhg']).squeeze()[:,2,0])
+
+s=0
+(jumpGRFs, landGRFs) = getForces(s)
+index1 = landGRFs[0]['col_headers'].index('1_ground_force_vy')
+index2 = landGRFs[0]['col_headers'].index('2_ground_force_vy')
+grfs = (np.matrix(landGRFs[0]['data'])[:,index1] + np.matrix(landGRFs[0]['data'])[:,index2])/(avatar0.data.mass[0]*9.81)
+plot_tools.plot(grfs)
+plot_tools.plot(np.array(LandLM_abs[0].data['dhg']).squeeze()[:,2,0])
+
+
+
+
+# Torques
+oMp =se3.utils.rotate('z',np.pi/2) * se3.utils.rotate('x',np.pi/2)
+#oMp = se3.SE3.Identity().rotation
+(jumpGRFs, landGRFs) = getForces(0)
+# in OpenSim global frame
+indexf1 = landGRFs[0]['col_headers'].index('1_ground_force_vx')
+indexf2 = landGRFs[0]['col_headers'].index('2_ground_force_vx')
+indext1 = landGRFs[0]['col_headers'].index('1_ground_torque_x')
+indext2 = landGRFs[0]['col_headers'].index('2_ground_torque_x')
+T1 = np.matrix(landGRFs[0]['data'])[:,indext1:indext1+3]
+T2 = np.matrix(landGRFs[0]['data'])[:,indext2:indext2+3] 
+T = T1+T2
+GRF1 = np.matrix(landGRFs[0]['data'])[:,indexf1:indexf1+3]
+GRF2 = np.matrix(landGRFs[0]['data'])[:,indexf2:indexf2+3]
+GRF = GRF1 + GRF2
+# in Pinocchio global frame
+pT1 = np.matrix([(T1[i].T).A1 for i in xrange(100)])
+pT2 = np.matrix([(T2[i].T).A1 for i in xrange(100)])
+pT = pT1 + pT2
+pGRF1 = np.matrix([(oMp*GRF1[i].T).A1 for i in xrange(100)])
+pGRF2 = np.matrix([(oMp*GRF2[i].T).A1 for i in xrange(100)])
+pGRF = pGRF1 + pGRF2 
+
+# Calculate CoM positions in the world frame
+CM = np.matrix([avatar0.com(LandAM[0].Q[0]['pinocchio_data'][i]).A1 for i in xrange(100)])
+# Express torque at CoM
+cT1 = np.matrix([ (pT1[i].A1 + np.cross(CM[i].A, pGRF1[i].A)).squeeze()  for i in xrange(100)])
+cT2 = np.matrix([ (pT2[i].A1 + np.cross(CM[i].A, pGRF2[i].A)).squeeze()  for i in xrange(100)])
+cT = cT1 + cT2
+cT = np.matrix([ (pT[i].A1 + np.cross(CM[i].A, pGRF[i].A)).squeeze()  for i in xrange(100)])
+
+# PWA
+px = - ((pT[:,1] + pGRF[:,0])/pGRF[:,2])
+py = (pT[:,0] + pGRF[:,1])/pGRF[:,2]
+cx = - ((cT[:,1] + pGRF[:,0])/pGRF[:,2])
+cy = (cT[:,0] + pGRF[:,1])/pGRF[:,2]
+
+
+
+# Plot
+# Osim
+fig = plt.figure ()
+fig.canvas.set_window_title('OpenSim')
+ax = fig.add_subplot ('223')
+ax.plot(T1); plt.legend(('x','y','z')); plt.title('T1 osim')
+ax = fig.add_subplot ('224')
+ax.plot(T2); plt.legend(('x','y','z')); plt.title('T2 osim')
+ax = fig.add_subplot ('221')
+ax.plot(GRF1); plt.legend(('x','y','z')); plt.title('GRF1 osim')
+ax = fig.add_subplot ('222') 
+ax.plot(GRF2); plt.legend(('x','y','z')); plt.title('GRF2 osim')
+
+# Pinocchio
+fig = plt.figure()
+fig.canvas.set_window_title('Pinocchio')
+ax = fig.add_subplot ('223')
+ax.plot(pT1); plt.legend(('x','y','z')); plt.title('T1 pinocchio')
+ax = fig.add_subplot ('224')
+ax.plot(pT2); plt.legend(('x','y','z')); plt.title('T2 pinocchio')
+ax = fig.add_subplot ('221')
+ax.plot(pGRF1); plt.legend(('x','y','z')); plt.title('GRF1 pinocchio')
+ax = fig.add_subplot ('222') 
+ax.plot(pGRF2); plt.legend(('x','y','z')); plt.title('GRF2 pinocchio')
+
+# Plot PWA
+fig = plt.figure()
+fig.canvas.set_window_title('Pinocchio')
+ax = fig.add_subplot ('121')
+ax.plot(np.hstack([px,py])); plt.legend(('pinocchio x','pinocchio y')); plt.title('CoP')
+ax = fig.add_subplot ('122')
+ax.plot(np.hstack([cx,cy])); plt.legend(('com x','com y')); plt.title('CoP')
+
+# Compare
+k = 1./(rconf.heights[0] * robots[0].data.mass[0] * 9.81)
+fig = plt.figure()
+fig.canvas.set_window_title('Pinocchio')
+ax = fig.add_subplot ('221')
+ax.plot(pGRF*k); plt.legend(('x','y','z')); plt.title('Fcom platforms')
+ax = fig.add_subplot ('222')
+ax.plot(np.array(LandAM[0].data['dhg']).squeeze()[:,0:3,0]); plt.legend(('x','y','z')); plt.title('Kcom dot')
+ax = fig.add_subplot ('223')
+ax.plot(cT*k); plt.legend(('x','y','z')); plt.title('Tcom platforms')
+ax = fig.add_subplot ('224')
+ax.plot(np.array(LandAM[0].data['dhg']).squeeze()[:,3:6,0]); plt.legend(('x','y','z')); plt.title('Lcom dot')
 
 
 ''' *******************************  Prepare files for R  ******************************* '''

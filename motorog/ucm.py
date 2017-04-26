@@ -186,7 +186,7 @@ class ucmMomentum(UCM):
         cMi = oMc.actInv( self.robot.data.oMi[s] )
         
         cHi = cMi.act(iHi).np.A1
-        cHDi = cMi.act(iHDi).np.A1
+        cHDi = cMi.act(iHDi).np.A1 
         return cHi, cHDi        
         
     def _getJmean(self):
@@ -290,7 +290,12 @@ class ucmMomentum(UCM):
                                       q[t,:,i], 
                                       dq[t,:,i], 
                                       ddq[t,:,i])
-
+                se3.centerOfMass(self.robot.model,
+                                 self.robot.data,
+                                 q[t,:,i], 
+                                 dq[t,:,i], 
+                                 ddq[t,:,i], True)
+    
                 # centroidal momenta
                 A = se3.ccrba(self.robot.model, 
                               self.robot.data, 
@@ -298,7 +303,7 @@ class ucmMomentum(UCM):
                               dq[t,:,i])
                 H = self.robot.data.hg.np.A.copy()
                 b = self._getBiais(q[t,:,i], dq[t,:,i]) # check calculation
-                #Hdot2 = (A * np.matrix(ddq[t,:,i]).squeeze().T) + b.copy() #- (self.robot.data.mass[0] * self.robot.model.gravity.vector) 
+                #Hdot2 = (A * np.matrix(ddq[t,:,i]).squeeze().T) + b.copy() - (self.robot.data.mass[0] * self.robot.model.gravity.vector)
 
                 # Segmental contributions to centroidal momenta (and its rate of change)
                 segH = []; segF=[]
@@ -307,7 +312,10 @@ class ucmMomentum(UCM):
                     (segH, segF) =  self._getContribution(p_com,s)
                     data_Hgs[t,:,i,s] = segH * self._K
                     data_dHgs[t,:,i,s] = segF * self._K
-                Hdot =  np.matrix(np.sum(data_dHgs[t,:,i],1)).T 
+                Hdot =  np.matrix(np.sum(data_dHgs[t,:,i],1)).T #- (self.robot.data.mass[0] * self.robot.model.gravity.vector*self._K)
+                #+ (b*self._K) #
+                #Hdot = self._K * Hdot2.copy()
+                #Hdot[0:3] = (self.robot.data.mass[0]*self.robot.data.acom[0]) *self._K
                 HNormalized = H.copy()*self._K
                 bNormalized = b.copy()*self._K
                 HdotNormalized = Hdot.copy()*self._K

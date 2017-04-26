@@ -43,6 +43,8 @@ class References:
         self.jump_names = self.motions['jump_names'][0]
         self.fly_names = self.motions['fly_names'][0]
         self.land_names = self.motions['land_names'][0]
+        self.jump_grfs_names = self.motions['jump_grfs'][0]
+        self.land_grfs_names = self.motions['land_grfs'][0]
 
     def loadModel(self):
         print self.model_path, self.mesh_path
@@ -67,6 +69,7 @@ class References:
         self.jump = []; self.fly = []; self.land = []
         self.jumpdq = []; self.flydq = []; self.landdq = []
         self.jumpddq = []; self.flyddq = []; self.landddq = []
+        self.jump_grfs = []; self.land_grfs = []
         for trls in xrange(len(self.trial_names)):
             self.trial.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+self.trial_names[trls]))
             self.jump.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+self.jump_names[trls]))
@@ -90,6 +93,8 @@ class References:
                 )
             self.landdq.append(dq)
             self.landddq.append(ddq)
+            self.jump_grfs.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+self.jump_grfs_names[trls]))
+            self.land_grfs.append(self.human.readOsim(self.trial_path+'/'+self.name+'/'+self.land_grfs_names[trls]))
                         
 
     def playAllTrials(self, dt=0.0025):

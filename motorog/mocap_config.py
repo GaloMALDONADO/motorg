@@ -7,7 +7,8 @@ name = 'Precision Landing'
 
 class MotionNames:
     def __init__(self):
-        self.motions = {'trial_names':[], 'jump_names':[], 'fly_names':[], 'land_names':[]}
+        self.motions = {'trial_names':[], 'jump_names':[], 'fly_names':[], 'land_names':[],
+                        'jump_grfs':[], 'fly_grfs':[], 'land_grfs':[]}
 
     def Cyril(self):
         trial_names = [ 'Motion_pl01.mot', 'Motion_pl02.mot', 'Motion_pl03.mot', 'Motion_pl04.mot',
@@ -28,10 +29,32 @@ class MotionNames:
                        'Land_normalized_Motion_pl05.mot', 'Land_normalized_Motion_pl07.mot',
                        'Land_normalized_Motion_pl08.mot', 'Land_normalized_Motion_pl09.mot',
                        'Land_normalized_Motion_pl10.mot', 'Land_normalized_Motion_pl11.mot']
+        jump_grfs = [ 'Jump_normalized_precision-landing01_filtered_grf.sto', 
+                      'Jump_normalized_precision-landing02_filtered_grf.sto',
+                      'Jump_normalized_precision-landing03_filtered_grf.sto', 
+                      'Jump_normalized_precision-landing04_filtered_grf.sto',
+                      'Jump_normalized_precision-landing05_filtered_grf.sto', 
+                      'Jump_normalized_precision-landing07_filtered_grf.sto',
+                      'Jump_normalized_precision-landing08_filtered_grf.sto', 
+                      'Jump_normalized_precision-landing09_filtered_grf.sto',
+                      'Jump_normalized_precision-landing10_filtered_grf.sto', 
+                      'Jump_normalized_precision-landing11_filtered_grf.sto']
+        land_grfs = [ 'Land_normalized_precision-landing01_filtered_grf.sto', 
+                      'Land_normalized_precision-landing02_filtered_grf.sto',
+                      'Land_normalized_precision-landing03_filtered_grf.sto', 
+                      'Land_normalized_precision-landing04_filtered_grf.sto',
+                      'Land_normalized_precision-landing05_filtered_grf.sto', 
+                      'Land_normalized_precision-landing07_filtered_grf.sto',
+                      'Land_normalized_precision-landing08_filtered_grf.sto', 
+                      'Land_normalized_precision-landing09_filtered_grf.sto',
+                      'Land_normalized_precision-landing10_filtered_grf.sto', 
+                      'Land_normalized_precision-landing11_filtered_grf.sto']
         self.motions['trial_names'].append(trial_names)
         self.motions['jump_names'].append(jump_names)
         self.motions['fly_names'].append(fly_names)
         self.motions['land_names'].append(land_names)
+        self.motions['jump_grfs'].append(jump_grfs)
+        self.motions['land_grfs'].append(land_grfs)
         return self.motions
 
 
@@ -53,10 +76,28 @@ class MotionNames:
                        'Land_normalized_Motion_pl12.mot', 'Land_normalized_Motion_pl13.mot',
                        'Land_normalized_Motion_pl14.mot', 'Land_normalized_Motion_pl15.mot',
                        'Land_normalized_Motion_pl16.mot', 'Land_normalized_Motion_pl17.mot']
+        jump_grfs = [ 'Jump_normalized_Precision Landing04_filtered_grf.sto', 
+                      'Jump_normalized_Precision Landing05_filtered_grf.sto',
+                      'Jump_normalized_Precision Landing12_filtered_grf.sto', 
+                      'Jump_normalized_Precision Landing13_filtered_grf.sto',
+                      'Jump_normalized_Precision Landing14_filtered_grf.sto', 
+                      'Jump_normalized_Precision Landing15_filtered_grf.sto',
+                      'Jump_normalized_Precision Landing16_filtered_grf.sto', 
+                      'Jump_normalized_Precision Landing17_filtered_grf.sto']
+        land_grfs = [ 'Land_normalized_Precision Landing04_filtered_grf.sto', 
+                      'Land_normalized_Precision Landing05_filtered_grf.sto',
+                      'Land_normalized_Precision Landing12_filtered_grf.sto', 
+                      'Land_normalized_Precision Landing13_filtered_grf.sto',
+                      'Land_normalized_Precision Landing14_filtered_grf.sto', 
+                      'Land_normalized_Precision Landing15_filtered_grf.sto',
+                      'Land_normalized_Precision Landing16_filtered_grf.sto', 
+                      'Land_normalized_Precision Landing17_filtered_grf.sto']
         self.motions['trial_names'].append(trial_names)
         self.motions['jump_names'].append(jump_names)
         self.motions['fly_names'].append(fly_names)
         self.motions['land_names'].append(land_names)
+        self.motions['jump_grfs'].append(jump_grfs)
+        self.motions['land_grfs'].append(land_grfs)
         return self.motions
 
 
@@ -82,10 +123,32 @@ class MotionNames:
                        'Land_normalized_Motion_pl08.mot', 'Land_normalized_Motion_pl10.mot',
                        'Land_normalized_Motion_pl12.mot', 'Land_normalized_Motion_pl13.mot',
                        'Land_normalized_Motion_pl14.mot', 'Land_normalized_Motion_pl15.mot']
+        jump_grfs = [ 'Jump_normalized_pl02_filtered_grf.sto', 
+                      'Jump_normalized_pl04_filtered_grf.sto',
+                      'Jump_normalized_pl06_filtered_grf.sto', 
+                      'Jump_normalized_pl07_filtered_grf.sto',
+                      'Jump_normalized_pl08_filtered_grf.sto', 
+                      'Jump_normalized_pl10_filtered_grf.sto',
+                      'Jump_normalized_pl12_filtered_grf.sto', 
+                      'Jump_normalized_pl13_filtered_grf.sto',
+                      'Jump_normalized_pl14_filtered_grf.sto', 
+                      'Jump_normalized_pl15_filtered_grf.sto']
+        land_grfs = [ 'Land_normalized_pl02_filtered_grf.sto', 
+                      'Land_normalized_pl04_filtered_grf.sto',
+                      'Land_normalized_pl06_filtered_grf.sto', 
+                      'Land_normalized_pl07_filtered_grf.sto',
+                      'Land_normalized_pl08_filtered_grf.sto', 
+                      'Land_normalized_pl10_filtered_grf.sto',
+                      'Land_normalized_pl12_filtered_grf.sto', 
+                      'Land_normalized_pl13_filtered_grf.sto',
+                      'Land_normalized_pl14_filtered_grf.sto', 
+                      'Land_normalized_pl15_filtered_grf.sto']
         self.motions['trial_names'].append(trial_names)
         self.motions['jump_names'].append(jump_names)
         self.motions['fly_names'].append(fly_names)
         self.motions['land_names'].append(land_names)
+        self.motions['jump_grfs'].append(jump_grfs)
+        self.motions['land_grfs'].append(land_grfs)
         return self.motions
 
 
@@ -104,10 +167,22 @@ class MotionNames:
         land_names = [ 'Land_normalized_Motion_pl02.mot', 'Land_normalized_Motion_pl05.mot',
                        'Land_normalized_Motion_pl06.mot', 'Land_normalized_Motion_pl07.mot',
                        'Land_normalized_Motion_pl10.mot']
+        jump_grfs = [ 'Jump_normalized_pl02_filtered_grf.sto', 
+                      'Jump_normalized_pl05_filtered_grf.sto',
+                      'Jump_normalized_pl06_filtered_grf.sto', 
+                      'Jump_normalized_pl07_filtered_grf.sto',
+                       'Jump_normalized_pl10_filtered_grf.sto']
+        land_grfs = [ 'Land_normalized_pl02_filtered_grf.sto', 
+                      'Land_normalized_pl05_filtered_grf.sto',
+                      'Land_normalized_pl06_filtered_grf.sto', 
+                      'Land_normalized_pl07_filtered_grf.sto',
+                      'Land_normalized_pl10_filtered_grf.sto']
         self.motions['trial_names'].append(trial_names)
         self.motions['jump_names'].append(jump_names)
         self.motions['fly_names'].append(fly_names)
         self.motions['land_names'].append(land_names)
+        self.motions['jump_grfs'].append(jump_grfs)
+        self.motions['land_grfs'].append(land_grfs)
         return self.motions
 
 
@@ -133,8 +208,28 @@ class MotionNames:
                        'Land_normalized_Motion_pl06.mot', 'Land_normalized_Motion_pl07.mot',
                        'Land_normalized_Motion_pl08.mot', 'Land_normalized_Motion_pl09.mot',
                        'Land_normalized_Motion_pl11.mot']
+        jump_grfs = [ 'Jump_normalized_precision_landing01_filtered_grf.sto', 
+                      'Jump_normalized_precision_landing02_filtered_grf.sto',
+                      'Jump_normalized_precision_landing03_filtered_grf.sto', 
+                      'Jump_normalized_precision_landing05_filtered_grf.sto',
+                      'Jump_normalized_precision_landing06_filtered_grf.sto', 
+                      'Jump_normalized_precision_landing07_filtered_grf.sto',
+                      'Jump_normalized_precision_landing08_filtered_grf.sto', 
+                      'Jump_normalized_precision_landing09_filtered_grf.sto',
+                      'Jump_normalized_precision_landing11_filtered_grf.sto']
+        land_grfs = [ 'Land_normalized_precision_landing01_filtered_grf.sto', 
+                      'Land_normalized_precision_landing02_filtered_grf.sto',
+                      'Land_normalized_precision_landing03_filtered_grf.sto', 
+                      'Land_normalized_precision_landing05_filtered_grf.sto',
+                      'Land_normalized_precision_landing06_filtered_grf.sto', 
+                      'Land_normalized_precision_landing07_filtered_grf.sto',
+                      'Land_normalized_precision_landing08_filtered_grf.sto', 
+                      'Land_normalized_precision_landing09_filtered_grf.sto',
+                      'Land_normalized_precision_landing11_filtered_grf.sto']
         self.motions['trial_names'].append(trial_names)
         self.motions['jump_names'].append(jump_names)
         self.motions['fly_names'].append(fly_names)
         self.motions['land_names'].append(land_names)
+        self.motions['jump_grfs'].append(jump_grfs)
+        self.motions['land_grfs'].append(land_grfs)
         return self.motions

@@ -111,12 +111,16 @@ jump.means <- structure(list('1'=c(meanImpLM1,meanImpAM1),
                              '100'=c(meanImpLM100, meanImpAM100)), 
                               .Names = c("1%", "40%",  "70%", "100%"), 
                               class = "data.frame", row.names = c(NA, -2L))
+angle1 <- rep(c(45,90), length.out=2)
+density1 <- seq(10,25,length.out=2)
+op = par(mar=c(5,5,5,1)) # c(bottom, left, top, right) which gives the number of lines of margin
 
 barx = barplot(as.matrix(jump.means), main="Takeoff",
                 xlab="Phase of the motion", ylab="Index of Motor Task Control",
-                xlim=c(0,13),ylim=c(-0.5,8),
-                col=c("blue","red"),
-                legend = c( "Force task","Torque task"), beside=TRUE)
+                xlim=c(0,13),ylim=c(-0.5,8),cex.names = 1.6,  cex.lab=1.8, cex.main =2,
+                col=c("blue","red"), angle=angle1, density=density1,
+                legend = c("DLM task","DAM task"), 
+               args.legend = list(cex=1.4, x=12, horiz=TRUE),beside=TRUE)
 
 jump.stds <- structure(list('1'=c(stdImpLM1,stdImpAM1),
                              '40'=c(stdImpLM40, stdImpAM40),
@@ -161,10 +165,10 @@ y <- 2
 offset1 <- 0.2
 offset2 <- 0.2
 
-displayEffects(x[1:2], 7.1, offset1, 3.5, '*')
-displayEffects(x[3:4], 4.8, offset1, 2.2, '*')
-displayEffects(x[5:6], 6.1, offset1, 4, '*')
-displayEffects(x[7:8], 4.7, offset1, 0.9, '*')
+#displayEffects(x[1:2], 7.1, offset1, 3.5, '*')
+#displayEffects(x[3:4], 4.8, offset1, 2.2, '*')
+#displayEffects(x[5:6], 6.1, offset1, 4, '*')
+#displayEffects(x[7:8], 4.7, offset1, 0.9, '*')
 
 #vector <- c((x[1]+x[2])/2, (x[7]+x[8])/2)
 #displayEffects(array(vector), -1.95, -1.7, -1.7, '**')

@@ -6,8 +6,8 @@
 # Task 3: DAM CoM 3 axis. Stability.
 # ----------------------------------------------
 rm(list = ls())
-#p='/galo/devel/gepetto/motorg/motorog/' #home
-p='/local/gmaldona/devel/motorg/motorog/' #lab
+p='/galo/devel/gepetto/motorg/motorog/' #home
+#p='/local/gmaldona/devel/motorg/motorog/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -21,10 +21,15 @@ SOT_LAND$Task<-as.factor(SOT_LAND$Task)
 SOT_LAND$Variability<-as.factor(SOT_LAND$Variability)
 # ----------------------------- Repeated Measures Anova ---------------------------
 # compute repetitive measures anova
-statsaov2 <-aov(SOT_LAND$Ratio ~ (SOT_LAND$Task+SOT_LAND$Phase) + 
-                  Error(SOT_LAND$Participant / (SOT_LAND$Task+SOT_LAND$Phase)), 
+statsaov2 <-aov(SOT_LAND$Variance ~ (SOT_LAND$Task*SOT_LAND$Phase*SOT_LAND$Variability) + 
+                  Error(SOT_LAND$Participant / (SOT_LAND$Task*SOT_LAND$Phase*SOT_LAND*Variability)), 
                 data = SOT_LAND)
 summary(statsaov2) 
 # tasks are significantly differents p = 1.96e-06 ***
 # phases are not significantly differents
 # tasks:phase interactions are significant p=7.9e-08 ***
+pairwise.t.test(SOT_LAND$Variance, SOT_LAND$Task+SOT_LAND$Phase+SOT_LAND$Variability, p.adj = "bonf",paired=TRUE)
+
+
+land = data.frame(variance=SOT_LAND$Variance,Variability=SOT_LAND$Variability)
+statsaov<-aov(variance ~ Variability, data=land)

@@ -6,8 +6,8 @@
 # Task 3: DAM CoM 3 axis. Stability.
 # ----------------------------------------------
 rm(list = ls())
-p='/galo/devel/gepetto/motorg/motorog/' #home
-#p='/local/gmaldona/devel/motorg/motorog/' #lab
+#p='/galo/devel/gepetto/motorg/motorog/' #home
+p='/local/gmaldona/devel/motorg/motorog/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -75,9 +75,9 @@ ciMinForce4 = meanForce4 - ciForce4
 
 meanForce13 = mean(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="13"])
 stdForce13 = mean(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="13"])
-ciForce13 = t * stdForce13 / sqrt(nparticipants)
-ciPlusForce13 = meanForce13 + ciForce13 
-ciMinForce13 = meanForce13 - ciForce13 
+ciForce13 = (t * stdForce13 / sqrt(nparticipants))/2
+ciPlusForce13 = (meanForce13 + ciForce13)/2
+ciMinForce13 = (meanForce13 - ciForce13 )/2
 
 meanForce20 = mean(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="20"])
 stdForce20 = mean(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="20"])
@@ -172,19 +172,6 @@ land.means <- structure(list('4'=c(meanForce4,  meanStab4, meanTau4),
                        .Names = c("4%", "13%", "20%", "40%","100%"), 
                        class = "data.frame", row.names = c(NA, -3L))
 
-# plot settings
-angle1 <- rep(c(45,135,90), length.out=3)
-density1 <- seq(10,25,length.out=3)
-op = par(mar=c(5,5,5,1)) # c(bottom, left, top, right) which gives the number of lines of margin
-# plot
-barx = barplot(as.matrix(land.means), main="Landing",
-               xlab="Phase of the motion", ylab="Index of Motor Task Control",
-               xlim=c(0,20),ylim=c(-5,15), 
-               las=1, cex.names = 1.6,  cex.lab=1.8, cex.main =2,
-               col=c("red","green","blue"), angle=angle1, density=density1,
-               legend = c( "Force task","Stability force task","Stability torque task"), beside=TRUE,
-               args.legend = list(cex=1.4, horiz=FALSE, ncol=3, x.intersp=0.01))
-
 land.stds <- structure(list('4'=c(stdForce4,  stdStab4, stdTau4),
                             '20'=c(stdForce13, stdStab13, stdTau13),
                             '13'=c(stdForce20, stdStab20, stdTau20),
@@ -200,6 +187,20 @@ land.ci <- structure(list('4'=c(ciForce4,  ciStab4, ciTau4),
                           '100'=c(ciForce100, ciStab100, ciTau100)), 
                        .Names = c("4%","13%","20%", "40%","100%"), 
                        class = "data.frame", row.names = c(NA, -3L))
+
+
+# plot settings
+angle1 <- rep(c(45,135,90), length.out=3)
+density1 <- seq(10,25,length.out=3)
+op = par(mar=c(5,5,5,1)) # c(bottom, left, top, right) which gives the number of lines of margin
+# plot
+barx = barplot(as.matrix(land.means), main="Landing",
+               xlab="Phase of the motion", ylab="Index of Motor Task Control",
+               xlim=c(0,20),ylim=c(-5,15), 
+               las=1, cex.names = 1.6,  cex.lab=1.8, cex.main =2,
+               col=c("red","green","blue"), angle=angle1, density=density1,
+               legend = c( "Force task","Stability force task","Stability torque task"), beside=TRUE,
+               args.legend = list(cex=1.4, horiz=FALSE, ncol=3, x.intersp=0.01))
 
 xx=as.matrix(land.means)
 er=as.matrix(land.stds)
@@ -225,7 +226,7 @@ displayEffects <- function(x, y, offset1, offset2, s='*'){
 # capture x coordinates of bars
 x <- barx
 
-displayEffects(x[1:2], 8.2, 0.2, 0.8, '*')
+displayEffects(x[1:2], 7.2, 0.2, 0.8, '*')
 displayEffects(x[2:3], -0.5, -0.3, -0.3, '*')
 displayEffects( c(x[1],x[3] ),  9.1, .8, 4.3, '*')
 

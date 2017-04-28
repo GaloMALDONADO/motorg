@@ -123,7 +123,7 @@ print 'H'
 print hg[10,0:3,0]
 print 'H segments'
 print np.sum(hg_s[10,0:3,0],1)
-np.testing.assert_almost_equal(hg[10,0:3,0], np.sum(hg_s[10,0:3,0],1)) 
+#np.testing.assert_almost_equal(hg[10,0:3,0], np.sum(hg_s[10,0:3,0],1)) 
 
 dhg=np.array(t2.data['dhg']).squeeze()
 dhg_s=np.array(t2.data['dhg_segments']).squeeze()
@@ -133,7 +133,7 @@ print 'H dot segments'
 print np.sum(dhg_s[10,0:3,0],1)
 print 'Drift'
 print np.array(t2.data['drift']).squeeze()[10,0:3,0]
-np.testing.assert_almost_equal(dhg[10,0:3,0], np.sum(dhg_s[10,0:3,0],1))
+#np.testing.assert_almost_equal(dhg[10,0:3,0], np.sum(dhg_s[10,0:3,0],1))
 
 
 
@@ -247,44 +247,70 @@ ax.plot(np.array(LandAM[0].data['dhg']).squeeze()[:,3:6,0]); plt.legend(('x','y'
 nsubjects = 5;
 
 ''' Impulsion Phase '''
-nphases = 4;
-ntasks = 2
-subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases)).T 
 #j: 0(start)  40 60(A-P_F, AM_UCM) 70(BW) 100(end)
-phaseFactor = np.matrix([  0, 0, 40, 40,  70, 70, 99, 99]*nsubjects).T
-taskFactor =  np.matrix([1,2]*nsubjects*nphases).T
+k=2
+nphases = 4
+ntasks = 2
+subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases*k)).T
+variabilityFactor = np.matrix([1,2]*nsubjects*nphases*ntasks).T
+taskFactor =  np.matrix([1,1,2,2]*nsubjects*nphases).T
+phaseFactor = np.matrix([  0, 0, 0, 0, 40, 40, 40, 40, 70, 70, 70, 70, 99, 99, 99, 99]*nsubjects).T
 
-C=[];
+
+C=[]; V=[]; 
 for i in xrange (len(mconf.traceurs_list)):
     C += [
-        #JumpV[i].criteria[10],
         JumpLM[i].criteria[2],
         JumpAM[i].criteria[2],
-        #JumpV[i].criteria[50],
         JumpLM[i].criteria[40],
         JumpAM[i].criteria[40],
-        #JumpV[i].criteria[90],
         JumpLM[i].criteria[70],
         JumpAM[i].criteria[70],
         JumpLM[i].criteria[97],
         JumpAM[i].criteria[97],
     ]
+    V += [
+        # good variability
+        JumpLM[i].Vucm[2],
+        JumpAM[i].Vucm[2],
+        JumpLM[i].Vucm[40],
+        JumpAM[i].Vucm[40],
+        JumpLM[i].Vucm[70],
+        JumpAM[i].Vucm[70],
+        JumpLM[i].Vucm[97],
+        JumpAM[i].Vucm[97],
+        # bad variability
+        JumpLM[i].Vcm[2],
+        JumpAM[i].Vcm[2],
+        JumpLM[i].Vcm[40],
+        JumpAM[i].Vcm[40],
+        JumpLM[i].Vcm[70],
+        JumpAM[i].Vcm[70],
+        JumpLM[i].Vcm[97],
+        JumpAM[i].Vcm[97],
+    ]
 
-np.savetxt("TableCriteriaImpulse.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,np.matrix(C).T]), 
+#np.savetxt("TableCriteriaImpulse.csv", 
+#           np.hstack([subjects,phaseFactor,taskFactor,np.matrix(C).T]), 
+#           delimiter=",")
+np.savetxt("TableVariancesImpulse.csv", 
+           np.hstack([subjects,phaseFactor,taskFactor,variabilityFactor,np.matrix(V).T]), 
            delimiter=",")
 
 
 ''' Landing Phase '''
 # 7 - 16 - 25 - 40 -100
+#l: 5(start) 20(maxForce) 40(lowerForce/stab) 100(end) 
+k=2
 nphases = 5
 ntasks = 3
-subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases)).T 
-#l: 5(start) 20(maxForce) 40(lowerForce/stab) 100(end) 
-phaseFactor = np.matrix([  4, 4, 4, 13, 13, 13, 20, 20, 20, 40, 40, 40, 97, 97, 97]*nsubjects).T
-taskFactor =  np.matrix([1,2,3]*nsubjects*nphases).T
+subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases*k)).T 
+variabilityFactor = np.matrix([1,2]*nsubjects*nphases*ntasks).T
+taskFactor =  np.matrix([1,1,2,2,3,3]*nsubjects*nphases).T
+phaseFactor = np.matrix([  4, 4, 4, 4, 4, 4, 13, 13, 13, 13, 13, 13, 20, 20, 20, 20, 20, 20, 40, 40, 40, 40, 40, 40, 97, 97, 97, 97, 97,97]*nsubjects).T
 
-C=[];
+
+C=[]; V=[];
 for i in xrange (len(mconf.traceurs_list)):
     C += [
         LandLM_abs[i].criteria[4],
@@ -303,16 +329,51 @@ for i in xrange (len(mconf.traceurs_list)):
         LandLM_stab[i].criteria[97],
         LandAM[i].criteria[97],
     ]
+    V += [
+        # good variability
+        # bad variability
+        LandLM_abs[i].Vucm[4],
+        LandLM_abs[i].Vcm[4],
+        LandLM_stab[i].Vucm[4],
+        LandLM_stab[i].Vcm[4],
+        LandAM[i].Vucm[4],
+        LandAM[i].Vcm[4],
+        LandLM_abs[i].Vucm[13],
+        LandLM_abs[i].Vcm[13],
+        LandLM_stab[i].Vucm[13],
+        LandLM_stab[i].Vcm[13],
+        LandAM[i].Vucm[13],
+        LandAM[i].Vcm[13],
+        LandLM_abs[i].Vucm[20],
+        LandLM_abs[i].Vcm[20],
+        LandLM_stab[i].Vucm[20],
+        LandLM_stab[i].Vcm[20],
+        LandAM[i].Vucm[20],
+        LandAM[i].Vcm[20],
+        LandLM_abs[i].Vucm[40],
+        LandLM_abs[i].Vcm[40],
+        LandLM_stab[i].Vucm[40],
+        LandLM_stab[i].Vcm[40],
+        LandAM[i].Vucm[40],
+        LandAM[i].Vcm[40],
+        LandLM_abs[i].Vucm[97],
+        LandLM_abs[i].Vcm[97],
+        LandLM_stab[i].Vucm[97],
+        LandLM_stab[i].Vcm[97],
+        LandAM[i].Vucm[97],
+        LandAM[i].Vcm[97],
+    ]
 
-np.savetxt("TableCriteriaLand.csv", 
-           np.hstack([subjects,phaseFactor,taskFactor,np.matrix(C).T]), 
+#np.savetxt("TableCriteriaLand.csv", 
+#           np.hstack([subjects,phaseFactor,taskFactor,np.matrix(C).T]), 
+#           delimiter=",")
+
+np.savetxt("TableVariancesLand.csv", 
+           np.hstack([subjects,phaseFactor,taskFactor,variabilityFactor,np.matrix(V).T]), 
            delimiter=",")
 
 
 ''' Display '''
-
-
-
 #launch with gepetto viewer
 x=land[4]['pinocchio_data']
 viewer = Viewer('avatar viewer',avatar0)

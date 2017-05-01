@@ -82,13 +82,14 @@ class UCM:
         
         Vucm = []; Vcm =[];
         ntrials = np.shape(Qi)[2]
-
+        ddq_variance = np.zeros((100,42,ntrials))
         for i in xrange(100):
             v_ucm = 0; v_cm = 0;
             for trls in xrange(ntrials):
                 #devq = np.matrix(Q_hat[i] - Qi[i,:,trls]).T
                 #devq = se3.differentiate(self.robot.model, np.matrix(Qi[i,:,trls]), Q_hat[0])
                 devq = (Qi[i,:,trls]-Q_hat[i])
+                ddq_variance[i,:,trls] = devq.squeeze()
                 #print devq.shape
                 # the deviations from the mean trajectories in joint-space are projected onto the null-space
                 #ucm = (np.matrix(Ni[trls]) * np.matrix(Ni[trls]).T) * devq.copy()
@@ -105,7 +106,7 @@ class UCM:
 
             Vucm.append(v_ucm)
             Vcm.append (v_cm)
-
+        self.ddq_variance = ddq_variance
         Vcm_n = np.array(Vcm)/np.float64(normCM)
         Vucm_n = np.array(Vucm)/np.float64(normUCM)
         if criteria is 'log':

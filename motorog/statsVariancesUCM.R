@@ -10,8 +10,8 @@
 # ----------------------------------------------------
 
 rm(list = ls())
-p='/galo/devel/gepetto/motorg/motorog/' #home
-#p='/local/gmaldona/devel/motorg/motorog/' #lab
+#p='/galo/devel/gepetto/motorg/motorog/' #home
+p='/local/gmaldona/devel/motorg/motorog/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -101,5 +101,5 @@ LAND_SDAM$Variability<-as.factor(LAND_SDAM$Variability)
 statsLAND_SDAM<-aov(LAND_SDAM$Variance ~ (LAND_SDAM$Phase*LAND_SDAM$Variability) + 
                        Error(LAND_SDAM$Participant / (LAND_SDAM$Phase*LAND_SDAM$Variability)), 
                      data = LAND_SDAM)
-summary(statsLAND_SDLM)
+summary(statsLAND_SDAM)
 pairwise.t.test(LAND_SDAM$Variance, LAND_SDAM$Variability:LAND_SDAM$Phase, p.adj = "bonf",paired=TRUE)

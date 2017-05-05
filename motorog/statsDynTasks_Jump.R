@@ -8,8 +8,8 @@ rm(list = ls())
 # Task 1: impulsion through antero-posterior and vertical force
 # Task 2: impulsion through antero posterior angular momentum (around M-L axis at the center of mass)
 # ------------------------------------------------------------------------
-p='/galo/devel/gepetto/motorg/motorog/' #home
-#p='/local/gmaldona/devel/motorg/motorog/' #lab
+#p='/galo/devel/gepetto/motorg/motorog/' #home
+p='/local/gmaldona/devel/motorg/motorog/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -119,7 +119,7 @@ barx = barplot(as.matrix(jump.means), main="Takeoff",
                 xlab="Phase of the motion", ylab="Index of Motor Task Control",
                 xlim=c(0,13),ylim=c(-0.5,8),cex.names = 1.6,  cex.lab=1.8, cex.main =2,
                 col=c("blue","red"), angle=angle1, density=density1,
-                legend = c("DLM task","DAM task"), 
+                legend = c("TDLM task","TDAM task"), 
                args.legend = list(cex=1.4, x=12, horiz=TRUE),beside=TRUE)
 
 jump.stds <- structure(list('1'=c(stdImpLM1,stdImpAM1),
@@ -180,26 +180,35 @@ offset2 <- 0.2
 # ----------------------------- Repeated Measures Anova ---------------------------
 # compute repetitive measures anova
 aovstats <-aov(SOT_IMPULSE$Ratio ~ 
-               (SOT_IMPULSE$Task+SOT_IMPULSE$Phase) + 
-               Error(SOT_IMPULSE$Participant  / (SOT_IMPULSE$Task+SOT_IMPULSE$Phase)), 
+               (SOT_IMPULSE$Task*SOT_IMPULSE$Phase) + 
+               Error(SOT_IMPULSE$Participant  / (SOT_IMPULSE$Task*SOT_IMPULSE$Phase)), 
                data = SOT_IMPULSE)
 summary(aovstats)
 # tasks are significantly differents p = 0.00425 ** <0.01
 # phases are not significantly differents p = 6.15e-06 *** < 0.05
+interaction.plot(SOT_IMPULSE$Task,SOT_IMPULSE$Phase, SOT_IMPULSE$Ratio,
+                 type="b",col=c(2:3),leg.bty="o",leg.bg="beige",lwd=2,pch=c(18,24),
+                 xlab="Task",ylab="ITC",main="Interaction plot")
+
+interaction.plot(SOT_IMPULSE$Phase,SOT_IMPULSE$Task, SOT_IMPULSE$Ratio,
+                 type="b",col=c("blue","red"),leg.bty="o",leg.bg="beige",
+                 cex.lab=1.8, legend=F,lwd=2,pch=c(18,24),
+                 xlab="Phase of the motion",ylab="Index of Motor Task Control")
+legend("bottomright",c("TDLM","TDAM"),bty="n",lty=c(1,2),lwd=2, cex=1.4, pch=c(18,24), col=c("blue","red"))
 
 
 # Effect Size
 # of the tasks
-aov_sum_sq = 5.779
-aov_resid = 0.674
+aov_sum_sq = 2.206
+aov_resid = 0.8003
 etacarrePartiel<-aov_sum_sq/(aov_sum_sq+aov_resid)
 # 89% of the variance of tha ratios explains the variation of the tasks
 ftailleEffet<-sqrt(etacarrePartiel/(1-etacarrePartiel))
 # effect fort : ftaill = 2.928 (f/2 = 1.464). Effect is independent of the size
 
 # of phases
-aov_sum_sq = 8.662
-aov_resid = 1.035
+aov_sum_sq = 10.496
+aov_resid = 4.654
 etacarrePartiel<-aov_sum_sq/(aov_sum_sq+aov_resid)
 # 89.3% of the variance of tha ratios explains the variation of the tasks
 ftailleEffet<-sqrt(etacarrePartiel/(1-etacarrePartiel))
@@ -208,12 +217,24 @@ ftailleEffet<-sqrt(etacarrePartiel/(1-etacarrePartiel))
 # POST-HOC
 # Compare tasks
 pairwise.t.test(SOT_IMPULSE$Ratio, SOT_IMPULSE$Task, p.adj = "bonf",paired=TRUE)
-# impulsionLM and impulsionAM are significantly different p = 6.2e-06
-# Linear Momentum > Angular Momentum
+
 
 # compare phases
 pairwise.t.test(SOT_IMPULSE$Ratio, SOT_IMPULSE$Phase, p.adj = "bonf",paired=TRUE)
-# 0 diff than 99, p=0.0116
-# 40 diff than 99, p=5.5e-05
-# 70 diff than 99, p=0.0014
 
+
+# Compare phases
+pairwise.t.test(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="1"], 
+                SOT_IMPULSE$Task[SOT_IMPULSE$Task=="1"]:SOT_IMPULSE$Phase[SOT_IMPULSE$Task=="1"], p.adj = "bonf",paired=TRUE)
+
+pairwise.t.test(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="2"], 
+                SOT_IMPULSE$Task[SOT_IMPULSE$Task=="2"]:SOT_IMPULSE$Phase[SOT_IMPULSE$Task=="2"], p.adj = "bonf",paired=TRUE)
+#Compare tasks
+pairwise.t.test(SOT_IMPULSE$Ratio[SOT_IMPULSE$Phase=="40"], 
+                SOT_IMPULSE$Task[SOT_IMPULSE$Phase=="40"]:SOT_IMPULSE$Phase[SOT_IMPULSE$Phase=="40"], p.adj = "bonf",paired=TRUE)
+pairwise.t.test(SOT_IMPULSE$Ratio[SOT_IMPULSE$Phase=="40"], 
+                SOT_IMPULSE$Task[SOT_IMPULSE$Phase=="40"]:SOT_IMPULSE$Phase[SOT_IMPULSE$Phase=="40"], p.adj = "bonf",paired=TRUE)
+pairwise.t.test(SOT_IMPULSE$Ratio[SOT_IMPULSE$Phase=="70"], 
+                SOT_IMPULSE$Task[SOT_IMPULSE$Phase=="70"]:SOT_IMPULSE$Phase[SOT_IMPULSE$Phase=="70"], p.adj = "bonf",paired=TRUE)
+pairwise.t.test(SOT_IMPULSE$Ratio[SOT_IMPULSE$Phase=="99"], 
+                SOT_IMPULSE$Task[SOT_IMPULSE$Phase=="99"]:SOT_IMPULSE$Phase[SOT_IMPULSE$Phase=="99"], p.adj = "bonf",paired=TRUE)

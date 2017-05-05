@@ -74,25 +74,25 @@ ciPlusForce4 = meanForce4 + ciForce4
 ciMinForce4 = meanForce4 - ciForce4 
 
 meanForce13 = mean(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="13"])
-stdForce13 = mean(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="13"])
-ciForce13 = (t * stdForce13 / sqrt(nparticipants))/2
-ciPlusForce13 = (meanForce13 + ciForce13)/2
-ciMinForce13 = (meanForce13 - ciForce13 )/2
+stdForce13 = sd(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="13"])
+ciForce13 = (t * stdForce13 / sqrt(nparticipants))
+ciPlusForce13 = (meanForce13 + ciForce13)
+ciMinForce13 = (meanForce13 - ciForce13 )
 
 meanForce20 = mean(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="20"])
-stdForce20 = mean(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="20"])
+stdForce20 = sd(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="20"])
 ciForce20 = t * stdForce20 / sqrt(nparticipants)
 ciPlusForce20 = meanForce20 + ciForce20 
 ciMinForce20 = meanForce20 - ciForce20 
 
 meanForce40= mean(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="40"])
-stdForce40= mean(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="40"])
+stdForce40= sd(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="40"])
 ciForce40 = t * stdForce40 / sqrt(nparticipants)
 ciPlusForce40 = meanForce40 + ciForce40 
 ciMinForce40 = meanForce40 - ciForce40 
 
 meanForce100= mean(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="97"])
-stdForce100= mean(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="97"])
+stdForce100= sd(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="97"])
 ciForce100 = t * stdForce100 / sqrt(nparticipants)
 ciPlusForce100 = meanForce100 + ciForce100 
 ciMinForce100 = meanForce100 - ciForce100 
@@ -124,7 +124,7 @@ ciPlusStab40 = meanStab40 + ciStab40
 ciMinStab40 = meanStab40 - ciStab40
 
 meanStab100= mean(SOT_LAND$Ratio[SOT_LAND$Task=="2" & SOT_LAND$Phase=="97"])
-stdStab100= mean(SOT_LAND$Ratio[SOT_LAND$Task=="2" & SOT_LAND$Phase=="97"])
+stdStab100= sd(SOT_LAND$Ratio[SOT_LAND$Task=="2" & SOT_LAND$Phase=="97"])
 ciStab100 = t * stdStab100 / sqrt(nparticipants)
 ciPlusStab100 = meanStab100 + ciStab100 
 ciMinStab100 = meanStab100 - ciStab100
@@ -157,7 +157,7 @@ ciPlusTau40 = meanTau40 + ciTau40
 ciMinTau40 = meanTau40 - ciTau40 
 
 meanTau100 = mean(SOT_LAND$Ratio[SOT_LAND$Task=="3" & SOT_LAND$Phase=="97"])
-stdTau100 = mean(SOT_LAND$Ratio[SOT_LAND$Task=="3" & SOT_LAND$Phase=="97"])
+stdTau100 = sd(SOT_LAND$Ratio[SOT_LAND$Task=="3" & SOT_LAND$Phase=="97"])
 ciTau100 = t * stdTau100 / sqrt(nparticipants)
 ciPlusTau100 = meanTau100 + ciTau100 
 ciMinTau100 = meanTau100 - ciTau100 
@@ -199,8 +199,8 @@ barx = barplot(as.matrix(land.means), main="Landing",
                xlim=c(0,20),ylim=c(-5,15), 
                las=1, cex.names = 1.6,  cex.lab=1.8, cex.main =2,
                col=c("red","green","blue"), angle=angle1, density=density1,
-               legend = c( "Force task","Stability force task","Stability torque task"), beside=TRUE,
-               args.legend = list(cex=1.4, horiz=FALSE, ncol=3, x.intersp=0.01))
+               legend = c( "Vertical LDLM","Stability LDLM","LDAM"), beside=TRUE,
+               args.legend = list(cex=1.4, horiz=FALSE, ncol=3, x.intersp=.5))
 
 xx=as.matrix(land.means)
 er=as.matrix(land.stds)
@@ -252,14 +252,18 @@ displayEffects(array(vector), -3.95, -1.2, -1.5, '**')
 
 # ----------------------------- Repeated Measures Anova ---------------------------
 # compute repetitive measures anova
-statsaov2 <-aov(SOT_LAND$Ratio ~ (SOT_LAND$Task+SOT_LAND$Phase) + 
-                  Error(SOT_LAND$Participant / (SOT_LAND$Task+SOT_LAND$Phase)), 
+statsaov2 <-aov(SOT_LAND$Ratio ~ (SOT_LAND$Task:SOT_LAND$Phase) + 
+                  Error(SOT_LAND$Participant / (SOT_LAND$Task:SOT_LAND$Phase)), 
                 data = SOT_LAND)
 summary(statsaov2) 
 # tasks are significantly differents p = 1.96e-06 ***
 # phases are not significantly differents
 # tasks:phase interactions are significant p=7.9e-08 ***
-
+interaction.plot(SOT_LAND$Phase,SOT_LAND$Task, SOT_LAND$Ratio,
+                 type="b",col=c("red","green","blue"),leg.bty="o",leg.bg="beige",
+                 cex.lab=1.8, legend=F,lwd=2,pch=c(18,24),
+                 xlab="Phase of the motion",ylab="Index of Motor Task Control")
+legend("bottomleft",c("Vertical LDLM","Stability LDLM","TDAM"),bty="n",lty=c(1,2),lwd=2, cex=1.4, pch=c(18,24), col=c("red","green","blue"))
 # Effect Size
 # of the tasks
 aov_sum_sq = 11.149

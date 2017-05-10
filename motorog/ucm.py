@@ -3,7 +3,7 @@ from matplotlib.pyplot import cm
 import numpy as np
 import pinocchio as se3
 import tools 
-
+import bmtools.processing as bm
 #from bmtools.filters import filtfilt_butter
 
 class UCM:
@@ -30,8 +30,9 @@ class UCM:
             return nullspace, rank
 
         N=[]
+        n,m = Jq[0].shape
         for i in xrange(100):
-            P=np.matrix(np.identity(42)) - (np.linalg.pinv(Jq[i])*Jq[i])
+            P=np.matrix(np.identity(m)) - (np.linalg.pinv(Jq[i])*Jq[i])
             N.append(P)
 
         projector = np.array(N)
@@ -82,7 +83,7 @@ class UCM:
         
         Vucm = []; Vcm =[];
         ntrials = np.shape(Qi)[2]
-        ddq_variance = np.zeros((100,42,ntrials))
+        ddq_variance = np.zeros((100,84,ntrials))
         for i in xrange(100):
             v_ucm = 0; v_cm = 0;
             for trls in xrange(ntrials):
@@ -191,18 +192,29 @@ class ucmMomentum(UCM):
         return cHi, cHDi        
         
     def _getJmean(self):
-        Jtask=[]
+        Alist=[]
+        # get A
         for i in range(0, 100):
             se3.forwardKinematics(self.robot.model, 
                                   self.robot.data, 
                                   self.q_mean[i], 
                                   self.dq_mean[i], 
                                   self.ddq_mean[i])
-            JH = se3.ccrba(self.robot.model,
+            A = se3.ccrba(self.robot.model,
                            self.robot.data, 
                            self.q_mean[i], 
                            self.dq_mean[i])
-            Jtask.append(JH[self._mask,:])
+            Alist.append(A[self._mask,:])
+        
+        dAlist = bm.diffJ(Alist, self.time_mean)
+        [item for sublist in dAlist for item in sublist]
+        print np.array(Alist).shape
+        print np.array(sublist).shape
+        # stack A and dA together 
+        Jtask=[]
+        for i in range(0, 100):
+            Jtask.append(np.hstack([sublist[i],Alist[i]]))
+
         return Jtask
     
 
@@ -210,6 +222,8 @@ class ucmMomentum(UCM):
         task=[]; Jtask=[]; drift=[] ;taskNormalized=[];
         contributionH=[]; contributionF=[];
         hg=[];# H2=[]
+        J = self._getJmean()
+        self.temp=J
         for i in range(0, 100):
             se3.forwardKinematics(self.robot.model, 
                                   self.robot.data, 
@@ -250,7 +264,7 @@ class ucmMomentum(UCM):
             self.contribution = contributionH
             self.contributionF = contributionF
             
-        return taskNormalized, Jtask, drift
+        return taskNormalized, J, drift
         
     def _getReferenceTask(self, Q):
         '''
@@ -379,6 +393,9 @@ class ucmMomentum(UCM):
         dataMean += [robot.dof2pinocchio(np.mean(data2,0).A1)]
         dataStd += [robot.dof2pinocchio(np.std(data2,0).A1)]
 
+Jtask=[]
+        for i in range(0, 100):
+            Jtask.append(np.hstack([sublist[i],Alist[i]]))
     '''
     
     def getUCMVariances(self):
@@ -390,8 +407,18 @@ class ucmMomentum(UCM):
         self.NTask = self.nullspace(self.JTask)
         self.n_ucm = self.repNo * (self.robot.nv-self.dim)
         self.n_cm = self.repNo * self.dim
-        (self.Vucm, self.Vcm, self.criteria) = self.varianceFromManifolds(self.dq_mean, 
-                                                                          self.dq_data, 
+        dq_ddq = np.matrix(np.zeros([100,84]))
+        dq_ddq_data = np.array(np.zeros([100,84,self.repNo]))
+        for i in xrange (0,100):
+            dq_ddq[i,:] = np.hstack([self.dq_mean[i],self.ddq_mean[i]])
+            for nrep in xrange(0,self.repNo):
+                dq_ddq_data[i,:,nrep] = np.hstack([self.dq_data[i,:,nrep],self.ddq_data[i,:,nrep]])
+            
+        print dq_ddq_data.shape
+        print dq_ddq.shape
+        print self.NTask.shape
+        (self.Vucm, self.Vcm, self.criteria) = self.varianceFromManifolds(dq_ddq, 
+                                                                          dq_ddq_data, 
                                                                           self.NTask, 
                                                                           self.n_ucm, 
                                                                           self.n_cm, 

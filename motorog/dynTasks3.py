@@ -113,25 +113,30 @@ nsubjects = 5;
 
 ''' Impulsion Phase '''
 #j: 0(start)  40 60(A-P_F, AM_UCM) 70(BW) 100(end)
-''''
+
 # For ITC
 nphases = 4
 ntasks = 2
-subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases*k)).T
-variabilityFactor = np.matrix([1,2]*nsubjects*nphases*ntasks).T
-taskFactor =  np.matrix([1,1,2,2]*nsubjects*nphases).T
-phaseFactor = np.matrix([  0, 0, 0, 0, 40, 40, 40, 40, 70, 70, 70, 70, 99, 99, 99, 99]*nsubjects).T
-    #C += [
-    #    JumpLM[i].criteria[2],
-    #    JumpAM[i].criteria[2],
-    #    JumpLM[i].criteria[40],
-    #    JumpAM[i].criteria[40],
-    #    JumpLM[i].criteria[70],
-    #    JumpAM[i].criteria[70],
-    #    JumpLM[i].criteria[97],
-    #    JumpAM[i].criteria[97],
-    #
-'''
+subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases)).T
+taskFactor =  np.matrix([1,2]*nsubjects*nphases).T
+phaseFactor = np.matrix([  0, 0, 40, 40, 70, 70, 99, 99]*nsubjects).T
+C = []
+for i in xrange (len(mconf.traceurs_list)):
+    C += [
+        JumpLM[i].criteria[2],
+        JumpAM[i].criteria[2],
+        JumpLM[i].criteria[40],
+        JumpAM[i].criteria[40],
+        JumpLM[i].criteria[70],
+        JumpAM[i].criteria[70],
+        JumpLM[i].criteria[97],
+        JumpAM[i].criteria[97],
+    ]
+np.savetxt("TableCriteriaImpulse.csv",
+           np.hstack([subjects,phaseFactor,taskFactor,np.matrix(C).T]),
+           delimiter=",")
+
+# For good vs bad variability
 k=2
 nphases = 4
 subjects = np.matrix(np.repeat(np.linspace(1,5,5), nphases*k)).T

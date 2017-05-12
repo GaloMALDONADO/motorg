@@ -83,13 +83,16 @@ class UCM:
         
         Vucm = []; Vcm =[];
         ntrials = np.shape(Qi)[2]
-        ddq_variance = np.zeros((100,84,ntrials))
+        ddq_variance = np.zeros((100,126,ntrials))
         for i in xrange(100):
             v_ucm = 0; v_cm = 0;
             for trls in xrange(ntrials):
                 #devq = np.matrix(Q_hat[i] - Qi[i,:,trls]).T
-                #devq = se3.differentiate(self.robot.model, np.matrix(Qi[i,:,trls]), Q_hat[0])
-                devq = (Qi[i,:,trls]-Q_hat[i])
+                devq1 = se3.differentiate(self.robot.model, np.matrix(Qi[i,:49,trls]), Q_hat[i][0,:49]).T
+                devq2 = (Qi[i,49:,trls]-Q_hat[i][0,49:])
+                print devq1.shape
+                print devq2.shape
+                devq = np.hstack([devq1,devq2])
                 ddq_variance[i,:,trls] = devq.squeeze()
                 #print devq.shape
                 # the deviations from the mean trajectories in joint-space are projected onto the null-space
@@ -207,13 +210,17 @@ class ucmMomentum(UCM):
             Alist.append(A[self._mask,:])
         
         dAlist = bm.diffJ(Alist, self.time_mean)
-        [item for sublist in dAlist for item in sublist]
+        ddAlist = bm.diffJ(Alist, self.time_mean)
+        [item for sublist1 in dAlist for item in sublist1]
+        [item for sublist2 in ddAlist for item in sublist2]
         print np.array(Alist).shape
-        print np.array(sublist).shape
+        print np.array(sublist1).shape
+        print np.array(sublist2).shape
         # stack A and dA together 
         Jtask=[]
         for i in range(0, 100):
-            Jtask.append(np.hstack([sublist[i],Alist[i]]))
+            #Jtask.append(np.hstack([sublist[i],Alist[i]]))
+            Jtask.append(np.hstack([sublist2[i],2*sublist1[i],Alist[i]]))
 
         return Jtask
     
@@ -407,18 +414,18 @@ Jtask=[]
         self.NTask = self.nullspace(self.JTask)
         self.n_ucm = self.repNo * (self.robot.nv-self.dim)
         self.n_cm = self.repNo * self.dim
-        dq_ddq = np.matrix(np.zeros([100,84]))
-        dq_ddq_data = np.array(np.zeros([100,84,self.repNo]))
+        q_dq_ddq = np.matrix(np.zeros([100,133]))
+        q_dq_ddq_data = np.array(np.zeros([100,133,self.repNo]))
         for i in xrange (0,100):
-            dq_ddq[i,:] = np.hstack([self.dq_mean[i],self.ddq_mean[i]])
+            q_dq_ddq[i,:] = np.hstack([self.q_mean[i],self.dq_mean[i],self.ddq_mean[i]])
             for nrep in xrange(0,self.repNo):
-                dq_ddq_data[i,:,nrep] = np.hstack([self.dq_data[i,:,nrep],self.ddq_data[i,:,nrep]])
+                q_dq_ddq_data[i,:,nrep] = np.hstack([self.q_data[i,:,nrep],self.dq_data[i,:,nrep],self.ddq_data[i,:,nrep]])
             
-        print dq_ddq_data.shape
-        print dq_ddq.shape
+        print q_dq_ddq_data.shape
+        print q_dq_ddq.shape
         print self.NTask.shape
-        (self.Vucm, self.Vcm, self.criteria) = self.varianceFromManifolds(dq_ddq, 
-                                                                          dq_ddq_data, 
+        (self.Vucm, self.Vcm, self.criteria) = self.varianceFromManifolds(q_dq_ddq, 
+                                                                          q_dq_ddq_data, 
                                                                           self.NTask, 
                                                                           self.n_ucm, 
                                                                           self.n_cm, 

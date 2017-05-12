@@ -24,7 +24,19 @@ class Plot:
         ax = fig.add_subplot ('111')
         plt.title('Generalized Velocities')
         for i in xrange (self.participantsNo):
-            ax.plot(self.k * self.task[i].v_mean, linewidth=3.0)
+            ax.plot(self.k * self.task[i].dq_mean, linewidth=3.0)
+
+        legends = self.coordinateNames
+        ax.legend(legends)
+        plt.show()
+
+    def plotAllAccelerations(self):
+        fig = plt.figure ()
+        fig.canvas.set_window_title('Generalized Accelerations')
+        ax = fig.add_subplot ('111')
+        plt.title('Generalized Accelerations')
+        for i in xrange (self.participantsNo):
+            ax.plot(self.k * self.task[i].ddq_mean, linewidth=3.0)
 
         legends = self.coordinateNames
         ax.legend(legends)

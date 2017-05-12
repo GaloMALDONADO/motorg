@@ -115,9 +115,9 @@ angle1 <- rep(c(45,90), length.out=2)
 density1 <- seq(10,25,length.out=2)
 op = par(mar=c(5,5,5,1)) # c(bottom, left, top, right) which gives the number of lines of margin
 
-barx = barplot(as.matrix(jump.means), main="Takeoff",
+barx = barplot(as.matrix(jump.means), 
                 xlab="Phase of the motion", ylab="Index of Motor Task Control",
-                xlim=c(0,13),ylim=c(-0.5,8),cex.names = 1.6,  cex.lab=1.8, cex.main =2,
+                xlim=c(0,13),ylim=c(-0.5,12),cex.names = 1.6,  cex.lab=1.8, cex.main =2,
                 col=c("blue","red"), angle=angle1, density=density1,
                 legend = c("TDLM task","TDAM task"), 
                args.legend = list(cex=1.4, x=12, horiz=TRUE),beside=TRUE)
@@ -165,10 +165,10 @@ y <- 2
 offset1 <- 0.2
 offset2 <- 0.2
 
-#displayEffects(x[1:2], 7.1, offset1, 3.5, '*')
-#displayEffects(x[3:4], 4.8, offset1, 2.2, '*')
-#displayEffects(x[5:6], 6.1, offset1, 4, '*')
-#displayEffects(x[7:8], 4.7, offset1, 0.9, '*')
+displayEffects(x[1:2], 8.7, offset1, .8, '*')
+displayEffects(x[3:4], 7.5, offset1, 1.9, '*')
+displayEffects(x[5:6], 7.1, 0.45, 0.2, '*')
+displayEffects(x[7:8], 8, 2.5, 0.2, '*')
 
 #vector <- c((x[1]+x[2])/2, (x[7]+x[8])/2)
 #displayEffects(array(vector), -1.95, -1.7, -1.7, '**')
@@ -226,15 +226,20 @@ pairwise.t.test(SOT_IMPULSE$Ratio, SOT_IMPULSE$Phase, p.adj = "bonf",paired=TRUE
 # Compare phases
 pairwise.t.test(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="1"], 
                 SOT_IMPULSE$Task[SOT_IMPULSE$Task=="1"]:SOT_IMPULSE$Phase[SOT_IMPULSE$Task=="1"], p.adj = "bonf",paired=TRUE)
-
+# phases are not significantly different
 pairwise.t.test(SOT_IMPULSE$Ratio[SOT_IMPULSE$Task=="2"], 
                 SOT_IMPULSE$Task[SOT_IMPULSE$Task=="2"]:SOT_IMPULSE$Phase[SOT_IMPULSE$Task=="2"], p.adj = "bonf",paired=TRUE)
+# phases are not significantly different
 #Compare tasks
+pairwise.t.test(SOT_IMPULSE$Ratio[SOT_IMPULSE$Phase=="0"], 
+                SOT_IMPULSE$Task[SOT_IMPULSE$Phase=="0"]:SOT_IMPULSE$Phase[SOT_IMPULSE$Phase=="0"], p.adj = "bonf",paired=TRUE)
+# task 1 different than task 2 p=0.038
 pairwise.t.test(SOT_IMPULSE$Ratio[SOT_IMPULSE$Phase=="40"], 
                 SOT_IMPULSE$Task[SOT_IMPULSE$Phase=="40"]:SOT_IMPULSE$Phase[SOT_IMPULSE$Phase=="40"], p.adj = "bonf",paired=TRUE)
-pairwise.t.test(SOT_IMPULSE$Ratio[SOT_IMPULSE$Phase=="40"], 
-                SOT_IMPULSE$Task[SOT_IMPULSE$Phase=="40"]:SOT_IMPULSE$Phase[SOT_IMPULSE$Phase=="40"], p.adj = "bonf",paired=TRUE)
+# task 1 different than task 2 p=0.05
 pairwise.t.test(SOT_IMPULSE$Ratio[SOT_IMPULSE$Phase=="70"], 
                 SOT_IMPULSE$Task[SOT_IMPULSE$Phase=="70"]:SOT_IMPULSE$Phase[SOT_IMPULSE$Phase=="70"], p.adj = "bonf",paired=TRUE)
+# task 1 not different than task 2 p=0.41
 pairwise.t.test(SOT_IMPULSE$Ratio[SOT_IMPULSE$Phase=="99"], 
                 SOT_IMPULSE$Task[SOT_IMPULSE$Phase=="99"]:SOT_IMPULSE$Phase[SOT_IMPULSE$Phase=="99"], p.adj = "bonf",paired=TRUE)
+# task 1 different than task 2 p=0.036

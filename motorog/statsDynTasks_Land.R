@@ -194,9 +194,9 @@ angle1 <- rep(c(45,135,90), length.out=3)
 density1 <- seq(10,25,length.out=3)
 op = par(mar=c(5,5,5,1)) # c(bottom, left, top, right) which gives the number of lines of margin
 # plot
-barx = barplot(as.matrix(land.means), main="Landing",
+barx = barplot(as.matrix(land.means), 
                xlab="Phase of the motion", ylab="Index of Motor Task Control",
-               xlim=c(0,20),ylim=c(-5,15), 
+               xlim=c(0,20),ylim=c(-6,15), 
                las=1, cex.names = 1.6,  cex.lab=1.8, cex.main =2,
                col=c("red","green","blue"), angle=angle1, density=density1,
                legend = c( "Vertical LDLM","Stability LDLM","LDAM"), beside=TRUE,
@@ -225,29 +225,35 @@ displayEffects <- function(x, y, offset1, offset2, s='*'){
 
 # capture x coordinates of bars
 x <- barx
+# ---------- tasks ---------
+# - 4%
+# task 1 different than task 3 p=0.025
+# task 2 different than task 3 p=0.014
+displayEffects(x[2:3], 8.2, 0.2, 0.4, '*')
+displayEffects( c(x[1],x[3] ),  9.5, .2, 3.2, '*')
+# - 40%
+# task 2 different than task 3 p=0.011
+displayEffects(x[11:12], 7.4, 0.2, 1.5, '*')
+# - 97%
+# task 1 different than task 3 p=0.022
+# task 2 different than task 3 p=0.00061
+displayEffects( c(x[13],x[15] ),  7.7, 1.7, 3.4, '*')
+displayEffects(x[14:15], 7, 0.2, 1.5, '*')
 
-displayEffects(x[1:2], 7.2, 0.2, 0.8, '*')
-displayEffects(x[2:3], -0.5, -0.3, -0.3, '*')
-displayEffects( c(x[1],x[3] ),  9.1, .8, 4.3, '*')
+# ---------- phases
+# Compare phases
+# task 1 = phase 100% is significantly different than phase 4% and 13%
+vector <- c((x[1]), (x[13]))
+displayEffects(array(vector), -1.5, -1.2, -1.2, '**')
+vector <- c((x[4]), (x[13]))
+displayEffects(array(vector), -2.5, -2.2, -2.2, '**')
+# Task 2: phases are not different 
 
-displayEffects(x[4:5], 8.4, 0.9, 4.2, '*')
-displayEffects(x[5:6], -0.5, -0.3, -0.3, '*')
-displayEffects( c(x[4],x[6] ),  9.2, .8, 6.2, '*')
-
-displayEffects(x[7:8], 6.2, 0.9, 0.3, '*')
-displayEffects(x[8:9], -0.6, -0.4, -0.4, '*')
-displayEffects( c(x[7],x[9] ),  7.1, .8, 3.6, '*')
-
-displayEffects(x[10:11], 9.1, 7, 0.2, '*')
-displayEffects(x[11:12], -2, -1.8, -1.8, '*')
-displayEffects( c(x[10],x[12] ),  10, 1.7, 3.4, '*')
-
-vector <- c((x[2]), (x[5]))
-displayEffects(array(vector), -1.95, -1.2, -1.2, '**')
-vector <- c((x[2]), (x[8]))
-displayEffects(array(vector), -2.95, -1.2, -1.5, '**')
-vector <- c((x[2]), (x[11]))
-displayEffects(array(vector), -3.95, -1.2, -1.5, '**')
+# Task 3: phases 100% is significantly different than phases 13% and 20% 
+vector <- c((x[6]), (x[15]))
+displayEffects(array(vector), -4.75, -4.25, -4.25, '**')
+vector <- c((x[9]), (x[15]))
+displayEffects(array(vector), -5.75, -5.25, -5.25, '**')
 
 
 # ----------------------------- Repeated Measures Anova ---------------------------
@@ -301,5 +307,39 @@ pairwise.t.test(SOT_LAND$Ratio, SOT_LAND$Task:SOT_LAND$Phase, p.adj = "bonf",pai
 # 2:20 with 3:97, p = 0.042
 # 2:40 with 3:40, p = 0.019
 # 2:97 with 3:97, p = 0.022
+
+
+# Compare phases
+pairwise.t.test(SOT_LAND$Ratio[SOT_LAND$Task=="1"], 
+                SOT_LAND$Task[SOT_LAND$Task=="1"]:SOT_LAND$Phase[SOT_LAND$Task=="1"], p.adj = "bonf",paired=TRUE)
+# phase 100% is significantly different than phase 4% and 13%
+pairwise.t.test(SOT_LAND$Ratio[SOT_LAND$Task=="2"], 
+                SOT_LAND$Task[SOT_LAND$Task=="2"]:SOT_LAND$Phase[SOT_LAND$Task=="2"], p.adj = "bonf",paired=TRUE)
+# phases are not different 
+pairwise.t.test(SOT_LAND$Ratio[SOT_LAND$Task=="3"], 
+                SOT_LAND$Task[SOT_LAND$Task=="3"]:SOT_LAND$Phase[SOT_LAND$Task=="3"], p.adj = "bonf",paired=TRUE)
+# phases 100% is significantly different than phases 13% and 20% 
+
+
+
+#Compare tasks
+pairwise.t.test(SOT_LAND$Ratio[SOT_LAND$Phase=="4"], 
+                SOT_LAND$Task[SOT_LAND$Phase=="4"]:SOT_LAND$Phase[SOT_LAND$Phase=="4"], p.adj = "bonf",paired=TRUE)
+# task 1 different than task 3 p=0.025
+# task 2 different than task 3 p=0.014
+
+pairwise.t.test(SOT_LAND$Ratio[SOT_LAND$Phase=="13"], 
+                SOT_LAND$Task[SOT_LAND$Phase=="13"]:SOT_LAND$Phase[SOT_LAND$Phase=="13"], p.adj = "bonf",paired=TRUE)
+# no difference
+pairwise.t.test(SOT_LAND$Ratio[SOT_LAND$Phase=="20"], 
+                SOT_LAND$Task[SOT_LAND$Phase=="20"]:SOT_LAND$Phase[SOT_LAND$Phase=="20"], p.adj = "bonf",paired=TRUE)
+# no difference
+pairwise.t.test(SOT_LAND$Ratio[SOT_LAND$Phase=="40"], 
+                SOT_LAND$Task[SOT_LAND$Phase=="40"]:SOT_LAND$Phase[SOT_LAND$Phase=="40"], p.adj = "bonf",paired=TRUE)
+# task 2 different than task 3 p=0.011
+pairwise.t.test(SOT_LAND$Ratio[SOT_LAND$Phase=="97"], 
+                SOT_LAND$Task[SOT_LAND$Phase=="97"]:SOT_LAND$Phase[SOT_LAND$Phase=="97"], p.adj = "bonf",paired=TRUE)
+# task 1 different than task 3 p=0.022
+# task 2 different than task 3 p=0.00061
 
 

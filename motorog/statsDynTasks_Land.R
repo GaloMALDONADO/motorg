@@ -193,14 +193,14 @@ land.ci <- structure(list('4'=c(ciForce4,  ciStab4, ciTau4),
 angle1 <- rep(c(45,135,90), length.out=3)
 density1 <- seq(10,25,length.out=3)
 op = par(mar=c(5,5,5,1)) # c(bottom, left, top, right) which gives the number of lines of margin
-# plot
+# plot -6 15 max(land.means)
 barx = barplot(as.matrix(land.means), 
                xlab="Phase of the motion", ylab="Index of Motor Task Control",
-               xlim=c(0,20),ylim=c(-6,15), 
+               xlim=c(0,20),ylim=c(0,max(land.means)+(abs(max(land.means))*0.80)), 
                las=1, cex.names = 1.6,  cex.lab=1.8, cex.main =2,
                col=c("red","green","blue"), angle=angle1, density=density1,
-               legend = c( "Vertical LDLM","Stability LDLM","LDAM"), beside=TRUE,
-               args.legend = list(cex=1.4, horiz=FALSE, ncol=3, x.intersp=.5))
+               legend = c( "Vertical","Stability LM","AM"), beside=TRUE,
+               args.legend = list(cex=1.4, horiz=FALSE, ncol=3, x.intersp=.6, y=13.5))
 
 xx=as.matrix(land.means)
 er=as.matrix(land.stds)

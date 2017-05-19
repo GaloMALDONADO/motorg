@@ -4,6 +4,7 @@ import numpy as np
 import pinocchio as se3
 import tools 
 import bmtools.processing as bm
+from IPython import embed
 #from bmtools.filters import filtfilt_butter
 
 class UCM:
@@ -32,7 +33,7 @@ class UCM:
         N=[]
         n,m = Jq[0].shape
         for i in xrange(100):
-            P=np.matrix(np.identity(m)) - (np.linalg.pinv(Jq[i])*Jq[i])
+            P=(np.matrix(np.identity(m))) - (np.linalg.pinv(Jq[i])*Jq[i])
             N.append(P)
 
         projector = np.array(N)
@@ -82,39 +83,106 @@ class UCM:
         '''
         
         Vucm = []; Vcm =[];
+        Vucm_q = []; Vcm_q =[];
+        Vucm_dq = []; Vcm_dq =[];
+        Vucm_ddq = []; Vcm_ddq =[];
         ntrials = np.shape(Qi)[2]
         ddq_variance = np.zeros((100,126,ntrials))
+        
         for i in xrange(100):
             v_ucm = 0; v_cm = 0;
+            v_ucm_q = 0; v_cm_q = 0;
+            v_ucm_dq = 0; v_cm_dq = 0;
+            v_ucm_ddq = 0; v_cm_ddq = 0;
             for trls in xrange(ntrials):
                 #devq = np.matrix(Q_hat[i] - Qi[i,:,trls]).T
-                devq1 = se3.differentiate(self.robot.model, np.matrix(Qi[i,:49,trls]), Q_hat[i][0,:49]).T
-                devq2 = (Qi[i,49:,trls]-Q_hat[i][0,49:])
-                print devq1.shape
-                print devq2.shape
-                devq = np.hstack([devq1,devq2])
-                ddq_variance[i,:,trls] = devq.squeeze()
+                devq = se3.differentiate(self.robot.model, np.matrix(Qi[i,:49,trls]), Q_hat[i][0,:49]).T
+                devdq = (Qi[i,49:91,trls]-Q_hat[i][0,49:91]).squeeze()
+                #devddq = (Qi[i,91:133,trls]-Q_hat[i][0,91:133]).squeeze()
+
+                #devQ = np.hstack([devq,devdq, devddq])
+                devQ = np.hstack([devq,devdq])
+                proj = self.ProjJ
+                ucm = np.matrix(proj[i]) * devQ.copy().T
+                cm = devQ.copy().T - ucm
+                
+                #ucm_q = ucm[:-84]
+                #ucm_dq = ucm[-84:-42]
+                #ucm_ddq = ucm[-42:]
+                #cm_q = cm[:-84]
+                #cm_dq = cm[-84:-42]
+                #cm_ddq = cm[-42:]
+                cm_q = cm[:-42]
+                cm_dq = cm[-42:]
+                ucm_q = ucm[:-42]
+                ucm_dq = ucm[-42:]
+
+                '''
+                ucm_q = np.matrix(Pi[2][1][i]) * devq.copy().T
+                cm_q = devq.copy().T - ucm_q.copy()
+                ucm_dq = np.matrix(Pi[1][1][i]) * devdq.copy().T
+                cm_dq = devdq.copy().T - ucm_dq.copy()
+                ucm_ddq = np.matrix(Pi[0][1][i]) * devddq.copy().T
+                cm_ddq = devddq.copy().T - ucm_ddq.copy()
+                '''
+                
+                v_ucm += np.square(np.linalg.norm(ucm))
+                v_cm  += np.square(np.linalg.norm(cm))
+                v_ucm_q += np.square(np.linalg.norm(ucm_q))
+                v_cm_q  += np.square(np.linalg.norm(cm_q))
+                v_ucm_dq += np.square(np.linalg.norm(ucm_dq))
+                v_cm_dq  += np.square(np.linalg.norm(cm_dq))
+                #v_ucm_ddq += np.square(np.linalg.norm(ucm_ddq))
+                #v_cm_ddq  += np.square(np.linalg.norm(cm_ddq))
+                
+                #embed()
+                '''
+                self.normdevq = np.linalg.norm(devq)
+                self.normdevdq = np.linalg.norm(devdq)
+                self.normdevddq = np.linalg.norm(devddq)
+                self.normPq = np.linalg.norm(np.matrix(Pi[0][1][i]))
+                self.normPdq = np.linalg.norm(np.matrix(Pi[1][1][i]))
+                self.normPddq = np.linalg.norm(np.matrix(Pi[2][1][i]))
+                self.Pq = np.matrix(Pi[0][1][i])
+                self.Pdq = np.matrix(Pi[1][1][i])
+                self.Pddq = np.matrix(Pi[2][1][i])
+                '''
+                #ddq_variance[i,:,trls] = devQ.squeeze()
                 #print devq.shape
                 # the deviations from the mean trajectories in joint-space are projected onto the null-space
                 #ucm = (np.matrix(Ni[trls]) * np.matrix(Ni[trls]).T) * devq.copy()
-                ucm = np.matrix(Pi[i]) * devq.copy().T
+                #ucm = np.matrix(Pi[i]) * devq.copy().T
                 # and onto the range space (orthogonal to the null space)
                 # which is a lineat appoximation of the controlled manifold
-                cm = devq.copy().T - ucm.copy()
+                #cm = devq.copy().T - ucm.copy()
                 # the variance per degree of freedom of the projected deviations is
-                v_ucm += np.square(np.linalg.norm(ucm))
-                v_cm  += np.square(np.linalg.norm(cm))
+                #v_ucm += np.square(np.linalg.norm(ucm))
+                #v_cm  += np.square(np.linalg.norm(cm))
                 #v_ucm += np.linalg.norm(ucm)
                 #v_cm  += np.linalg.norm(cm)
                 
+                #compute variance per space
+                #self.devQ[i,:,trls] = devq.squeeze()
+                #self.devq[i,:,trls] = self,devQ[i,0:49,trls]
 
+            #Vucm.append(v_ucm_q + v_ucm_dq + v_ucm_ddq)
+            #Vcm.append (v_cm_q + v_cm_dq + v_cm_ddq)
             Vucm.append(v_ucm)
             Vcm.append (v_cm)
-        self.ddq_variance = ddq_variance
-        Vcm_n = np.array(Vcm)/np.float64(normCM)
-        Vucm_n = np.array(Vucm)/np.float64(normUCM)
+            Vucm_q.append(v_ucm_q)
+            Vucm_dq.append(v_ucm_dq)
+            #Vucm_ddq.append(v_ucm_ddq)
+            Vcm_q.append(v_cm_q)
+            Vcm_dq.append(v_cm_dq)
+            #Vcm_ddq.append(v_cm_ddq)
+        #self.ddq_variance = ddq_variance
+        Vcm_n = np.array(Vcm_dq)/np.float64(normCM)
+        Vucm_n = np.array(Vucm_dq)/np.float64(normUCM)
         if criteria is 'log':
             c = np.log(Vucm_n/Vcm_n)
+            #c = Vucm_n/Vcm_n
+            #c = log(Vucm_n)
+            #c = log(Vcm)
         else:
             c = Vucm_n/Vcm_n
         return Vucm_n, Vcm_n, c
@@ -195,42 +263,52 @@ class ucmMomentum(UCM):
         return cHi, cHDi        
         
     def _getJmean(self):
-        Alist=[]
-        # get A
+        # Get jacobian matrices
+        Ag_list=[]
         for i in range(0, 100):
             se3.forwardKinematics(self.robot.model, 
                                   self.robot.data, 
                                   self.q_mean[i], 
                                   self.dq_mean[i], 
                                   self.ddq_mean[i])
-            A = se3.ccrba(self.robot.model,
+            Ag = se3.ccrba(self.robot.model,
                            self.robot.data, 
                            self.q_mean[i], 
                            self.dq_mean[i])
-            Alist.append(A[self._mask,:])
+            Ag_list.append(Ag[self._mask,:])       
+        dAg_list = bm.diffJ(Ag_list, self.time_mean)
+        ddAg_list = bm.diffJ(dAg_list, self.time_mean)
         
-        dAlist = bm.diffJ(Alist, self.time_mean)
-        ddAlist = bm.diffJ(Alist, self.time_mean)
-        [item for sublist1 in dAlist for item in sublist1]
-        [item for sublist2 in ddAlist for item in sublist2]
-        print np.array(Alist).shape
-        print np.array(sublist1).shape
-        print np.array(sublist2).shape
-        # stack A and dA together 
-        Jtask=[]
+        Ag=[]; dAg=[];  ddAg=[]
+        Je=[]
         for i in range(0, 100):
-            #Jtask.append(np.hstack([sublist[i],Alist[i]]))
-            Jtask.append(np.hstack([sublist2[i],2*sublist1[i],Alist[i]]))
+            #print np.matrix(dAg_list[i])-np.matrix(ddAg_list[i])
+            Ag.append(np.matrix(Ag_list[i]))
+            dAg.append(np.matrix(2*dAg_list[i]))
+            ddAg.append(np.matrix(ddAg_list[i]))
+            Je.append(np.hstack([dAg_list[i], Ag_list[i]]))
+            #Je.append(np.hstack([ddAg_list[i], 2*dAg_list[i], Ag_list[i]]))
 
-        return Jtask
+        # Compute projector onto the nullspace
+        NAg=self.nullspace(Ag)
+        NdAg=self.nullspace(dAg)
+        NddAg=self.nullspace(ddAg)
+        self.ProjJ = self.nullspace(Je)
+        
+        return Ag, NAg, dAg, NdAg, ddAg, NddAg
     
 
     def _getDynTask(self):
-        task=[]; Jtask=[]; drift=[] ;taskNormalized=[];
+        task=[]; Jtask=[]; drift=[] ;taskNormalized=[]; Ntask=[];
         contributionH=[]; contributionF=[];
         hg=[];# H2=[]
-        J = self._getJmean()
-        self.temp=J
+        Ag, NAg, dAg, NdAg, ddAg, NddAg = self._getJmean()
+        Jtask.append(['J',Ag])
+        Jtask.append(['dJ',dAg])
+        Jtask.append(['ddJ', ddAg])
+        Ntask.append(['NJ', NAg])
+        Ntask.append(['NdJ', NdAg])
+        Ntask.append(['NddJ', NddAg])
         for i in range(0, 100):
             se3.forwardKinematics(self.robot.model, 
                                   self.robot.data, 
@@ -264,14 +342,14 @@ class ucmMomentum(UCM):
             taskNormalized.append(Hdot[self._mask])
             self.taskNormalized = taskNormalized
             drift.append(b[self._mask] * self._K)
-            Jtask.append(A[self._mask,:])
+            #Jtask.append(A[self._mask,:])
             # Invidual joint contribution
             contributionH.append(np.array(segH).squeeze())
             contributionF.append(np.array(segF).squeeze())
             self.contribution = contributionH
             self.contributionF = contributionF
             
-        return taskNormalized, J, drift
+        return taskNormalized, Jtask, Ntask, drift
         
     def _getReferenceTask(self, Q):
         '''
@@ -409,9 +487,9 @@ Jtask=[]
         #self.computeStats()
         self.getReferenceConfigurations(self.Q)
         self.data = self.momentaExtraction()
-        (self.task, self.JTask, self.drift) = self._getDynTask()
+        (self.task, self.JTask, self.NTask, self.drift) = self._getDynTask()
         #self.JTask = self._getJmeank()
-        self.NTask = self.nullspace(self.JTask)
+        #self.NTask = self.nullspace(self.JTask)
         self.n_ucm = self.repNo * (self.robot.nv-self.dim)
         self.n_cm = self.repNo * self.dim
         q_dq_ddq = np.matrix(np.zeros([100,133]))
@@ -421,9 +499,9 @@ Jtask=[]
             for nrep in xrange(0,self.repNo):
                 q_dq_ddq_data[i,:,nrep] = np.hstack([self.q_data[i,:,nrep],self.dq_data[i,:,nrep],self.ddq_data[i,:,nrep]])
             
-        print q_dq_ddq_data.shape
-        print q_dq_ddq.shape
-        print self.NTask.shape
+        #print q_dq_ddq_data.shape
+        #print q_dq_ddq.shape
+        #print self.NTask.shape
         (self.Vucm, self.Vcm, self.criteria) = self.varianceFromManifolds(q_dq_ddq, 
                                                                           q_dq_ddq_data, 
                                                                           self.NTask, 

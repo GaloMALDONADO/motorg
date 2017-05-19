@@ -319,24 +319,24 @@ for i in xrange (len(mconf.traceurs_list)):
 
 ''' Display '''
 #launch with gepetto viewer
-x=land[4]['pinocchio_data']
-viewer = Viewer('avatar viewer',avatar0)
+#x=land[4]['pinocchio_data']
+#viewer = Viewer('avatar viewer',avatar0)
 #viewer.display(x[7],avatar4.name)
 #viewer.display(x[14],avatar4.name)
 #viewer.display(x[21],avatar4.name)
 #viewer.display(x[40],avatar4.name)
 #viewer.display(x[99],avatar4.name)
-viewer.addRobot(avatar1)
-viewer.addRobot(avatar2)
-viewer.addRobot(avatar3)
-viewer.addRobot(avatar4)
+#viewer.addRobot(avatar1)
+#viewer.addRobot(avatar2)
+#viewer.addRobot(avatar3)
+#viewer.addRobot(avatar4)
 #viewer.viewer.gui.setBackgroundColor1(viewer.windowID,(255,255,255,0))
 
 #viewer.viewer.gui.setVisibility('world/Melvin/floor','OFF')
 #viewer.viewer.gui.setVisibility('world/Cyril/floor','OFF')
 #viewer.viewer.gui.setVisibility('world/Michael/floor','OFF')
 #viewer.viewer.gui.setVisibility('world/Lucas/floor','OFF')
-viewer.viewer.gui.setVisibility('world/Yoan/floor','OFF')
+#viewer.viewer.gui.setVisibility('world/Yoan/floor','OFF')
 
 
 
@@ -351,12 +351,12 @@ land3 = land[3]['pinocchio_data']
 jump4 = jump[4]['pinocchio_data']
 land4 = land[4]['pinocchio_data']
 
-viewer.display(jump0[0],avatar0.name) 
-viewer.display(jump1[0],avatar1.name) 
-viewer.display(jump2[0],avatar2.name) 
-viewer.display(jump3[0],avatar3.name) 
+#viewer.display(jump0[0],avatar0.name) 
+#viewer.display(jump1[0],avatar1.name) 
+#viewer.display(jump2[0],avatar2.name) 
+#viewer.display(jump3[0],avatar3.name) 
 
-viewer.display(land4[5],avatar4.name)
+#viewer.display(land4[5],avatar4.name)
 
 ''' Rate of Change '''
 #Study of contribution of joints 

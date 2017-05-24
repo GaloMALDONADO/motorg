@@ -119,7 +119,7 @@ barx = barplot(as.matrix(jump.means),
                 xlab="Phase of the motion", ylab="Index of Motor Task Control",
                 xlim=c(0,13),ylim=c(-0.5,12),cex.names = 1.6,  cex.lab=1.8, cex.main =2,
                 col=c("blue","red"), angle=angle1, density=density1,
-                legend = c("TDLM task","TDAM task"), 
+                legend = c("LMD","AMD"), 
                args.legend = list(cex=1.4, x=12, horiz=TRUE),beside=TRUE)
 
 jump.stds <- structure(list('1'=c(stdImpLM1,stdImpAM1),

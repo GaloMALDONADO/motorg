@@ -196,17 +196,17 @@ op = par(mar=c(5,5,5,1)) # c(bottom, left, top, right) which gives the number of
 # plot -6 15 max(land.means)
 barx = barplot(as.matrix(land.means), 
                xlab="Phase of the motion", ylab="Index of Motor Task Control",
-               xlim=c(0,20),ylim=c(0,max(land.means)+(abs(max(land.means))*0.80)), 
+               xlim=c(0,20),ylim=c(-1.5,max(land.means)+(abs(max(land.means))*0.80)), 
                las=1, cex.names = 1.6,  cex.lab=1.8, cex.main =2,
                col=c("red","green","blue"), angle=angle1, density=density1,
-               legend = c( "Vertical","Stability LM","AM"), beside=TRUE,
-               args.legend = list(cex=1.4, horiz=FALSE, ncol=3, x.intersp=.6, y=13.5))
+               legend = c( "LMD(z)","LMD(x,y)","AMD(x,y,z)"), beside=TRUE,
+               args.legend = list(cex=1.4, horiz=FALSE, ncol=3, x.intersp=.5, y=16))
 
 xx=as.matrix(land.means)
 er=as.matrix(land.stds)
 erci=as.matrix(land.ci)
 arrows(barx,xx+erci, barx,xx, angle=90, code=3, length=0.05)
-arrows(barx,xx-erci, barx,xx, angle=90, code=3, length=0.05)
+#arrows(barx,xx-erci, barx,xx, angle=90, code=3, length=0.05)
 # unconmment to plot with SD
 #arrows(barx,x+er, barx,xx, angle=90, code=3, length=0.05)
 

@@ -63,7 +63,7 @@ LLM_Stab_mask =   np.array([True, True, False, False, False, False])
 
 
 robots=[]
-
+order = 2 # 1 velocities, 2 accelerations
 
 participantsNo = len(mconf.traceurs_list)
 for i in xrange (participantsNo):
@@ -83,20 +83,20 @@ for i in xrange (participantsNo):
 
     ''' *******************************  JUMP  ******************************* '''
     ''' Impulsion/Explosivness task is defined with the linear momentum rate in the Antero-Posterior and Vertical axis'''
-    JumpLM += [ucm.ucmMomentum(robots[i], jump, jump_dq, jump_ddq, JLMmask, KF, 1)]
+    JumpLM += [ucm.ucmMomentum(robots[i], order, jump, jump_dq, jump_ddq, JLMmask, KF, 1)]
     Vucm, Vcm, criteria = JumpLM[i].getUCMVariances()
     ''' Impulsion task is also defined with the angular momentum around the Antero-Posterior axis'''
-    JumpAM += [ucm.ucmMomentum(robots[i], jump, jump_dq, jump_ddq, JAMmask, 1, KT)]
+    JumpAM += [ucm.ucmMomentum(robots[i], order, jump, jump_dq, jump_ddq, JAMmask, 1, KT)]
     Vucm, Vcm, criteria = JumpAM[i].getUCMVariances()
     
     ''' *******************************  LAND  ******************************* '''
     ''' Damping and reducing GRFs task is defined with the linear momentum '''
-    LandLM_abs += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LLM_Abs_mask, KF, 1)]
+    LandLM_abs += [ucm.ucmMomentum(robots[i], order, land, land_dq, land_ddq, LLM_Abs_mask, KF, 1)]
     Vucm, Vcm, criteria = LandLM_abs[i].getUCMVariances()
-    LandLM_stab += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LLM_Stab_mask, KF,1)]
+    LandLM_stab += [ucm.ucmMomentum(robots[i], order, land, land_dq, land_ddq, LLM_Stab_mask, KF,1)]
     Vucm, Vcm, criteria = LandLM_stab[i].getUCMVariances()
     ''' Angular stability task is also defined with the ang momentum around Antero-Posterior axis'''
-    LandAM += [ucm.ucmMomentum(robots[i], land, land_dq, land_ddq, LAMmask, 1, KT)]
+    LandAM += [ucm.ucmMomentum(robots[i], order, land, land_dq, land_ddq, LAMmask, 1, KT)]
     Vucm, Vcm, criteria = LandAM[i].getUCMVariances()
 
 #    

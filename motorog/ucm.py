@@ -38,7 +38,7 @@ class UCM:
 
         projector = np.array(N)
         self.projector = projector
-        #print np.sum((np.matrix(projector[1])*np.matrix(projector[1]))-np.matrix(projector[1]))
+        #print np.sum((np.matrix(projector)*np.matrix(projector))-np.matrix(projector))
         return projector
     
     def updateAll(self,q,v,a):
@@ -69,8 +69,102 @@ class UCM:
         #                                                                       self.fs, 
         #                                                                       self.filter_order)
         
+    def varianceFromManifoldsPos(self, Q_hat, Qi, Pi, normUCM, normCM, criteria='log'):
+        ''' Vcm, Vucm, c = varianceFromManifolds(Q_hat, Qi, Pi) 
+        Return a normalized array of the variance of the CM and the UCM, and the hypothesis test result
+        Param-in :
+        Q_hat = mean joint configuration (1x100)
+        Qi = matrix of joint configurations (100, joints_dof, nTrials)
+        Ni = list of size (100) containing the nullspace (1 x joints_dof- task_dof)
+        norm UCM = value to which the variance of UCM is normalized. Default is 1
+        norm CM = value to which the variance of CM is normalized. Default is 1 
+        normaly the value is calculated as : # of dof involved (joints and tasks) * # of trials
+        '''
+        
+        Vucm = []; Vcm =[];
+        ntrials = np.shape(Qi)[2]
+        for i in xrange(100):
+            v_ucm = 0; v_cm = 0;
+            for trls in xrange(ntrials):
+                # the deviations from the mean trajectories in joint-space are projected onto the null-space
+                devQ = np.matrix(Q_hat[i] - Qi[i,:,trls]).T
+                proj = self.ProjJ
+                # and onto the range space (orthogonal to the null space)
+                # which is a lineat appoximation of the controlled manifold
+                ucm = np.matrix(proj[i]) * devQ.copy().T
+                cm = devQ.copy().T - ucm
+                # the variance per degree of freedom of the projected deviations is
+                v_ucm += np.square(np.linalg.norm(ucm))
+                v_cm  += np.square(np.linalg.norm(cm))
+                #embed()
+            Vucm.append(v_ucm)
+            Vcm.append (v_cm)
+        Vcm_n = np.array(Vcm)/np.float64(normCM)
+        Vucm_n = np.array(Vucm)/np.float64(normUCM)
+        #embed()
+        if criteria is 'log':
+            c = np.log(Vucm_n/Vcm_n)
+        else:
+            c = Vucm_n/Vcm_n
+        return Vucm_n, Vcm_n, c
 
-    def varianceFromManifolds(self, Q_hat, Qi, Pi, normUCM, normCM, criteria='log'):
+    def varianceFromManifoldsVel(self, Q_hat, Qi, Pi, normUCM, normCM, criteria='log'):
+        ''' Vcm, Vucm, c = varianceFromManifolds(Q_hat, Qi, Pi) 
+        Return a normalized array of the variance of the CM and the UCM, and the hypothesis test result
+        Param-in :
+        Q_hat = mean joint configuration (1x100)
+        Qi = matrix of joint configurations (100, joints_dof, nTrials)
+        Ni = list of size (100) containing the nullspace (1 x joints_dof- task_dof)
+        norm UCM = value to which the variance of UCM is normalized. Default is 1
+        norm CM = value to which the variance of CM is normalized. Default is 1 
+        normaly the value is calculated as : # of dof involved (joints and tasks) * # of trials
+        '''
+        Vucm = []; Vcm =[];
+        Vucm_q = []; Vcm_q =[];
+        Vucm_dq = []; Vcm_dq =[];
+        ntrials = np.shape(Qi)[2]
+        
+        for i in xrange(100):
+            v_ucm = 0; v_cm = 0;
+            v_ucm_q = 0; v_cm_q = 0;
+            v_ucm_dq = 0; v_cm_dq = 0;
+            for trls in xrange(ntrials):
+                devq = se3.differentiate(self.robot.model, np.matrix(Qi[i,:49,trls]), Q_hat[i][0,:49]).T
+                devdq = (Qi[i,49:91,trls]-Q_hat[i][0,49:91]).squeeze()
+                devQ = np.hstack([devq,devdq])
+                proj = self.ProjJ
+                ucm = np.matrix(proj[i]) * devQ.copy().T
+                cm = devQ.copy().T - ucm
+                cm_q = cm[:-42]
+                cm_dq = cm[-42:]
+                ucm_q = ucm[:-42]
+                ucm_dq = ucm[-42:]
+                v_ucm += np.square(np.linalg.norm(ucm))
+                v_cm  += np.square(np.linalg.norm(cm))
+                v_ucm_q += np.square(np.linalg.norm(ucm_q))
+                v_cm_q  += np.square(np.linalg.norm(cm_q))
+                v_ucm_dq += np.square(np.linalg.norm(ucm_dq))
+                v_cm_dq  += np.square(np.linalg.norm(cm_dq))
+            Vucm.append(v_ucm)
+            Vcm.append (v_cm)
+            Vucm_q.append(v_ucm_q)
+            Vucm_dq.append(v_ucm_dq)
+            Vcm_q.append(v_cm_q)
+            Vcm_dq.append(v_cm_dq)
+
+        Vcm_n = np.array(Vcm_dq)/np.float64(normCM)
+        Vucm_n = np.array(Vucm_dq)/np.float64(normUCM)
+        #embed()
+        if criteria is 'log':
+            c = np.log(Vucm_n/Vcm_n)
+            #c = Vucm_n/Vcm_n
+            #c = log(Vucm_n)
+            #c = log(Vcm)
+        else:
+            c = Vucm_n/Vcm_n
+        return Vucm_n, Vcm_n, c
+
+    def varianceFromManifoldsAcc(self, Q_hat, Qi, Pi, normUCM, normCM, criteria='log'):
         ''' Vcm, Vucm, c = varianceFromManifolds(Q_hat, Qi, Pi) 
         Return a normalized array of the variance of the CM and the UCM, and the hypothesis test result
         Param-in :
@@ -95,36 +189,21 @@ class UCM:
             v_ucm_dq = 0; v_cm_dq = 0;
             v_ucm_ddq = 0; v_cm_ddq = 0;
             for trls in xrange(ntrials):
-                #devq = np.matrix(Q_hat[i] - Qi[i,:,trls]).T
                 devq = se3.differentiate(self.robot.model, np.matrix(Qi[i,:49,trls]), Q_hat[i][0,:49]).T
                 devdq = (Qi[i,49:91,trls]-Q_hat[i][0,49:91]).squeeze()
-                #devddq = (Qi[i,91:133,trls]-Q_hat[i][0,91:133]).squeeze()
+                devddq = (Qi[i,91:133,trls]-Q_hat[i][0,91:133]).squeeze()
 
-                #devQ = np.hstack([devq,devdq, devddq])
-                devQ = np.hstack([devq,devdq])
+                devQ = np.hstack([devq,devdq, devddq])
                 proj = self.ProjJ
                 ucm = np.matrix(proj[i]) * devQ.copy().T
                 cm = devQ.copy().T - ucm
                 
-                #ucm_q = ucm[:-84]
-                #ucm_dq = ucm[-84:-42]
-                #ucm_ddq = ucm[-42:]
-                #cm_q = cm[:-84]
-                #cm_dq = cm[-84:-42]
-                #cm_ddq = cm[-42:]
-                cm_q = cm[:-42]
-                cm_dq = cm[-42:]
-                ucm_q = ucm[:-42]
-                ucm_dq = ucm[-42:]
-
-                '''
-                ucm_q = np.matrix(Pi[2][1][i]) * devq.copy().T
-                cm_q = devq.copy().T - ucm_q.copy()
-                ucm_dq = np.matrix(Pi[1][1][i]) * devdq.copy().T
-                cm_dq = devdq.copy().T - ucm_dq.copy()
-                ucm_ddq = np.matrix(Pi[0][1][i]) * devddq.copy().T
-                cm_ddq = devddq.copy().T - ucm_ddq.copy()
-                '''
+                ucm_q = ucm[:-84]
+                ucm_dq = ucm[-84:-42]
+                ucm_ddq = ucm[-42:]
+                cm_q = cm[:-84]
+                cm_dq = cm[-84:-42]
+                cm_ddq = cm[-42:]
                 
                 v_ucm += np.square(np.linalg.norm(ucm))
                 v_cm  += np.square(np.linalg.norm(cm))
@@ -132,52 +211,22 @@ class UCM:
                 v_cm_q  += np.square(np.linalg.norm(cm_q))
                 v_ucm_dq += np.square(np.linalg.norm(ucm_dq))
                 v_cm_dq  += np.square(np.linalg.norm(cm_dq))
-                #v_ucm_ddq += np.square(np.linalg.norm(ucm_ddq))
-                #v_cm_ddq  += np.square(np.linalg.norm(cm_ddq))
-                
+                v_ucm_ddq += np.square(np.linalg.norm(ucm_ddq))
+                v_cm_ddq  += np.square(np.linalg.norm(cm_ddq))               
                 #embed()
-                '''
-                self.normdevq = np.linalg.norm(devq)
-                self.normdevdq = np.linalg.norm(devdq)
-                self.normdevddq = np.linalg.norm(devddq)
-                self.normPq = np.linalg.norm(np.matrix(Pi[0][1][i]))
-                self.normPdq = np.linalg.norm(np.matrix(Pi[1][1][i]))
-                self.normPddq = np.linalg.norm(np.matrix(Pi[2][1][i]))
-                self.Pq = np.matrix(Pi[0][1][i])
-                self.Pdq = np.matrix(Pi[1][1][i])
-                self.Pddq = np.matrix(Pi[2][1][i])
-                '''
-                #ddq_variance[i,:,trls] = devQ.squeeze()
-                #print devq.shape
-                # the deviations from the mean trajectories in joint-space are projected onto the null-space
-                #ucm = (np.matrix(Ni[trls]) * np.matrix(Ni[trls]).T) * devq.copy()
-                #ucm = np.matrix(Pi[i]) * devq.copy().T
-                # and onto the range space (orthogonal to the null space)
-                # which is a lineat appoximation of the controlled manifold
-                #cm = devq.copy().T - ucm.copy()
-                # the variance per degree of freedom of the projected deviations is
-                #v_ucm += np.square(np.linalg.norm(ucm))
-                #v_cm  += np.square(np.linalg.norm(cm))
-                #v_ucm += np.linalg.norm(ucm)
-                #v_cm  += np.linalg.norm(cm)
-                
-                #compute variance per space
-                #self.devQ[i,:,trls] = devq.squeeze()
-                #self.devq[i,:,trls] = self,devQ[i,0:49,trls]
 
-            #Vucm.append(v_ucm_q + v_ucm_dq + v_ucm_ddq)
-            #Vcm.append (v_cm_q + v_cm_dq + v_cm_ddq)
             Vucm.append(v_ucm)
             Vcm.append (v_cm)
             Vucm_q.append(v_ucm_q)
             Vucm_dq.append(v_ucm_dq)
-            #Vucm_ddq.append(v_ucm_ddq)
+            Vucm_ddq.append(v_ucm_ddq)
             Vcm_q.append(v_cm_q)
             Vcm_dq.append(v_cm_dq)
-            #Vcm_ddq.append(v_cm_ddq)
-        #self.ddq_variance = ddq_variance
-        Vcm_n = np.array(Vcm_dq)/np.float64(normCM)
-        Vucm_n = np.array(Vucm_dq)/np.float64(normUCM)
+            Vcm_ddq.append(v_cm_ddq)
+
+        Vcm_n = np.array(Vcm)/np.float64(normCM)
+        Vucm_n = np.array(Vucm)/np.float64(normUCM*3)
+        #embed()
         if criteria is 'log':
             c = np.log(Vucm_n/Vcm_n)
             #c = Vucm_n/Vcm_n
@@ -187,11 +236,10 @@ class UCM:
             c = Vucm_n/Vcm_n
         return Vucm_n, Vcm_n, c
 
-
 ''' Uncontrolled Manifold of the Momentum '''
 class ucmMomentum(UCM):
 
-    def __init__(self, robot, Q, dq, ddq, mask, KF=1, KT=1, name="UCM of CoM"):
+    def __init__(self, robot, order, Q, dq, ddq, mask, KF=1, KT=1, name="UCM of CoM"):
         UCM.__init__(self, robot)
         self.name = name
         self.robot = robot
@@ -203,6 +251,7 @@ class ucmMomentum(UCM):
         self._KF = np.float64(KF)
         self._KT = np.float64(KT)
         self._K = self._KF * self._KT
+        self.order = order #0 pos, 1 vel, 2 acc
 
     @property
     def dim(self):
@@ -281,20 +330,30 @@ class ucmMomentum(UCM):
         
         Ag=[]; dAg=[];  ddAg=[]
         Je=[]
-        for i in range(0, 100):
-            #print np.matrix(dAg_list[i])-np.matrix(ddAg_list[i])
-            Ag.append(np.matrix(Ag_list[i]))
-            dAg.append(np.matrix(2*dAg_list[i]))
-            ddAg.append(np.matrix(ddAg_list[i]))
-            Je.append(np.hstack([dAg_list[i], Ag_list[i]]))
-            #Je.append(np.hstack([ddAg_list[i], 2*dAg_list[i], Ag_list[i]]))
+        if self.order == 1:
+            for i in range(0, 100):
+                Ag.append(np.matrix(Ag_list[i]))
+                dAg.append(np.matrix(dAg_list[i]))
+                ddAg.append(np.nan)
+                Je.append(np.hstack([dAg_list[i], Ag_list[i]]))
+            # Compute projector onto the nullspace
+            NAg=self.nullspace(Ag)
+            NdAg=self.nullspace(dAg)
+            NddAg=np.nan
+            self.ProjJ = self.nullspace(Je)
 
-        # Compute projector onto the nullspace
-        NAg=self.nullspace(Ag)
-        NdAg=self.nullspace(dAg)
-        NddAg=self.nullspace(ddAg)
-        self.ProjJ = self.nullspace(Je)
-        
+        elif self.order == 2:
+            for i in range(0, 100):
+                Ag.append(np.matrix(Ag_list[i]))
+                dAg.append(np.matrix(2*dAg_list[i]))
+                ddAg.append(np.matrix(ddAg_list[i]))
+                Je.append(np.hstack([ddAg_list[i], 2*dAg_list[i], Ag_list[i]]))
+            # Compute projector onto the nullspace
+            NAg=self.nullspace(Ag)
+            NdAg=self.nullspace(dAg)
+            NddAg=self.nullspace(ddAg)
+            self.ProjJ = self.nullspace(Je)
+
         return Ag, NAg, dAg, NdAg, ddAg, NddAg
     
 
@@ -492,22 +551,49 @@ Jtask=[]
         #self.NTask = self.nullspace(self.JTask)
         self.n_ucm = self.repNo * (self.robot.nv-self.dim)
         self.n_cm = self.repNo * self.dim
-        q_dq_ddq = np.matrix(np.zeros([100,133]))
-        q_dq_ddq_data = np.array(np.zeros([100,133,self.repNo]))
-        for i in xrange (0,100):
-            q_dq_ddq[i,:] = np.hstack([self.q_mean[i],self.dq_mean[i],self.ddq_mean[i]])
-            for nrep in xrange(0,self.repNo):
-                q_dq_ddq_data[i,:,nrep] = np.hstack([self.q_data[i,:,nrep],self.dq_data[i,:,nrep],self.ddq_data[i,:,nrep]])
-            
         #print q_dq_ddq_data.shape
         #print q_dq_ddq.shape
         #print self.NTask.shape
-        (self.Vucm, self.Vcm, self.criteria) = self.varianceFromManifolds(q_dq_ddq, 
-                                                                          q_dq_ddq_data, 
+        if self.order == 0:
+            data_mean = self.q_mean
+            data = self.q_data
+            (self.Vucm, self.Vcm, self.criteria) = self.varianceFromManifoldsPos(data_mean, 
+                                                                          data, 
                                                                           self.NTask, 
                                                                           self.n_ucm, 
                                                                           self.n_cm, 
                                                                           'log')
+        elif self.order == 1:
+            dof=self.robot.nq+self.robot.nv
+            data_mean = np.matrix(np.zeros([100,dof]))
+            data = np.array(np.zeros([100,dof,self.repNo]))
+            for i in xrange (0,100):
+                data_mean[i,:] = np.hstack([self.q_mean[i],self.dq_mean[i]])
+                for nrep in xrange(0,self.repNo):
+                    data[i,:,nrep] = np.hstack([self.q_data[i,:,nrep],self.dq_data[i,:,nrep]])
+            (self.Vucm, self.Vcm, self.criteria) = self.varianceFromManifoldsVel(data_mean, 
+                                                                          data, 
+                                                                          self.NTask, 
+                                                                          self.n_ucm, 
+                                                                          self.n_cm, 
+                                                                          'log')
+        elif self.order == 2:
+            dof=self.robot.nq+self.robot.nv+self.robot.nv
+            data_mean = np.matrix(np.zeros([100,dof]))
+            data = np.array(np.zeros([100,dof,self.repNo]))
+            for i in xrange (0,100):
+                data_mean[i,:] = np.hstack([self.q_mean[i],self.dq_mean[i],self.ddq_mean[i]])
+                for nrep in xrange(0,self.repNo):
+                    data[i,:,nrep] = np.hstack([self.q_data[i,:,nrep],
+                                                self.dq_data[i,:,nrep],
+                                                self.ddq_data[i,:,nrep]])
+            (self.Vucm, self.Vcm, self.criteria) = self.varianceFromManifoldsAcc(data_mean, 
+                                                                          data, 
+                                                                          self.NTask, 
+                                                                          self.n_ucm, 
+                                                                          self.n_cm, 
+                                                                          'log')
+        
         return self.Vucm, self.Vcm, self.criteria
 
 
@@ -570,7 +656,7 @@ class ucmJoint(UCM):
         self.getReferenceConfigurations(self.Q)
         (self.task, self.JTask, self.drift) = self._getDynTask()
         self.NTask = self.nullspace(self.JTask)
-        self.n_ucm = self.repNo * self.robot.nv
+        self.n_ucm = self.repNo * (self.robot.nv - self.dim)
         self.n_cm = self.repNo * self.dim
         self.Vucm, self.Vcm, self.criteria = self.varianceFromManifolds(self.dq_mean, 
                                                                         self.dq_data, 

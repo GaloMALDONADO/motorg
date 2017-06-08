@@ -2,7 +2,6 @@
 rm(list = ls())
 
 
-
 # ------------------------------------------------------------------------
 #    JUMP IMPULSE
 # Task 1: impulsion through antero-posterior and vertical force
@@ -117,9 +116,9 @@ op = par(mar=c(5,5,5,1)) # c(bottom, left, top, right) which gives the number of
 
 barx = barplot(as.matrix(jump.means), 
                 xlab="Phase of the motion", ylab="Index of Motor Task Control",
-                xlim=c(0,13),ylim=c(-0.5,12),cex.names = 1.6,  cex.lab=1.8, cex.main =2,
+                xlim=c(0,13),ylim=c(-0.5,11),cex.names = 1.6,  cex.lab=1.8, cex.main =2,
                 col=c("blue","red"), angle=angle1, density=density1,
-                legend = c("LMD","AMD"), 
+                legend = c("LMD(y,z)","AMD(y)"), 
                args.legend = list(cex=1.4, x=12, horiz=TRUE),beside=TRUE)
 
 jump.stds <- structure(list('1'=c(stdImpLM1,stdImpAM1),
@@ -243,3 +242,8 @@ pairwise.t.test(SOT_IMPULSE$Ratio[SOT_IMPULSE$Phase=="70"],
 pairwise.t.test(SOT_IMPULSE$Ratio[SOT_IMPULSE$Phase=="99"], 
                 SOT_IMPULSE$Task[SOT_IMPULSE$Phase=="99"]:SOT_IMPULSE$Phase[SOT_IMPULSE$Phase=="99"], p.adj = "bonf",paired=TRUE)
 # task 1 different than task 2 p=0.036
+
+
+
+# interactions
+pairwise.t.test(SOT_IMPULSE$Ratio,SOT_IMPULSE$Task:SOT_IMPULSE$Phase, p.adj = "bonf",paired=TRUE)

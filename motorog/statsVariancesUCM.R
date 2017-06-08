@@ -25,9 +25,10 @@ pathName = paste(p,'TableVariancesImpulseLM.csv',sep="")
 TAKEOFF_DLM = read.csv(pathName, header = FALSE, col.names = list('Participant', 'Phase', 'Variability' ,'Variance'))
 TAKEOFF_DLM$Participant<-as.factor(TAKEOFF_DLM$Participant)
 TAKEOFF_DLM$Phase<-as.factor(TAKEOFF_DLM$Phase)
-TAKEOFF_DLM$Variability<-as.factor(TAKEOFF_DLM$Variability)
+
 TAKEOFF_DLM$Variability = gsub("1", "GoodV", TAKEOFF_DLM$Variability)
 TAKEOFF_DLM$Variability = gsub("2", "BadV", TAKEOFF_DLM$Variability)
+TAKEOFF_DLM$Variability<-as.factor(TAKEOFF_DLM$Variability)
 TAKEOFF_DLM$Variability<-as.factor(TAKEOFF_DLM$Variability)
 # repetitive measures anova
 statsTAKEOFF_DLM <-aov(TAKEOFF_DLM$Variance ~ (TAKEOFF_DLM$Phase*TAKEOFF_DLM$Variability) + 

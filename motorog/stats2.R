@@ -8,8 +8,8 @@ rm(list = ls())
 # Task 1: impulsion through antero-posterior and vertical force
 # Task 2: impulsion through antero posterior angular momentum (around M-L axis at the center of mass)
 # ------------------------------------------------------------------------
-p='/galo/devel/gepetto/motorg/motorog/' #home
-#p='/local/gmaldona/devel/motorg/motorog/' #lab
+#p='/galo/devel/gepetto/motorg/motorog/' #home
+p='/local/gmaldona/devel/motorg/motorog/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -229,8 +229,8 @@ pairwise.t.test(SOT_IMPULSE$Ratio, SOT_IMPULSE$Phase, p.adj = "bonf",paired=TRUE
 # Task 3: Torque around M-L axis at the CoM
 # ----------------------------------------------
 rm(list = ls())
-p='/galo/devel/gepetto/motorg/motorog/' #home
-#p='/local/gmaldona/devel/motorg/motorog/' #lab
+#p='/galo/devel/gepetto/motorg/motorog/' #home
+p='/local/gmaldona/devel/motorg/motorog/' #lab
 nparticipants = 5
 ddl=nparticipants-1
 t = qt(.975,ddl)
@@ -244,34 +244,33 @@ SOT_LAND$Task<-as.factor(SOT_LAND$Task)
 
 
 # -----------------  Assess Normality of the Data -------------------------
-shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="4"])
-# data normally distributed
-shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="13"])
+shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="5"])
 # data normally distributed
 shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="20"])
 # data normally distributed
 shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="40"])
 # data normally distributed
-shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="97"])
-
-shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="2" & SOT_LAND$Phase=="4"])
+shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="1" & SOT_LAND$Phase=="99"])
 # data normally distributed
-shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="2" & SOT_LAND$Phase=="13"])
+
+shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="2" & SOT_LAND$Phase=="5"])
 # data normally distributed
 shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="2" & SOT_LAND$Phase=="20"])
 # data normally distributed
 shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="2" & SOT_LAND$Phase=="40"])
-shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="2" & SOT_LAND$Phase=="97"])
-
-shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="3" & SOT_LAND$Phase=="4"])
 # data normally distributed
-shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="3" & SOT_LAND$Phase=="13"])
+shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="2" & SOT_LAND$Phase=="99"])
+# data not ormally distributed ***************
+
+shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="3" & SOT_LAND$Phase=="5"])
 # data normally distributed
 shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="3" & SOT_LAND$Phase=="20"])
 # data normally distributed
 shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="3" & SOT_LAND$Phase=="40"])
 # data normally distributed
-shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="3" & SOT_LAND$Phase=="97"])
+shapiro.test(SOT_LAND$Ratio[SOT_LAND$Task=="3" & SOT_LAND$Phase=="99"])
+# data normally distributed
+
 
 #variance equality
 
@@ -376,7 +375,7 @@ land.means <- structure(list('5'=c(meanForce5,  meanStab5, meanTau5),
                        class = "data.frame", row.names = c(NA, -3L))
 barx = barplot(as.matrix(land.means), main="Landing",
                xlab="Phase of the motion", ylab="Index of Motor Task Control",
-               xlim=c(0,15),ylim=c(-5,15),
+               xlim=c(0,15),ylim=c(-2,15),
                col=c("red","green","blue"),
                legend = c( "Force task","Stability force task","Stability torque task"), beside=TRUE)
 
@@ -433,13 +432,6 @@ displayEffects( c(x[7],x[9] ),  7.1, .8, 3.6, '*')
 displayEffects(x[10:11], 9.1, 7, 0.2, '*')
 displayEffects(x[11:12], -2, -1.8, -1.8, '*')
 displayEffects( c(x[10],x[12] ),  10, 1.7, 3.4, '*')
-
-vector <- c((x[2]), (x[5]))
-displayEffects(array(vector), -1.95, -1.2, -1.2, '**')
-vector <- c((x[2]), (x[8]))
-displayEffects(array(vector), -2.95, -1.2, -1.5, '**')
-vector <- c((x[2]), (x[11]))
-displayEffects(array(vector), -3.95, -1.2, -1.5, '**')
 
 
 # ----------------------------- Repeated Measures Anova ---------------------------

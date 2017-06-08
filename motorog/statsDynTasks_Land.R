@@ -258,8 +258,8 @@ displayEffects(array(vector), -5.75, -5.25, -5.25, '**')
 
 # ----------------------------- Repeated Measures Anova ---------------------------
 # compute repetitive measures anova
-statsaov2 <-aov(SOT_LAND$Ratio ~ (SOT_LAND$Task:SOT_LAND$Phase) + 
-                  Error(SOT_LAND$Participant / (SOT_LAND$Task:SOT_LAND$Phase)), 
+statsaov2 <-aov(SOT_LAND$Ratio ~ (SOT_LAND$Task*SOT_LAND$Phase) + 
+                  Error(SOT_LAND$Participant / (SOT_LAND$Task*SOT_LAND$Phase)), 
                 data = SOT_LAND)
 summary(statsaov2) 
 # tasks are significantly differents p = 1.96e-06 ***

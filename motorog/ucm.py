@@ -193,48 +193,54 @@ class UCM:
                 devdq = (Qi[i,49:91,trls]-Q_hat[i][0,49:91]).squeeze()
                 devddq = (Qi[i,91:133,trls]-Q_hat[i][0,91:133]).squeeze()
 
-                devQ = np.hstack([devq,devdq, devddq])
+                devQ = np.hstack([devq, devdq, devddq])
                 proj = self.ProjJ
-                ucm = np.matrix(proj[i]) * devQ.copy().T
-                cm = devQ.copy().T - ucm
+                #ucm = np.matrix(proj[i]) * devQ.copy().T
+                #cm = devQ.copy().T - ucm
                 
-                ucm_q = ucm[:-84]
-                ucm_dq = ucm[-84:-42]
-                ucm_ddq = ucm[-42:]
-                cm_q = cm[:-84]
-                cm_dq = cm[-84:-42]
-                cm_ddq = cm[-42:]
+                #ucm_q = ucm[:-84]
+                #ucm_dq = ucm[-84:-42]
+                #ucm_ddq = ucm[-42:]
+                #cm_q = cm[:-84]
+                #cm_dq = cm[-84:-42]
+                #cm_ddq = cm[-42:]
                 
-                v_ucm += np.square(np.linalg.norm(ucm))
-                v_cm  += np.square(np.linalg.norm(cm))
-                v_ucm_q += np.square(np.linalg.norm(ucm_q))
-                v_cm_q  += np.square(np.linalg.norm(cm_q))
-                v_ucm_dq += np.square(np.linalg.norm(ucm_dq))
-                v_cm_dq  += np.square(np.linalg.norm(cm_dq))
+                
+                ucm_ddq = np.matrix(proj[i]) * devQ.copy().T[-42:]
+                cm_ddq = devQ.copy().T[-42:] - ucm_ddq
+
+
+                #v_ucm += np.square(np.linalg.norm(ucm))
+                #v_cm  += np.square(np.linalg.norm(cm))
+                #v_ucm_q += np.square(np.linalg.norm(ucm_q))
+                #v_cm_q  += np.square(np.linalg.norm(cm_q))
+                #v_ucm_dq += np.square(np.linalg.norm(ucm_dq))
+                #v_cm_dq  += np.square(np.linalg.norm(cm_dq))
                 v_ucm_ddq += np.square(np.linalg.norm(ucm_ddq))
                 v_cm_ddq  += np.square(np.linalg.norm(cm_ddq))               
                 #embed()
 
-            Vucm.append(v_ucm)
-            Vcm.append (v_cm)
-            Vucm_q.append(v_ucm_q)
-            Vucm_dq.append(v_ucm_dq)
+            #Vucm.append(v_ucm)
+            #Vcm.append (v_cm)
+            #Vucm_q.append(v_ucm_q)
+            #Vucm_dq.append(v_ucm_dq)
             Vucm_ddq.append(v_ucm_ddq)
-            Vcm_q.append(v_cm_q)
-            Vcm_dq.append(v_cm_dq)
+            #Vcm_q.append(v_cm_q)
+            #Vcm_dq.append(v_cm_dq)
             Vcm_ddq.append(v_cm_ddq)
 
-        Vcm_n = np.array(Vcm)/np.float64(normCM)
-        Vucm_n = np.array(Vucm)/np.float64(normUCM*3)
+        Vcm_n = np.array(Vcm_ddq)/np.float64(normCM)
+        Vucm_n = np.array(Vucm_ddq)/np.float64(normUCM)#*3)
         #embed()
         if criteria is 'log':
             c = np.log(Vucm_n/Vcm_n)
+            #c = (Vucm_n-Vcm_n) / (Vucm_n+Vcm_n)
             #c = Vucm_n/Vcm_n
             #c = log(Vucm_n)
             #c = log(Vcm)
         else:
             c = Vucm_n/Vcm_n
-        return Vucm_n, Vcm_n, c
+        return np.log(Vucm_n), np.log(Vcm_n), c
 
 ''' Uncontrolled Manifold of the Momentum '''
 class ucmMomentum(UCM):
@@ -352,7 +358,8 @@ class ucmMomentum(UCM):
             NAg=self.nullspace(Ag)
             NdAg=self.nullspace(dAg)
             NddAg=self.nullspace(ddAg)
-            self.ProjJ = self.nullspace(Je)
+            #self.ProjJ = self.nullspace(Je)
+            self.ProjJ = self.nullspace(Ag)
 
         return Ag, NAg, dAg, NdAg, ddAg, NddAg
     

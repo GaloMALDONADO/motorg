@@ -6,8 +6,8 @@ generic_model =  '/galo/devel/gepetto/Models/data/whole_body/wholebody.osim'
 mesh_path = '/galo/devel/gepetto/Models/data/whole_body/stl_osim/'
 models_path='/galo/devel/gepetto/parkour/models'
 
-model_names = ['Cyril.osim', 'Lucas.osim','Melvin.osim','Michael.osim','Yoan.osim']
-heights = [1.60, 1.69, 1.78, 1.75, 1.71]
+model_names = ['Cyril.osim', 'JulienB', 'Lucas.osim','Melvin.osim','Michael.osim','Remi.osim','Yoan.osim']
+heights = [1.60, 1.704, 1.69, 1.78, 1.75, 1.704, 1.71]
 
 #__ DEFAULT POSES
 half_sitting = np.matrix([0.,0.,0.92,0.,0.,0.,0.,                                                       # Free flyer 0-6

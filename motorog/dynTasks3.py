@@ -83,23 +83,277 @@ for i in xrange (participantsNo):
 
     ''' *******************************  JUMP  ******************************* '''
     ''' Impulsion/Explosivness task is defined with the linear momentum rate in the Antero-Posterior and Vertical axis'''
-    JumpLM += [ucm.ucmMomentum(robots[i], order, jump, jump_dq, jump_ddq, JLMmask, KF, 1)]
+    JumpLM += [ucm.ucmMomentum(robots[i], order, jump, jump_dq, jump_ddq, JLMmask, KF, KT)]
     Vucm, Vcm, criteria = JumpLM[i].getUCMVariances()
     ''' Impulsion task is also defined with the angular momentum around the Antero-Posterior axis'''
-    JumpAM += [ucm.ucmMomentum(robots[i], order, jump, jump_dq, jump_ddq, JAMmask, 1, KT)]
+    JumpAM += [ucm.ucmMomentum(robots[i], order, jump, jump_dq, jump_ddq, JAMmask, KF, KT)]
     Vucm, Vcm, criteria = JumpAM[i].getUCMVariances()
     
     ''' *******************************  LAND  ******************************* '''
     ''' Damping and reducing GRFs task is defined with the linear momentum '''
-    LandLM_abs += [ucm.ucmMomentum(robots[i], order, land, land_dq, land_ddq, LLM_Abs_mask, KF, 1)]
+    LandLM_abs += [ucm.ucmMomentum(robots[i], order, land, land_dq, land_ddq, LLM_Abs_mask, KF, KT)]
     Vucm, Vcm, criteria = LandLM_abs[i].getUCMVariances()
-    LandLM_stab += [ucm.ucmMomentum(robots[i], order, land, land_dq, land_ddq, LLM_Stab_mask, KF,1)]
+    LandLM_stab += [ucm.ucmMomentum(robots[i], order, land, land_dq, land_ddq, LLM_Stab_mask, KF,KT)]
     Vucm, Vcm, criteria = LandLM_stab[i].getUCMVariances()
     ''' Angular stability task is also defined with the ang momentum around Antero-Posterior axis'''
-    LandAM += [ucm.ucmMomentum(robots[i], order, land, land_dq, land_ddq, LAMmask, 1, KT)]
+    LandAM += [ucm.ucmMomentum(robots[i], order, land, land_dq, land_ddq, LAMmask, KF, KT)]
     Vucm, Vcm, criteria = LandAM[i].getUCMVariances()
+    
 
+
+# stats momenta
+plt.ion()
+xaxis = np.linspace(1,100,100)
+meanParticipant = []
+meanParticipantHg = []    
+import tools
+romM = []
+rom = tools.RoM(robots[0])
+for i in xrange (len(mconf.traceurs_list)):
+    taskL = LandAM[i]
+    hg = np.array(taskL.data['hg']).squeeze()
+    dhg = np.array(taskL.data['dhg']).squeeze()
+    q = np.array(taskL.q_mean)
+    #romM += [rom.getRoM(taskL.q_mean)]
+    meanParticipant += [[np.mean(np.matrix(dhg[:,i,:].squeeze()),1) for i in xrange(6)]]
+    meanParticipantHg += [[np.mean(np.matrix(hg[:,i,:].squeeze()),1) for i in xrange(6)]]
+
+
+meanGroup = np.mean(np.array(meanParticipant).squeeze(),0)
+meanGroupHg = np.mean(np.array(meanParticipantHg).squeeze(),0)
+stdGroup = np.std(np.array(meanParticipant).squeeze(),0)
+stdGroupHg = np.std(np.array(meanParticipantHg).squeeze(),0)
+path_sim = '/local/gmaldona/devel/parkour-motgen/landing/'
+sim_land = np.load(path_sim+'land_dHg.npy')
+sim_land_hg = np.load(path_sim+'land_Hg2.npy')
+
+# Land momenta
+fig1 = plt.figure()
+fig1.canvas.set_window_title('Figure Momenta Landing')
+ax = fig1.add_subplot('231')
+ax.plot(xaxis[2:98], meanGroupHg[0,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_land_hg[0,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroupHg[0,2:98]+stdGroupHg[0,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroupHg[0,2:98]-stdGroupHg[0,2:98],'--r', linewidth=1.0)
+ax.legend(['humans','robot','humans $ \pm $ std'],bbox_to_anchor = (2.7, -1.33), ncol=3)
+ax.set_xlabel('Time $[\%]$',fontsize=12)
+ax.set_ylabel('Linear Momentum\n$kg \cdot m \cdot s^{-1} \cdot BW^{-1} $',
+              fontsize=12, multialignment='center')
+    
+ax = fig1.add_subplot('232')
+ax.plot(xaxis[2:98], meanGroupHg[1,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_land_hg[1,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroupHg[1,2:98]+stdGroupHg[1,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroupHg[1,2:98]-stdGroupHg[1,2:98],'--r', linewidth=1.0)
+ax.set_xlabel('Time $[\%]$',fontsize=12)
+
+ax = fig1.add_subplot('233')
+ax.plot(xaxis[2:98], meanGroupHg[2,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_land_hg[2,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroupHg[2,2:98]+stdGroupHg[2,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroupHg[2,2:98]-stdGroupHg[2,2:98],'--r', linewidth=1.0)
+ax.set_xlabel('Time $[\%]$',fontsize=12)
+
+ax = fig1.add_subplot('234')
+ax.plot(xaxis[2:98], meanGroupHg[3,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], -sim_land_hg[3,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroupHg[3,2:98]+stdGroupHg[3,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroupHg[3,2:98]-stdGroupHg[3,2:98],'--r', linewidth=1.0)
+ax.set_xlabel('Time $[\%]$',fontsize=12)
+ax.set_ylabel('Angular Momentum\n$kg \cdot m^{2} \cdot s^{-1} \cdot BW^{-1} \cdot BH^{-1}$',
+              fontsize=12, multialignment='center')
+
+ax = fig1.add_subplot('235')
+ax.plot(xaxis[2:98], meanGroupHg[4,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], -sim_land_hg[4,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroupHg[4,2:98]+stdGroupHg[4,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroupHg[4,2:98]-stdGroupHg[4,2:98],'--r', linewidth=1.0)
+ax.set_xlabel('Time $[\%]$',fontsize=12)
+
+ax = fig1.add_subplot('236')
+ax.plot(xaxis[2:98], meanGroupHg[5,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], -sim_land_hg[5,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroupHg[5,2:98]+stdGroupHg[5,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroupHg[5,2:98]-stdGroupHg[5,2:98],'--r', linewidth=1.0)
+ax.set_xlabel('Time $[\%]$',fontsize=12)
+
+
+
+# ---------------------------------------------------------
+# DERIVATIVE
+# ---------------------------------------------------------
+
+fig1 = plt.figure()
+fig1.canvas.set_window_title('Figure Momenta Derivative Landing')
+ax = fig1.add_subplot('231')
+#plt.title('M-L Linear Momentum Derivative')
+ax.plot(xaxis[2:98], meanGroup[0,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_land[0,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroup[0,2:98]+stdGroup[0,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroup[0,2:98]-stdGroup[0,2:98],'--r', linewidth=1.0)
+
+
+ax = fig1.add_subplot('232')
+#plt.title('A-P Linear Momentum Derivative')
+ax.plot(xaxis[2:98], meanGroup[1,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_land[1,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroup[1,2:98]+stdGroup[1,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroup[1,2:98]-stdGroup[1,2:98],'--r', linewidth=1.0)
+ax.set_xlabel('Time $[\%]$',fontsize=12)
+
+ax = fig1.add_subplot('233')
+#plt.title('Vertical Linear Momentum Derivative')
+ax.plot(xaxis[2:98], meanGroup[2,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_land[2,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroup[2,2:98]+stdGroup[2,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroup[2,2:98]-stdGroup[2,2:98],'--r', linewidth=1.0)
+ax.set_xlabel('Time $[\%]$',fontsize=12)
+
+ax = fig1.add_subplot('234')
+#plt.title('M-L Angular Momentum Derivative')
+ax.plot(xaxis[2:98], meanGroup[3,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_land[3,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroup[3,2:98]+stdGroup[3,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroup[3,2:98]-stdGroup[3,2:98],'--r', linewidth=1.0)
+ax.set_xlabel('Time $[\%]$',fontsize=12)
+
+
+ax = fig1.add_subplot('235')
+#plt.title('A-P Angular Momentum Derivative')
+ax.plot(xaxis[2:98], meanGroup[4,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_land[4,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroup[4,2:98]+stdGroup[4,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroup[4,2:98]-stdGroup[4,2:98],'--r', linewidth=1.0)
+ax.set_xlabel('Time $[\%]$',fontsize=12)
+
+ax = fig1.add_subplot('236')
+#plt.title('Vertical Angular Momentum Derivative')
+ax.plot(xaxis[2:98], meanGroup[5,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_land[5,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroup[5,2:98]+stdGroup[5,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroup[5,2:98]-stdGroup[5,2:98],'--r', linewidth=1.0)
+ax.set_xlabel('Time $[\%]$',fontsize=12)
+
+
+meanParticipant = []    
+meanParticipantHg = []    
+for i in xrange (len(mconf.traceurs_list)):
+    taskJ = JumpAM[i]
+    dhg = np.array(taskJ.data['dhg']).squeeze()
+    hg = np.array(taskJ.data['hg']).squeeze()
+    meanParticipant+=[[np.mean(np.matrix(dhg[:,i,:].squeeze()),1) for i in xrange(6)]]
+    meanParticipantHg+=[[np.mean(np.matrix(hg[:,i,:].squeeze()),1) for i in xrange(6)]]
+    
+meanGroup = np.mean(np.array(meanParticipant).squeeze(),0)
+stdGroup = np.std(np.array(meanParticipant).squeeze(),0)
+meanGroupHg = np.mean(np.array(meanParticipantHg).squeeze(),0)
+stdGroupHg = np.std(np.array(meanParticipantHg).squeeze(),0)
+sim_jump = np.load(path_sim+'jump_dHg.npy')
+sim_jump_hg = np.load(path_sim+'jump_Hg2.npy')
+
+# Momenta jump
+
+fig1 = plt.figure()
+fig1.canvas.set_window_title('Figure Momenta Takeoff')
+ax = fig1.add_subplot('231')
+#plt.title('M-L Linear Momentum Derivative')
+ax.plot(xaxis[2:98], meanGroupHg[0,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_jump_hg[0,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroupHg[0,2:98]+stdGroupHg[0,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroupHg[0,2:98]-stdGroupHg[0,2:98],'--r', linewidth=1.0)
+ax.legend(['humans','robot','humans $ \pm $ std'],bbox_to_anchor = (2.7, -1.33), ncol=3)
+ax.set_xlabel('Time $[\%]$',fontsize=12)
+ax.set_ylabel('Linear Momentum\n$kg \cdot m \cdot s^{-1} \cdot BW^{-1} $',
+              fontsize=12, multialignment='center')
+    
+ax = fig1.add_subplot('232')
+#plt.title('A-P Linear Momentum Derivative')
+ax.plot(xaxis[2:98], meanGroupHg[1,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_jump_hg[1,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroupHg[1,2:98]+stdGroupHg[1,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroupHg[1,2:98]-stdGroupHg[1,2:98],'--r', linewidth=1.0)
+ax.set_xlabel('Time $[\%]$',fontsize=12)
+
+ax = fig1.add_subplot('233')
+#plt.title('Vertical Linear Momentum Derivative')
+ax.plot(xaxis[2:98], meanGroupHg[2,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_jump_hg[2,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroupHg[2,2:98]+stdGroupHg[2,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroupHg[2,2:98]-stdGroupHg[2,2:98],'--r', linewidth=1.0)
+ax.set_xlabel('Time $[\%]$',fontsize=12)
+
+ax = fig1.add_subplot('234')
+#plt.title('M-L Angular Momentum Derivative')
+ax.plot(xaxis[2:98], meanGroupHg[3,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_jump_hg[3,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroupHg[3,2:98]+stdGroupHg[3,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroupHg[3,2:98]-stdGroupHg[3,2:98],'--r', linewidth=1.0)
+ax.set_xlabel('Time $[\%]$',fontsize=12)
+ax.set_ylabel('Angular Momentum\n$kg \cdot m^{2} \cdot s^{-1} \cdot BW^{-1} \cdot BH^{-1}$',
+              fontsize=12, multialignment='center')
+
+ax = fig1.add_subplot('235')
+#plt.title('A-P Angular Momentum Derivative')
+ax.plot(xaxis[2:98], meanGroupHg[4,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], -sim_jump_hg[4,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroupHg[4,2:98]+stdGroupHg[4,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroupHg[4,2:98]-stdGroupHg[4,2:98],'--r', linewidth=1.0)
+ax.set_xlabel('Time $[\%]$',fontsize=12)
+
+ax = fig1.add_subplot('236')
+#plt.title('Vertical Angular Momentum Derivative')
+ax.plot(xaxis[2:98], meanGroupHg[5,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_jump_hg[5,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroupHg[5,2:98]+stdGroupHg[5,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroupHg[5,2:98]-stdGroupHg[5,2:98],'--r', linewidth=1.0)
+ax.set_xlabel('Time $[\%]$',fontsize=12)
+
+# ---------------------------------------------------------------------
+fig2 = plt.figure()
+fig2.canvas.set_window_title('Figure Momenta Derivative Takeoff')
+ax = fig2.add_subplot('231')
+#plt.title('M-L Linear Momentum Derivative')
+ax.plot(xaxis[2:98], meanGroup[0,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_jump[0,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroup[0,2:98]+stdGroup[0,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroup[0,2:98]-stdGroup[0,2:98],'--r', linewidth=1.0)
+    
+ax = fig2.add_subplot('232')
+#plt.title('A-P Linear Momentum Derivative')
+ax.plot(xaxis[2:98], meanGroup[1,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], -sim_jump[2,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroup[1,2:98]+stdGroup[1,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroup[1,2:98]-stdGroup[1,2:98],'--r', linewidth=1.0)
+
+ax = fig2.add_subplot('233')
+#plt.title('Vertical Linear Momentum Derivative')
+ax.plot(xaxis[2:98], meanGroup[2,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_jump[1,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroup[2,2:98]+stdGroup[2,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroup[2,2:98]-stdGroup[2,2:98],'--r', linewidth=1.0)
+
+ax = fig2.add_subplot('234')
+#plt.title('Angular Momentum Derivative around M-L axis')
+ax.plot(xaxis[2:98], meanGroup[3,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_jump[3,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroup[3,2:98]+stdGroup[3,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroup[3,2:98]-stdGroup[3,2:98],'--r', linewidth=1.0)
+
+ax = fig2.add_subplot('235')
+#plt.title('A-P Angular Momentum Derivative')
+ax.plot(xaxis[2:98], meanGroup[4,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_jump[5,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroup[4,2:98]+stdGroup[4,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroup[4,2:98]-stdGroup[4,2:98],'--r', linewidth=1.0)
+
+ax = fig2.add_subplot('236')
+#plt.title('Vertical Angular Momentum Derivative')
+ax.plot(xaxis[2:98], meanGroup[5,2:98],'-k', linewidth=3.0)
+ax.plot(xaxis[2:98], sim_jump[4,2:98],'-.b', linewidth=3.0)
+ax.plot(xaxis[2:98], meanGroup[5,2:98]+stdGroup[5,2:98],'--r', linewidth=1.0)
+ax.plot(xaxis[2:98], meanGroup[5,2:98]-stdGroup[5,2:98],'--r', linewidth=1.0)
 #    
+
 plotLinMomJ = plotTasks.CentroidalMomentum(JumpLM,'Impulsion through Linear Momentum (A-P and V) during Jump')
 plotAngMomJ = plotTasks.CentroidalMomentum(JumpAM, 'Angular Momentum (around M-L) contribution during Jump')
 plotLinMomL_stab = plotTasks.CentroidalMomentum(LandLM_stab,'Linear Momentum stability (A-P and M-L) task during Landing')
@@ -109,7 +363,7 @@ plotAML = plotTasks.CentroidalMomentum(LandAM,"")
 
 
 ''' *******************************  Prepare files for R  ******************************* '''
-nsubjects = 5;
+nsubjects = 7;
 
 ''' Impulsion Phase '''
 #j: 0(start)  40 60(A-P_F, AM_UCM) 70(BW) 100(end)
@@ -117,7 +371,7 @@ nsubjects = 5;
 # For ITC
 nphases = 4
 ntasks = 2
-subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases)).T
+subjects = np.matrix(np.repeat(np.linspace(1,nsubjects,nsubjects), ntasks*nphases)).T
 taskFactor =  np.matrix([1,2]*nsubjects*nphases).T
 phaseFactor = np.matrix([  0, 0, 40, 40, 70, 70, 99, 99]*nsubjects).T
 C = []
@@ -139,7 +393,7 @@ np.savetxt("TableCriteriaImpulse.csv",
 # For good vs bad variability
 k=2
 nphases = 4
-subjects = np.matrix(np.repeat(np.linspace(1,5,5), nphases*k)).T
+subjects = np.matrix(np.repeat(np.linspace(1,nsubjects,nsubjects), nphases*k)).T
 variabilityFactor = np.matrix([1,2]*nsubjects*nphases).T
 phaseFactor = np.matrix([  0, 0, 40, 40, 70, 70, 99, 99]*nsubjects).T
 C=[]; V1=[]; V2=[]; 
@@ -188,7 +442,7 @@ np.savetxt("TableVariancesImpulseAM.csv",
 # ******************* ITC *********************************
 nphases = 5
 ntasks = 3
-subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases)).T 
+subjects = np.matrix(np.repeat(np.linspace(1,nsubjects,nsubjects), ntasks*nphases)).T 
 taskFactor =  np.matrix([1,2,3]*nsubjects*nphases).T
 phaseFactor = np.matrix([  4, 4, 4, 13, 13, 13, 20, 20, 20, 40, 40, 40, 97, 97,97]*nsubjects).T
 C=[]
@@ -216,7 +470,7 @@ np.savetxt("TableCriteriaLand.csv", np.hstack([subjects,phaseFactor,taskFactor,n
 
 k=2
 nphases = 5
-subjects = np.matrix(np.repeat(np.linspace(1,5,5), nphases*k)).T 
+subjects = np.matrix(np.repeat(np.linspace(1,nsubjects,nsubjects), nphases*k)).T 
 variabilityFactor = np.matrix([1,2]*nsubjects*nphases).T
 phaseFactor = np.matrix([  4, 4, 13, 13, 20, 20, 40, 40, 97, 97]*nsubjects).T
 
@@ -289,7 +543,7 @@ np.savetxt("TableVariancesLandStabDAM.csv",
 #l: 5(start) 20(maxForce) 40(lowerForce/stab) 100(end)                                                          
 nphases = 5
 ntasks = 3
-subjects = np.matrix(np.repeat(np.linspace(1,5,5), ntasks*nphases)).T
+subjects = np.matrix(np.repeat(np.linspace(1,nsubjects,nsubjects), ntasks*nphases)).T
 variabilityFactor = np.matrix([1,2]*nsubjects*nphases*ntasks).T
 taskFactor =  np.matrix([1,1,2,2,3,3]*nsubjects*nphases).T
 phaseFactor = np.matrix([  4, 4, 4, 4, 4, 4, 13, 13, 13, 13, 13, 13, 20, 20, 20, 20, 20, 20, 40, 40, 40, 40, 40, 40, 97, 97, 97, 97, 97,97]*nsubjects).T
@@ -662,7 +916,7 @@ plt.ylabel('Angular Momentum \n $[Kg \cdot m^{2} \cdot s^{-1} \cdot  BW^{-1} \cd
 ''' Impulsion Phase '''
 nphases = 4;
 segments = 25
-subjects = np.matrix(np.repeat(np.linspace(1,5,5), nphases*segments)).T 
+subjects = np.matrix(np.repeat(np.linspace(1,nsubjects,nsubjects), nphases*segments)).T 
 #j: 0(start)  40 60(A-P_F, AM_UCM) 70(BW) 100(end)
 phaseFactor = np.matrix([  0, 40, 70,  99]*nsubjects*segments).T
 segmentFactor = np.matrix(range(segments)*nsubjects*nphases).T
@@ -800,7 +1054,7 @@ np.savetxt("tables/momenta/std/JumpAMz.csv", table_JumpM_stdzz, delimiter=",")
 ''' Landing Phase '''
 nphases = 4;
 segments = 25
-subjects = np.matrix(np.repeat(np.linspace(1,5,5), nphases*segments)).T 
+subjects = np.matrix(np.repeat(np.linspace(1,nsubjects,nsubjects), nphases*segments)).T 
 #l: 5(start) 20(maxForce) 40(lowerForce/stab) 100(end) 
 phaseFactor = np.matrix([  5, 20, 40,  99]*nsubjects*segments).T
 segmentFactor = np.matrix(range(segments)*nsubjects*nphases).T
@@ -939,17 +1193,6 @@ np.savetxt("tables/momenta/mean/LandAMy.csv", table_JumpMyy, delimiter=",")
 np.savetxt("tables/momenta/std/LandAMy.csv", table_JumpM_stdyy, delimiter=",")
 np.savetxt("tables/momenta/mean/LandAMz.csv", table_JumpMzz, delimiter=",")
 np.savetxt("tables/momenta/std/LandAMz.csv", table_JumpM_stdzz, delimiter=",")
-
-
-
-
-
-
-
-
-
-
-
 
 
 

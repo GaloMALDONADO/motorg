@@ -28,12 +28,16 @@ class References:
         mn = protocol.MotionNames()
         if participant is 'Cyril':
             self.motions = mn.Cyril()
+        elif participant is 'JulienB':
+            self.motions = mn.JulienB()
         elif participant is 'Lucas':
             self.motions = mn.Lucas()
         elif participant is 'Melvin':
             self.motions = mn.Melvin()
         elif participant is 'Michael':
             self.motions = mn.Michael()
+        elif participant is 'Remi':
+            self.motions = mn.Remi()
         elif participant is 'Yoan':
             self.motions = mn.Yoan()
         else:

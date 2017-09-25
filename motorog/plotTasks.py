@@ -372,6 +372,67 @@ class CentroidalMomentum(Plot):
         plt.axvline(30,color = '0', linewidth=1.5, linestyle='--')
         plt.axvline(40,color = '0', linewidth=1.5, linestyle='--')
 
+
+    def plotMomentaDerivative(self):
+        fig = plt.figure()
+        fig.canvas.set_window_title(self.windowTitle)
+        
+        task = [np.array(self.task[i].taskNormalized).squeeze() for i in xrange(self.participantsNo)]
+        task_hat = np.mean(task,0)
+        taskStd_hat = np.std(task,0)
+        
+        taskPlus = task_hat + taskStd_hat
+        taskMin = task_hat - taskStd_hat
+        
+        ax = fig.add_subplot('231')
+        plt.title('M-L Linear Momentum Derivative')
+        ax.plot(task_hat[1:,0],'-r', linewidth=3.0)
+        ax.plot(taskPlus[1:,0],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin[1:,0],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[Nm \cdot BW^{-1} \cdot H^{-1}]$')
+        plt.legend(['mean','mean $\pm$ std'],loc=1)
+
+        ax = fig.add_subplot('232')
+        plt.title('A-P Linear Momentum Derivative')
+        ax.plot(task_hat[1:,1],'-r', linewidth=3.0)
+        ax.plot(taskPlus[1:,1],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin[1:,1],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[Nm \cdot BW^{-1} \cdot H^{-1}]$')
+        plt.legend(['mean','mean $\pm$ std'],loc=1)
+
+        ax = fig.add_subplot('233')
+        plt.title('Vertical Linear Momentum Derivative')
+        ax.plot(task_hat[1:,2],'-r', linewidth=3.0)
+        ax.plot(taskPlus[1:,2],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin[1:,2],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[Nm \cdot BW^{-1} \cdot H^{-1}]$')
+        plt.legend(['mean','mean $\pm$ std'],loc=1)
+
+        
+        ax = fig.add_subplot('234')
+        plt.title('M-L Angular Momentum Derivative')
+        ax.plot(task_hat[1:,3],'-r', linewidth=3.0)
+        ax.plot(taskPlus[1:,3],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin[1:,3],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[Nm \cdot BW^{-1} \cdot H^{-1}]$')
+        plt.legend(['mean','mean $\pm$ std'],loc=1)
+
+        ax = fig.add_subplot('235')
+        plt.title('A-P Angular Momentum Derivative')
+        ax.plot(task_hat[1:,4],'-r', linewidth=3.0)
+        ax.plot(taskPlus[1:,4],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin[1:,4],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[Nm \cdot BW^{-1} \cdot H^{-1}]$')
+        plt.legend(['mean','mean $\pm$ std'],loc=1)
+
+        ax = fig.add_subplot('236')
+        plt.title('Vertical Angular Momentum Derivative')
+        ax.plot(task_hat[1:,5],'-r', linewidth=3.0)
+        ax.plot(taskPlus[1:,5],'-k',color = '0.75', linewidth=1.0, linestyle='--')
+        ax.plot(taskMin[1:,5],'-k' ,color = '0.75',linewidth=1.0, linestyle='--')
+        plt.ylabel('$[Nm \cdot BW^{-1} \cdot H^{-1}]$')
+        plt.legend(['mean','mean $\pm$ std'],loc=1)
+
         #plt.legend(['mean','mean $\pm$ std'],loc=1)
         
         #ax = fig.add_subplot('111')

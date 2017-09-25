@@ -49,6 +49,9 @@ class UCM:
         self.robot.tau = se3.rnea(self.robot.model, self.robot.data, q, v, a)
 
 
+    #def getRoM(self, Q):
+    #    (self.rom_mean, self.rom_std, self.rom_data) = tools.RoM(Q)
+
     def getReferenceConfigurations(self, Q):
         '''
         meanConf, stdConf, data = meanConfiguration(Q)
@@ -258,6 +261,7 @@ class ucmMomentum(UCM):
         self._KT = np.float64(KT)
         self._K = self._KF * self._KT
         self.order = order #0 pos, 1 vel, 2 acc
+        
 
     @property
     def dim(self):
@@ -276,7 +280,7 @@ class ucmMomentum(UCM):
         cXi = se3.SE3.Identity()
         cXi.rotation = oXi.rotation
         cXi.translation = oXi.translation - p_com
-        cXi.translation = p_com
+        #cXi.translation = p_com
         
         m_gravity = model.gravity.copy()
         model.gravity.setZero()
@@ -308,9 +312,10 @@ class ucmMomentum(UCM):
         #iHDi.linear 
         # express at the center of mass
         oMc = se3.SE3.Identity()
-        oMc.translation = com
+        oMc.translation = self.robot.data.oMi[1].translation - com
+        #oMc.translation = com
         # uncomment in case need to change the rotation of the reference frame
-        #oMc.rotation = self.robot.data.oMi[1].rotation 
+        oMc.rotation = self.robot.data.oMi[1].rotation 
         cMi = oMc.actInv( self.robot.data.oMi[s] )
         
         cHi = cMi.act(iHi).np.A1
@@ -396,16 +401,19 @@ class ucmMomentum(UCM):
             p_com = self.robot.com(self.q_mean[i])
             for s in range(1,26):
                 hc, hcd = self._getContribution(p_com,s) 
-                segH.append(hc*self._K)
-                segF.append(hcd*self._K)
+                segH.append(hc)
+                segF.append(hcd)
             Hdot = np.matrix(np.sum(np.array(segF).squeeze(),0)).T
-
+            #gravityF = np.matrix([[0,0,1/self._KF,0,0,0]]).T
+            #Hdot += gravityF
+            Hdot = np.matrix(np.vstack([self._KF * Hdot[0:3], self._KT * Hdot[3:6]]))
+            self.Hdot = Hdot 
             # ---- Store data
             # Centroidal Momenta
             hg.append(Hg.copy()*self._K)
             self.h = hg
             # Rate of Change
-            taskNormalized.append(Hdot[self._mask])
+            taskNormalized.append(Hdot)#[self._mask])
             self.taskNormalized = taskNormalized
             drift.append(b[self._mask] * self._K)
             #Jtask.append(A[self._mask,:])
@@ -467,7 +475,7 @@ class ucmMomentum(UCM):
                               self.robot.data, 
                               q[t,:,i], 
                               dq[t,:,i])
-                H = self.robot.data.hg.np.A.copy()
+                #H = self.robot.data.hg.np.A.copy()
                 b = self._getBiais(q[t,:,i], dq[t,:,i]) # check calculation
                 #Hdot2 = (A * np.matrix(ddq[t,:,i]).squeeze().T) + b.copy() - (self.robot.data.mass[0] * self.robot.model.gravity.vector)
 
@@ -476,13 +484,17 @@ class ucmMomentum(UCM):
                 p_com = self.robot.com(q[t,:,i])
                 for s in range(1,26):
                     (segH, segF) =  self._getContribution(p_com,s)
-                    data_Hgs[t,:,i,s] = segH * self._K
-                    data_dHgs[t,:,i,s] = segF * self._K
+                    data_Hgs[t,:,i,s] = segH #* self._K
+                    data_dHgs[t,:,i,s] = segF #* self._K
                 Hdot =  np.matrix(np.sum(data_dHgs[t,:,i],1)).T #- (self.robot.data.mass[0] * self.robot.model.gravity.vector*self._K)
+                Hdot = np.matrix(np.vstack([self._KF * Hdot[0:3], self._KT * Hdot[3:6]]))
+                
                 #+ (b*self._K) #
                 #Hdot = self._K * Hdot2.copy()
                 #Hdot[0:3] = (self.robot.data.mass[0]*self.robot.data.acom[0]) *self._K
-                HNormalized = H.copy()*self._K
+                #HH = np.matrix(np.vstack([self._KF * H[0:3], self._KT * H[3:6]]))
+                H =  np.matrix(np.sum(data_Hgs[t,:,i],1)).T
+                HNormalized = np.matrix(np.vstack([self._KF * H[0:3], self._KT * H[3:6]]))#H.copy()*self._K
                 bNormalized = b.copy()*self._K
                 HdotNormalized = Hdot.copy()*self._K
                 data_Hg[t,:,i] = HNormalized.squeeze()

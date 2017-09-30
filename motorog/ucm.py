@@ -20,6 +20,13 @@ class UCM:
         #self.cutoff = 50
         #self.filter_order = 4
 
+    def _diag(self, L):
+        shp = L[0].shape
+        mask = np.kron(np.eye(len(L)), np.ones(shp))==1
+        out = np.zeros(np.asarray(shp)*len(L))
+        out[mask] = np.concatenate(L).ravel()
+        return out
+
     def nullspace(self, Jq):
         ''' Computes the null space from SVD
         returns the nulls space and the rank
@@ -46,7 +53,7 @@ class UCM:
         self.robot.q=q
         self.robot.v=v
         self.robot.a=a
-        self.robot.tau = se3.rnea(self.robot.model, self.robot.data, q, v, a)
+        #self.robot.tau = se3.rnea(self.robot.model, self.robot.data, q, v, a)
 
 
     #def getRoM(self, Q):
@@ -260,8 +267,7 @@ class ucmMomentum(UCM):
         self._KF = np.float64(KF)
         self._KT = np.float64(KT)
         self._K = self._KF * self._KT
-        self.order = order #0 pos, 1 vel, 2 acc
-        
+        self.order = order #0 pos, 1 vel, 2 acc        
 
     @property
     def dim(self):
@@ -290,6 +296,249 @@ class ucmMomentum(UCM):
         f_com = cXi.act(f_ff)
         return f_com.np
 
+    def check2(self):
+        Ag=self._test()
+        print Ag.shape
+        print '*************'
+        print 'Pinocchio:'
+        print self.robot.data.Ag*self.robot.v.T
+        print np.sum(self.robot.data.Ag)
+        print 'Method 1'
+        print Ag * self.robot.v.T
+        print np.sum(Ag)
+
+    def check(self):
+        #Ag = self._getAg()
+        P_sys1 = self._getP_sys1()
+        P_sys2 = self._getP_sys2()
+        J_sys = self._getJ_sys()
+        Xg_sys = self._getXg_sys()
+        Ag1 = Xg_sys.T * P_sys1 * J_sys
+        Ag2 = Xg_sys.T * P_sys2 * J_sys
+        print '*************'
+        print 'Pinocchio:'
+        print self.robot.data.Ag*self.robot.v.T
+        print np.sum(self.robot.data.Ag)
+        print 'Method 1'
+        print Ag1 * self.robot.v.T
+        print np.sum(Ag1)
+        print 'Method 2'
+        print Ag2 * self.robot.v.T
+        print np.sum(Ag2)
+        #dAg = self._getdAg()
+        #print dAg*self.robot.a.T
+        #print self.dH
+
+    def _getAg(self):
+        P_sys = self._getP_sys1()
+        J_sys = self._getJ_sys()
+        Xg_sys = self._getXg_sys()
+        Ag = Xg_sys.T * P_sys * J_sys
+        return Ag
+
+        
+    def _test(self):
+        se3.computeJacobians(self.robot.model, self.robot.data, self.q_mean[self.i])
+        arr_s = []
+        for s in range(1,26):
+            oMi = self.robot.data.oMi[1]
+            oMc = se3.SE3.Identity()
+            oMc.rotation = oMi.rotation
+            #oMc.translation = oMi.translation - self.robot.data.com[0]
+            oMc.translation = self.robot.data.com[0]
+            cMi = oMc.actInv( self.robot.data.oMi[s] )
+            cXi = cMi.action
+            cFi = cMi.inverse().action
+            #
+            iJ = se3.jacobian(self.robot.model, self.robot.data, self.q_mean[self.i].T, s, False, True)
+            #
+            iI = self.robot.model.inertias[s].matrix()
+            #
+            cIi = cFi * iI
+            cJi = cXi * iJ
+            cAi = cIi * cJi
+            arr_s += [cAi]
+            #self.Ag_ = np.hstack(y[:] for y in arr_s)
+        self.Ag_ = np.sum(arr_s,0)
+        return self.Ag_
+            
+            
+    def _getXg_sys(self):
+        '''
+        dimensions = 6x150
+        '''
+        arr_s1 = []
+        arr_s2 = []
+        for s in range(1,26):
+            oMi = self.robot.data.oMi[1]
+            oMc = se3.SE3.Identity()
+            oMc.rotation = oMi.rotation
+            oMc.translation = oMi.translation - self.robot.data.com[0]
+            #oMc.translation = self.robot.data.com[0]
+            cMi = oMc.actInv( self.robot.data.oMi[s] )
+            #cXi = cMi.action.T
+            cXfi = cMi.inverse().action #.T
+            
+            # ---------- motion application
+            A = cMi.rotation
+            B = se3.utils.skew(cMi.translation) * cMi.rotation
+            C = se3.utils.zero((3,3))
+            D = cMi.rotation
+            row1 = np.hstack([A, B])
+            row2 = np.hstack([C, D])
+            cXi_2 = np.vstack([row1,row2]) # the same as cMi.action
+            # ---------- force application
+            Af = cMi.rotation
+            Bf = se3.utils.zero((3,3))
+            Cf = se3.utils.skew(cMi.translation) * cMi.rotation
+            Df = cMi.rotation
+            row1f = np.hstack([Af, Bf])
+            row2f = np.hstack([Cf, Df])
+            #cXfi = np.vstack([row1f,row2f]).T  
+            # -----------------
+            #arr_s1 += [cXi]
+            arr_s2 += [cXfi]
+        #self.Xg_sys = np.hstack(y[:] for y in arr_s1).T
+        self.Xgf_sys = np.hstack(y[:] for y in arr_s2).T
+        return self.Xgf_sys
+
+    def _getJ_sys(self):
+        '''
+        dim = 150x42
+        '''
+        arr_s = []
+        se3.computeJacobians(self.robot.model, self.robot.data, self.q_mean[self.i])
+        for s in range(1,26):
+            #wrt body
+            J_s = se3.jacobian(self.robot.model, self.robot.data, self.q_mean[self.i].T, s, False, True)
+            arr_s += [J_s.T]
+        #[150,42]
+        self.J_sys = np.hstack(y[:] for y in arr_s).T
+        return self.J_sys
+
+    def _getP_sys1(self):
+        '''
+        dim = 6,150
+        '''
+        arr_s = []
+        for s in range(1,26):
+            #wrt body
+            I = self.robot.model.inertias[s].matrix()
+            arr_s += [np.array(I.squeeze())]
+        self.P_sys1 = self._diag((arr_s[0], arr_s[1], arr_s[2], arr_s[3], arr_s[4], arr_s[5], 
+                                  arr_s[6], arr_s[7], arr_s[8], arr_s[9], arr_s[10],
+                                  arr_s[11], arr_s[12], arr_s[13], arr_s[14], arr_s[15], 
+                                  arr_s[16], arr_s[17], arr_s[18], arr_s[19], arr_s[20],
+                                  arr_s[21], arr_s[22], arr_s[23], arr_s[24] ))
+        #self.P_sys = np.hstack(y[:] for y in arr_s)
+        return self.P_sys1
+
+    def _getP_sys2(self):
+        '''
+        [ T 0 ; U V]
+        '''
+        arr_s = []
+        for s in range(1,26):
+            m_s = self.robot.model.inertias[s].mass
+            p_com = self.robot.data.com[0]
+            #lever from joint to CoM
+            lever = self.robot.model.inertias[s].lever
+            #postion of the joint wrt world
+            #p_i = self.robot.data.oMi[s].translation
+            p_i = self.robot.data.liMi[s].translation
+            #postion of the segment CoM wrt world
+            p_s =  p_i + lever
+            #intertia wrt to joint
+            I_j = self.robot.model.inertias[s].inertia 
+            #intertia expressed at the CoM
+            I_s = I_j - ( (m_s*np.identity(3)) * (lever.A1*lever.A1) )
+            # get matrix components of size [3 x 3s] each
+            T = m_s * np.identity(3)
+            #U = np.identity(3) * m_s*(p_s - p_com).A1
+            #U = m_s*se3.utils.skew(p_s) #- p_com)
+            U = m_s*se3.utils.skew(p_i) #- p_com)
+            #U = m_s*se3.utils.skew(lever)
+            #V = I_s
+            V = I_j
+            O = np.zeros((3,3))
+            col1 = np.vstack([T,U])
+            col2 = np.vstack([O,V])
+            arr_s += [np.hstack([col1,col2]).A]
+        #[6,150]
+        self.P_sys2 = self._diag((arr_s[0], arr_s[1], arr_s[2], arr_s[3], arr_s[4], arr_s[5], 
+                                 arr_s[6], arr_s[7], arr_s[8], arr_s[9], arr_s[10],
+                                 arr_s[11], arr_s[12], arr_s[13], arr_s[14], arr_s[15], 
+                                 arr_s[16], arr_s[17], arr_s[18], arr_s[19], arr_s[20],
+                                 arr_s[21], arr_s[22], arr_s[23], arr_s[24] ))
+        #self.P_sys = np.hstack(y[:] for y in arr_s) 
+        return self.P_sys2
+        
+    def _getdJ_sys(self):
+        arr_s = []
+        se3.computeJacobiansTimeVariation(self.robot.model, 
+                                          self.robot.data, 
+                                          self.q_mean[self.i], 
+                                          self.dq_mean[self.i])
+        for s in range(1,26):
+            dJ_s = se3.getJacobianTimeVariation(self.robot.model, self.robot.data, s, True)
+            arr_s += [dJ_s]
+        dJ_sys = np.vstack(y[:] for y in arr_s)
+        return dJ_sys
+    
+    def _getdP_sys(self):
+        '''
+        [ dT 0 ; dU dV]
+        '''
+        arr_s = []
+        for s in range(1,26):
+            m_s = self.robot.model.inertias[s].mass
+            twist_s = self.robot.velocity(self.robot.q, self.robot.v, s, True)
+            v_s = twist_s.linear
+            w_j = twist_s.angular
+            #lever from joint to CoM
+            lever = self.robot.model.inertias[s].lever
+            #angular velocity around center of mass
+            w_s = w_j + np.matrix(np.cross(lever.A1,v_s.A1)).T
+            v_com = self.robot.data.vcom[0]
+            #postion of the joint wrt world
+            p_i = self.robot.data.oMi[s].translation
+            #postion of the segment CoM wrt world
+            p_s =  p_i + lever
+            #intertia wrt to joint
+            I_j = self.robot.model.inertias[s].inertia 
+            #intertia expressed at the CoM, parallel axis theorem
+            I_s = I_j - ( (m_s*np.identity(3)) * (lever.A1*lever.A1) )
+            # get matrix components of size [3 x 3s] each
+            dT = np.zeros((3,3))
+            dU = m_s*se3.utils.skew(v_s - v_com)
+            dV = se3.utils.skew(w_s) * I_s 
+            dO = np.zeros((3,3))
+            col1 = np.vstack([dT, dU])
+            col2 = np.vstack([dO, dV])
+            arr_s += [np.hstack([col1,col2])]
+        #[6,150]
+        self.dP_sys = np.hstack(y[:] for y in arr_s) 
+        return self.dP_sys
+
+    def _getdAg(self):
+        P_sys = self._getP_sys()
+        J_sys = self._getJ_sys()
+        dP_sys = self._getdP_sys()
+        dJ_sys = self._getdJ_sys()
+        dAg = (dP_sys * J_sys) + (P_sys * dJ_sys)
+        return dAg
+
+    def _getD(self, dA, dq):
+        '''
+        partial(dAg) / partial(dq)
+        '''
+        h = 1e-4
+        #q1 = q0 (spatial operator) v1*h
+        pass
+    
+    def _getE(self, A, dA, q):
+        pass
+        
     def _getContribution(self,com,s):
         '''
         Get segment contribution to centroidal angular 
@@ -321,7 +570,7 @@ class ucmMomentum(UCM):
         cHi = cMi.act(iHi).np.A1
         cHDi = cMi.act(iHDi).np.A1 
         return cHi, cHDi        
-        
+    
     def _getJmean(self):
         # Get jacobian matrices
         Ag_list=[]
@@ -336,9 +585,14 @@ class ucmMomentum(UCM):
                            self.q_mean[i], 
                            self.dq_mean[i])
             Ag_list.append(Ag[self._mask,:])       
-        dAg_list = bm.diffJ(Ag_list, self.time_mean)
-        ddAg_list = bm.diffJ(dAg_list, self.time_mean)
+        #D = bm.get_ddA_ddq + np.nan_to_num(self.robot.dAg)
         
+        dAg_list = bm.diffM(Ag_list, self.time_mean)
+        ddAg_list = bm.diffM(dAg_list, self.time_mean)
+        self.G = bm.diffM(dAg_list, self.dq_mean.A1)
+        self.H = bm.diffM(dAg_list, self.q_mean.A1)
+        self.I = bm.diffM(Ag_list, self.q_mean.A1)
+         
         Ag=[]; dAg=[];  ddAg=[]
         Je=[]
         if self.order == 1:
@@ -356,7 +610,9 @@ class ucmMomentum(UCM):
         elif self.order == 2:
             for i in range(0, 100):
                 Ag.append(np.matrix(Ag_list[i]))
+                #D = self._getD(dA_list[i], self.robot.dq_mean[i])
                 dAg.append(np.matrix(2*dAg_list[i]))
+                #E = self._getE(A_list[i], dA_list[i], self.robot.q_mean[i])
                 ddAg.append(np.matrix(ddAg_list[i]))
                 Je.append(np.hstack([ddAg_list[i], 2*dAg_list[i], Ag_list[i]]))
             # Compute projector onto the nullspace
@@ -381,6 +637,8 @@ class ucmMomentum(UCM):
         Ntask.append(['NdJ', NdAg])
         Ntask.append(['NddJ', NddAg])
         for i in range(0, 100):
+            self.i = i
+            self.updateAll(self.q_mean[i], self.dq_mean[i], self.ddq_mean[i])
             se3.forwardKinematics(self.robot.model, 
                                   self.robot.data, 
                                   self.q_mean[i], 
@@ -393,7 +651,6 @@ class ucmMomentum(UCM):
                           self.q_mean[i], 
                           self.dq_mean[i])
             Hg = self.robot.data.hg.np.A.copy()
-            
             # ---- Its rate of change
             b = self._getBiais(self.q_mean[i], self.dq_mean[i]) #check it
             # Individual contributions to centroidal momenta (and its rate of change)
@@ -404,10 +661,13 @@ class ucmMomentum(UCM):
                 segH.append(hc)
                 segF.append(hcd)
             Hdot = np.matrix(np.sum(np.array(segF).squeeze(),0)).T
+            self.dH = Hdot.copy() 
             #gravityF = np.matrix([[0,0,1/self._KF,0,0,0]]).T
             #Hdot += gravityF
             Hdot = np.matrix(np.vstack([self._KF * Hdot[0:3], self._KT * Hdot[3:6]]))
             self.Hdot = Hdot 
+            #self.robot.data.com[0] = p_com
+            self.check()
             # ---- Store data
             # Centroidal Momenta
             hg.append(Hg.copy()*self._K)
@@ -422,7 +682,6 @@ class ucmMomentum(UCM):
             contributionF.append(np.array(segF).squeeze())
             self.contribution = contributionH
             self.contributionF = contributionF
-            
         return taskNormalized, Jtask, Ntask, drift
         
     def _getReferenceTask(self, Q):
@@ -468,7 +727,7 @@ class ucmMomentum(UCM):
                                  self.robot.data,
                                  q[t,:,i], 
                                  dq[t,:,i], 
-                                 ddq[t,:,i], True)
+                                 ddq[t,:,i])#, True)
     
                 # centroidal momenta
                 A = se3.ccrba(self.robot.model, 
